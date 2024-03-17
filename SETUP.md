@@ -31,7 +31,10 @@
 3. Create a `.env` file at the root directory of the project with the following variables:
 
    ```sh
-   # change these accordingly to your mysql setup
+   # https://account.mapbox.com/access-tokens
+   NEXT_PUBLIC_MAPBOX_TOKEN=
+
+   # MySQL connection details
    MYSQL_HOST=localhost
    MYSQL_PORT=3306
    MYSQL_DATABASE=startupsphere
