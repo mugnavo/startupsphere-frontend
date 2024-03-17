@@ -1,0 +1,30 @@
+{
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/.next": true,
+    "**/out": true,
+    "**/build": true,
+    "**/node_modules": true,
+    "**/.drizzle": true,
+    "next-env.d.ts": true,
+
+    "drizzle.config.ts": true,
+    "pnpm-lock.yaml": true,
+    ".editorconfig": true,
+    ".eslintrc.json": true,
+    ".gitattributes": true,
+    ".prettierrc": true,
+    "components.json": true,
+    "postcss.config.js": true,
+    "SETUP.md": true,
+    "CONTRIBUTING.md": true,
+    "pull_request_template.md": true
+  },
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "files.eol": "\n"
+}
