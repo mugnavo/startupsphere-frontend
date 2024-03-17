@@ -1,3 +1,9 @@
+import StartupMap from "~/components/StartupMap";
+
 export default function Home() {
-  return <main>hello world</main>;
+  return (
+    <main className="h-screen">
+      <StartupMap />
+    </main>
+  );
 }
