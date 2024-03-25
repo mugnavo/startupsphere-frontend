@@ -34,12 +34,8 @@
    # https://account.mapbox.com/access-tokens
    NEXT_PUBLIC_MAPBOX_TOKEN=
 
-   # MySQL connection details
-   MYSQL_HOST=localhost
-   MYSQL_PORT=3306
-   MYSQL_DATABASE=startupsphere
-   MYSQL_USER=root
-   MYSQL_PASSWORD=
+   # PostgreSQL connection
+   DATABASE_URL= # e.g. postgres://user:password@host:port/dbname
    ```
 
 4. Run the project:

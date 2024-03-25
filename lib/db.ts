@@ -1,12 +1,8 @@
-import { drizzle } from "drizzle-orm/mysql2";
-import mysql from "mysql2/promise";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Client } from "pg";
 
-const connection = mysql.createPool({
-  host: process.env.MYSQL_HOST!,
-  port: Number(process.env.MYSQL_PORT),
-  database: process.env.MYSQL_DATABASE!,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-});
+import * as schema from "./schema";
 
-export const db = drizzle(connection);
+const connection = new Client({ connectionString: process.env.DATABASE_URL! });
+
+export const db = drizzle(connection, { schema });

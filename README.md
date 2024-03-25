@@ -13,7 +13,7 @@ Core:
 
 - [React 18](https://react.dev/)
 - [Next.js 14](https://nextjs.org/docs)
-- MySQL via [Drizzle ORM](https://orm.drizzle.team/docs/update)
+- PostgreSQL via [Drizzle ORM](https://orm.drizzle.team/docs/update)
 - [Mapbox](https://docs.mapbox.com/mapbox-gl-js/guides/) via [react-map-gl](https://visgl.github.io/react-map-gl/)
 
 Misc:
