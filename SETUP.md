@@ -12,17 +12,17 @@
 4. Optional, but very convenient since the `pnpm` command is too long:
 
    Use the `pn` alias for pnpm: [pnpm.io/installation#adding-a-permanent-alias-in-powershell-windows](https://pnpm.io/installation#adding-a-permanent-alias-in-powershell-windows)
-   [![image](https://github.com/dotnize/pinto/assets/48910077/0de0c417-9aaa-48f8-a768-35fcd968d7b4)](https://pnpm.io/installation#adding-a-permanent-alias-in-powershell-windows)
+   [![image](https://github.com/mugnavo/startupsphere/assets/48910077/cc31c18e-9969-4024-a772-995b8d370b4e)](https://pnpm.io/installation#adding-a-permanent-alias-in-powershell-windows)
 
 ## Cloning & running the project
 
 1. Clone this project:
    ```sh
-   git clone git@github.com:dotnize/pinto.git
+   git clone git@github.com:mugnavo/startupsphere.git
    ```
    or via HTTPS:
    ```sh
-   git clone https://github.com/dotnize/pinto.git
+   git clone https://github.com/mugnavo/startupsphere.git
    ```
 2. Install dependencies:
    ```sh
