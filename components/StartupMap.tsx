@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { FillExtrusionLayer } from "react-map-gl";
 import Map, { Layer } from "react-map-gl";
 
@@ -40,15 +41,21 @@ const building3dLayer: FillExtrusionLayer = {
 };
 
 export default function StartupMap() {
+  const [viewState, setViewState] = useState({
+    longitude: 123.89811168536812,
+    latitude: 10.296462810801557,
+    zoom: 16.822704814280264,
+    pitch: 77.50180300523273,
+    bearing: -13.596730550512234,
+  });
+
   return (
     <div className="h-screen">
+      Coordinates: {JSON.stringify(viewState)}
       <Map
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
-        initialViewState={{
-          longitude: -122.4,
-          latitude: 37.8,
-          zoom: 14,
-        }}
+        {...viewState}
+        onMove={(evt) => setViewState(evt.viewState)}
         style={{ width: "100%", height: "100%" }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
       >
