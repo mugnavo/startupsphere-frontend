@@ -1,6 +1,7 @@
 "use client";
 import { RiHeartLine, RiHistoryLine, RiSearchLine } from "@remixicon/react";
 import { useState } from "react";
+import SearchContent from "./search-content";
 
 interface StateType {
   searchIsActive: boolean;
@@ -49,6 +50,9 @@ export default function SideMenu() {
 
         <div className=" absolute bottom-0 h-2 w-full bg-yellow-400" />
       </div>
+      {state.searchIsActive && (
+        <SearchContent onClick={() => handleItemClick("searchIsActive")} />
+      )}
     </>
   );
 }
