@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .side-menu-font {
+    @apply text-xs font-light;
+  }
+  .btn-primary {
+    @apply relative mt-2 rounded-md p-2 text-sm shadow-sm ring-1 ring-inset ring-gray-300;
+  }
+  .btn-active {
+    @apply relative mt-2 rounded-md bg-gray-300 p-2 text-sm shadow-sm ring-1 ring-inset ring-gray-300;
+  }
+}
