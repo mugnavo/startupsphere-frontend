@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write . \"!pnpm-lock.yaml\" \"!pull_request_template.md\" --ignore-path .gitignore",
-    "dz": "drizzle-kit"
+    "dz": "drizzle-kit",
+    "cleaninstall": "rimraf .next node_modules && pnpm install"
   },
   "dependencies": {
     "@lucia-auth/adapter-drizzle": "^1.0.7",
@@ -40,6 +41,7 @@
     "postcss": "^8.4.38",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.13",
+    "rimraf": "^5.0.5",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.4.4"
   },
