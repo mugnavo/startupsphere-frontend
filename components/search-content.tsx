@@ -1,5 +1,5 @@
 "use client";
-import { RiCloseLine, RiSearchLine } from "@remixicon/react";
+import { Search, X } from "lucide-react";
 import { useState } from "react";
 
 export default function SearchContent(props: { onClick: () => void }) {
@@ -39,11 +39,11 @@ export default function SearchContent(props: { onClick: () => void }) {
     <div className=" absolute left-20 top-0 z-10 h-screen w-[22rem] bg-white p-6">
       <div className=" flex items-center justify-between">
         <span>Search</span>
-        <RiCloseLine size={20} onClick={props.onClick} className="cursor-pointer" />
+        <X size={20} onClick={props.onClick} className="cursor-pointer" />
       </div>
       <div className="relative mt-2 rounded-md shadow-sm">
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
-          <RiSearchLine size={15} className="  text-gray-500" />
+          <Search size={15} className="  text-gray-500" />
         </div>
         <input
           type="search"
@@ -62,9 +62,7 @@ export default function SearchContent(props: { onClick: () => void }) {
             className={`flex items-center gap-3 ${category.isActive ? "btn-active" : "btn-primary"}`}
           >
             {category.name}
-            {category.isActive && (
-              <RiCloseLine size={15} onClick={() => filterDeselected(index)} />
-            )}
+            {category.isActive && <X size={15} onClick={() => filterDeselected(index)} />}
           </button>
         ))}
       </div>

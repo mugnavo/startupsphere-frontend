@@ -1,5 +1,5 @@
 "use client";
-import { RiHeartLine, RiHistoryLine, RiSearchLine } from "@remixicon/react";
+import { Heart, History, Search } from "lucide-react";
 import { useState } from "react";
 import SearchContent from "./search-content";
 
@@ -32,19 +32,19 @@ export default function SideMenu() {
         <MenuItem
           state={state.searchIsActive}
           name="Search"
-          icon={RiSearchLine}
+          icon={Search}
           onClick={() => handleItemClick("searchIsActive")}
         />
         <MenuItem
           state={state.recentIsActive}
           name="Recent"
-          icon={RiHistoryLine}
+          icon={History}
           onClick={() => handleItemClick("recentIsActive")}
         />
         <MenuItem
           state={state.favoritesIsActive}
           name="Favorites"
-          icon={RiHeartLine}
+          icon={Heart}
           onClick={() => handleItemClick("favoritesIsActive")}
         />
 

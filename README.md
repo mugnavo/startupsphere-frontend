@@ -18,8 +18,8 @@ Core:
 
 Misc:
 
-- Styling: [Tailwind CSS](https://tailwindcss.com/) + [Tremor](https://www.tremor.so/components) components
-- Icons: [Remix Icon](https://remixicon.com/) via [Tremor Icons](https://www.tremor.so/docs/ui/icons)
+- Styling: [Tailwind CSS](https://tailwindcss.com/) + [daisyUI](https://daisyui.com/components/)
+- Icons: [lucide-react](https://lucide.dev/)
 - Type safety with [TypeScript 5](https://www.typescriptlang.org/docs/)
 - Linting & formatting with [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/)
 - [pnpm](https://pnpm.io/) package manager
