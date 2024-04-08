@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { FillExtrusionLayer } from "react-map-gl";
 import Map, { Layer } from "react-map-gl";
+import SideMenu from "./side-menu";
 
 const building3dLayer: FillExtrusionLayer = {
   // from https://docs.mapbox.com/mapbox-gl-js/example/3d-buildings/
@@ -52,6 +53,7 @@ export default function StartupMap() {
   return (
     <div className="h-screen">
       Coordinates: {JSON.stringify(viewState)}
+      <SideMenu />
       <Map
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
         {...viewState}
