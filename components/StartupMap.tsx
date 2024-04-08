@@ -51,8 +51,7 @@ export default function StartupMap() {
   });
 
   return (
-    <div className="h-screen">
-      Coordinates: {JSON.stringify(viewState)}
+    <div className="h-screen overflow-y-hidden">
       <SideMenu />
       <Map
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
