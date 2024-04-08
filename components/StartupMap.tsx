@@ -51,7 +51,7 @@ export default function StartupMap() {
   });
 
   return (
-    <div className="h-screen overflow-y-hidden">
+    <div className="h-screen overflow-hidden">
       <SideMenu />
       <Map
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
