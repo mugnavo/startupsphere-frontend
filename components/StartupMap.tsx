@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { FillExtrusionLayer } from "react-map-gl";
 import Map, { Layer } from "react-map-gl";
+import Account from "./account";
 import SideMenu from "./side-menu";
 
 const building3dLayer: FillExtrusionLayer = {
@@ -53,6 +54,7 @@ export default function StartupMap() {
   return (
     <div className="h-screen overflow-hidden">
       <SideMenu />
+      <Account />
       <Map
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
         {...viewState}
