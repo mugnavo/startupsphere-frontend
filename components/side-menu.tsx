@@ -2,6 +2,7 @@
 import { Heart, History, Search } from "lucide-react";
 import { useState } from "react";
 import SearchContent from "./search-content";
+import Favorites from "./favorites";
 
 interface StateType {
   searchIsActive: boolean;
@@ -52,6 +53,9 @@ export default function SideMenu() {
       </div>
       {state.searchIsActive && (
         <SearchContent onClick={() => handleItemClick("searchIsActive")} />
+      )}
+      {state.favoritesIsActive && (
+        <Favorites onClick={() => handleItemClick("favoritesIsActive")} />
       )}
     </>
   );
