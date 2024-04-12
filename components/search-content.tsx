@@ -5,11 +5,11 @@ import { useState } from "react";
 export default function SearchContent(props: { onClick: () => void }) {
   const [categories, setCategories] = useState([
     { id: 1, name: "cars", isActive: false },
-    { id: 1, name: "people", isActive: false },
-    { id: 1, name: "finance", isActive: false },
-    { id: 1, name: "crypto", isActive: false },
-    { id: 1, name: "goats", isActive: false },
-    { id: 1, name: "stocks", isActive: false },
+    { id: 2, name: "people", isActive: false },
+    { id: 3, name: "finance", isActive: false },
+    { id: 4, name: "crypto", isActive: false },
+    { id: 5, name: "goats", isActive: false },
+    { id: 6, name: "stocks", isActive: false },
   ]);
 
   const filterSelected = (index: number) => {
