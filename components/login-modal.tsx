@@ -12,7 +12,7 @@ export default function LoginModal({ id }: LoginModalProps) {
           <div className="flex flex-col items-center justify-center gap-5 p-8">
             <label className="form-control w-[80%]">
               <div className="label">
-                <span className="label-text">Email/Username</span>
+                <span className="label-text font-semibold">Email/Username</span>
               </div>
               <input
                 type="text"
@@ -22,7 +22,7 @@ export default function LoginModal({ id }: LoginModalProps) {
             </label>
             <label className="form-control w-[80%]">
               <div className="label">
-                <span className="label-text">Password</span>
+                <span className="label-text font-semibold">Password</span>
               </div>
               <input
                 type="password"
