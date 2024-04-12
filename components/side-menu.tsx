@@ -1,8 +1,8 @@
 "use client";
 import { Heart, History, LineChart, Megaphone, Plus, Search } from "lucide-react";
 import { useState } from "react";
-import SearchContent from "./search-content";
 import Favorites from "./favorites";
+import SearchContent from "./search-content";
 
 export default function SideMenu() {
   const [menuItems, setMenuItems] = useState([
@@ -48,7 +48,7 @@ export default function SideMenu() {
       {menuItems[0].isActive && (
         <SearchContent onClick={() => handleItemClick(menuItems[0].name)} />
       )}
-      {state.favoritesIsActive && (
+      {menuItems[2].isActive && (
         <Favorites onClick={() => handleItemClick("favoritesIsActive")} />
       )}
     </>
