@@ -30,3 +30,7 @@ Misc:
 - Baclayon, Leonel - [carefreebee](https://github.com/carefreebee)
 - Sagmon, Liden - [lninyow](https://github.com/lninyow)
 - Ursonal, Jameel - [SmolDuck02](https://github.com/SmolDuck02)
+
+<a href="https://github.com/mugnavo/startupsphere/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=mugnavo/startupsphere" />
+</a>

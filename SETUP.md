@@ -4,7 +4,10 @@
 
 1. Make sure you have [Node.js](https://nodejs.org/en/) **LTS** (at least v20) installed:
    - Use `node --version` from your terminal to check the version
-2. Setup your VS Code with extensions - [Click here](https://gist.github.com/dotnize/47769c47114d7b7ba9a07df90cf416ca)
+2. Install essential VS Code extensions:
+   - **[Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)**
+   - recommended: GitHub Copilot, Error Lens, Todo Tree
+   - optional: ESLint (might be annoying due to stricter warnings)
 3. Install `pnpm` via corepack:
    ```sh
    corepack enable pnpm
