@@ -30,7 +30,7 @@ export default function LoginModal({ id }: LoginModalProps) {
                 className="input input-bordered w-full "
               />
               <a className="link-hover link mt-2 self-end text-xs">
-                Don't have an account? Register here
+                Don&apos;t have an account? Register here
               </a>
             </label>
 

@@ -1,6 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
-import { Image, Search, X, MoreVertical } from "lucide-react";
+import { Image, MoreVertical, Search, X } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface Startup {
   id: number;
@@ -70,6 +70,7 @@ export default function Favorites(props: { onClick: () => void }) {
             <div key={startup.id} className="mb-4 flex items-center justify-between">
               <div className="flex items-center">
                 <div className="mr-4 flex h-12 w-12 items-center justify-center bg-gray-200">
+                  {/* eslint-disable-next-line jsx-a11y/alt-text */}
                   <Image size={24} color="#6B7280" />
                 </div>
                 <div>
