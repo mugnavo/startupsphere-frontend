@@ -10,16 +10,16 @@
     "lint": "next lint",
     "format": "prettier --write . \"!pnpm-lock.yaml\" \"!pull_request_template.md\" --ignore-path .gitignore",
     "dz": "drizzle-kit",
-    "cleaninstall": "rimraf .next node_modules && pnpm install"
+    "reinstall": "rimraf .next node_modules"
   },
   "dependencies": {
     "@lucia-auth/adapter-drizzle": "^1.0.7",
     "arctic": "^1.5.0",
-    "drizzle-orm": "^0.30.7",
+    "drizzle-orm": "^0.30.8",
     "lucia": "^3.1.1",
-    "lucide-react": "^0.365.0",
-    "mapbox-gl": "^3.2.0",
-    "next": "^14.1.4",
+    "lucide-react": "^0.367.0",
+    "mapbox-gl": "^3.3.0",
+    "next": "^14.2.0",
     "oslo": "^1.2.0",
     "pg": "^8.11.5",
     "react": "^18.2.0",
@@ -28,22 +28,22 @@
   },
   "devDependencies": {
     "@types/mapbox-gl": "^3.1.0",
-    "@types/node": "^20.12.5",
-    "@types/pg": "^8.11.4",
-    "@types/react": "^18.2.74",
-    "@types/react-dom": "^18.2.24",
+    "@types/node": "^20.12.7",
+    "@types/pg": "^8.11.5",
+    "@types/react": "^18.2.77",
+    "@types/react-dom": "^18.2.25",
     "autoprefixer": "^10.4.19",
     "daisyui": "^4.10.1",
     "drizzle-kit": "^0.20.14",
     "eslint": "^8.57.0",
-    "eslint-config-next": "^14.1.4",
+    "eslint-config-next": "^14.2.0",
     "eslint-config-prettier": "^9.1.0",
     "postcss": "^8.4.38",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.13",
     "rimraf": "^5.0.5",
     "tailwindcss": "^3.4.3",
-    "typescript": "^5.4.4"
+    "typescript": "^5.4.5"
   },
   "packageManager": "pnpm@8.15.6"
 }
