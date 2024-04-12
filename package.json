@@ -10,7 +10,7 @@
     "lint": "next lint",
     "format": "prettier --write . \"!pnpm-lock.yaml\" \"!pull_request_template.md\" --ignore-path .gitignore",
     "dz": "drizzle-kit",
-    "reinstall": "rimraf .next node_modules"
+    "clean": "rimraf .next node_modules"
   },
   "dependencies": {
     "@lucia-auth/adapter-drizzle": "^1.0.7",
