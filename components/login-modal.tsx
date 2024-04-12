@@ -29,6 +29,9 @@ export default function LoginModal({ id }: LoginModalProps) {
                 placeholder="Input your password"
                 className="input input-bordered w-full "
               />
+              <a className="link-hover link mt-2 self-end text-sm">
+                Dont have an account? Register here
+              </a>
             </label>
 
             <div className="modal-action">
