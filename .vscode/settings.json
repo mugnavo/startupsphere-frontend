@@ -13,6 +13,8 @@
     "**/node_modules": true,
     "next-env.d.ts": true,
 
+    "pull_request_template.md": true,
+    "CONTRIBUTING.md": true,
     "pnpm-lock.yaml": true,
     ".editorconfig": true,
     ".eslintrc.json": true,
@@ -30,7 +32,8 @@
   // more readable tabs
   "workbench.editor.customLabels.patterns": {
     "**/app/**/page.tsx": "${dirname}/page.${extname}",
-    "**/app/**/layout.tsx": "${dirname}/layout.${extname}"
+    "**/app/**/layout.tsx": "${dirname}/layout.${extname}",
+    "**/app/**/route.ts": "${dirname}/route.${extname}"
   },
 
   // smol performance improvements
