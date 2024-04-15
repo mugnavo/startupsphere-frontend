@@ -14,12 +14,13 @@ Core:
 - [React 18](https://react.dev/)
 - [Next.js 14](https://nextjs.org/docs)
 - PostgreSQL via [Drizzle ORM](https://orm.drizzle.team/docs/update)
-- [Mapbox](https://docs.mapbox.com/mapbox-gl-js/guides/) via [react-map-gl](https://visgl.github.io/react-map-gl/)
+- [Mapbox](https://docs.mapbox.com/mapbox-gl-js/guides/) via [react-map-gl](https://visgl.github.io/react-map-gl/) & [@mapbox/search-js-react](https://docs.mapbox.com/mapbox-search-js/api/react/)
 
 Misc:
 
 - Styling: [Tailwind CSS](https://tailwindcss.com/) + [daisyUI](https://daisyui.com/components/)
 - Icons: [lucide-react](https://lucide.dev/)
+- Charts: [recharts](https://recharts.org/en-US/api)
 - Type safety with [TypeScript 5](https://www.typescriptlang.org/docs/)
 - Linting & formatting with [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/)
 - [pnpm](https://pnpm.io/) package manager
