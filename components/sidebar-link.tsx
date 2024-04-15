@@ -15,7 +15,7 @@ export default function SidebarLink({ item }: { item: SidebarLinkProps }) {
     <Link
       href={item.href}
       prefetch
-      className={`${pathname === item.href ? " text-gray-900" : "text-gray-500"} flex cursor-pointer flex-col items-center text-center`}
+      className={`${pathname === item.href || (pathname !== "/" && pathname.startsWith(item.href)) ? " text-gray-900" : "text-gray-500"} flex cursor-pointer flex-col items-center text-center`}
     >
       {item.icon}
       <div

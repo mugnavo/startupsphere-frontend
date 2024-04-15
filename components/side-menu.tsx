@@ -1,4 +1,11 @@
-import { Heart, History, LineChart, Megaphone, Search } from "lucide-react";
+import {
+  Heart,
+  History,
+  LayoutDashboard,
+  LineChart,
+  Megaphone,
+  Search,
+} from "lucide-react";
 import { Fragment } from "react";
 
 import LoginModal from "./login-modal";
@@ -10,6 +17,7 @@ const SIDEBAR_LINKS: SidebarLinkProps[] = [
   { href: "/favorites", name: "Favorites", icon: <Heart size={22} /> },
   { href: "/trending", name: "Trending", icon: <Megaphone size={22} /> },
   { href: "/top", name: "Top", icon: <LineChart size={22} /> },
+  { href: "/dashboard", name: "Dashboard", icon: <LayoutDashboard size={22} /> },
 ];
 
 export default function SideMenu() {
@@ -22,7 +30,7 @@ export default function SideMenu() {
           <Fragment key={item.href}>
             <SidebarLink item={item} />
 
-            {index === 2 && <div className="m-2 w-3 rounded-lg border border-gray-300" />}
+            {index === 4 && <div className="m-2 w-3 rounded-lg border border-gray-300" />}
           </Fragment>
         ))}
       </div>
