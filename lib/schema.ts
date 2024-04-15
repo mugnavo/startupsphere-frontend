@@ -84,7 +84,5 @@ export const likes = pgTable(
   (table) => ({ pk: primaryKey({ columns: [table.userId, table.startupId] }) })
 );
 
-type Expand<T> = T extends unknown ? { [K in keyof T]: T[K] } : never;
-type MakeOptional<T, K extends keyof T> = Expand<Omit<T, K> & Partial<Pick<T, K>>>;
-
-export type User = typeof users.$inferSelect;
+export type UserWithPassword = typeof users.$inferInsert;
+export type User = Omit<UserWithPassword, "hashedPassword">;
