@@ -1,5 +1,6 @@
 "use client";
 import { Image, MoreVertical, Search, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface Startup {
@@ -8,7 +9,8 @@ interface Startup {
   location: string;
 }
 
-export default function Favorites(props: { onClick: () => void }) {
+export default function Favorites() {
+  const router = useRouter();
   const [favoriteStartups, setFavoriteStartups] = useState<Startup[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedStartupId, setSelectedStartupId] = useState<number | null>(null);
@@ -46,7 +48,7 @@ export default function Favorites(props: { onClick: () => void }) {
     <div className="absolute left-20 top-0 z-10 h-screen w-[22rem] bg-white p-6">
       <div className="flex items-center justify-between">
         <span>Favorites</span>
-        <X size={20} onClick={props.onClick} className="cursor-pointer" />
+        <X size={20} onClick={() => router.replace("/")} className="cursor-pointer" />
       </div>
       <div className="relative mt-2">
         {/* Search input with magnifying glass icon */}

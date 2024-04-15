@@ -1,8 +1,10 @@
 "use client";
 import { Search, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function SearchContent(props: { onClick: () => void }) {
+export default function SearchContent() {
+  const router = useRouter();
   const [categories, setCategories] = useState([
     { id: 1, name: "cars", isActive: false },
     { id: 2, name: "people", isActive: false },
@@ -39,7 +41,7 @@ export default function SearchContent(props: { onClick: () => void }) {
     <div className=" absolute left-20 top-0 z-10 h-screen w-[22rem] bg-white p-6">
       <div className=" flex items-center justify-between">
         <span>Search</span>
-        <X size={20} onClick={props.onClick} className="cursor-pointer" />
+        <X size={20} onClick={() => router.replace("/")} className="cursor-pointer" />
       </div>
       <div className="relative mt-2 rounded-md shadow-sm">
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">

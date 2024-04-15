@@ -6,6 +6,17 @@ interface LoginModalProps {
 export default function LoginModal({ id }: LoginModalProps) {
   return (
     <div>
+      <button
+        className="btn m-2 self-end"
+        onClick={() => {
+          const modal = document.getElementById(id);
+          if (modal instanceof HTMLDialogElement) {
+            modal.showModal();
+          }
+        }}
+      >
+        Login
+      </button>
       <dialog id={id} className="modal">
         <div className="modal-box">
           <h1 className="p-3 text-3xl font-bold">Login</h1>

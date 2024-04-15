@@ -1,0 +1,28 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+export interface SidebarLinkProps {
+  href: string;
+  name: string;
+  icon: React.ReactNode;
+}
+
+export default function SidebarLink({ item }: { item: SidebarLinkProps }) {
+  const pathname = usePathname();
+  return (
+    <Link
+      href={item.href}
+      prefetch
+      className={`${pathname === item.href ? " text-gray-900" : "text-gray-500"} flex cursor-pointer flex-col items-center text-center`}
+    >
+      {item.icon}
+      <div
+        className={`${pathname === item.href ? "font-bold" : "font-light"} mt-1 text-xs`}
+      >
+        {item.name}
+      </div>
+    </Link>
+  );
+}
