@@ -14,6 +14,7 @@ export const users = pgTable("users", {
   hashedPassword: text("hashed_password").notNull(),
 
   coordinates: jsonb("coordinates"),
+  avatarUrl: text("avatar_url"),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   location: text("location").notNull(),
