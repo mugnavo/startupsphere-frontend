@@ -55,7 +55,7 @@ export default function SearchContent() {
           placeholder="Search Startups"
         />
       </div>
-      <div className="scrollbar flex gap-3 overflow-x-scroll">
+      <div className="flex gap-3 overflow-x-scroll pb-2.5 pt-1">
         {categories.map((category, index) => (
           <button
             key={category.id}

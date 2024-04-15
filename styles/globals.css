@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  * {
+    scrollbar-width: thin;
+  }
+}
+
 @layer components {
   .side-menu-font {
     @apply text-xs font-light;
