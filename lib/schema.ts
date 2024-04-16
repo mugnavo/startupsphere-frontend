@@ -36,17 +36,17 @@ export const sessions = pgTable("sessions", {
 export const startups = pgTable("startups", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
-  coordinates: jsonb("coordinates").notNull(),
-  description: text("description").notNull(),
+  coordinates: jsonb("coordinates"),
+  description: text("description"),
   location: text("location").notNull(),
-  founderName: text("founder_name").notNull(),
-  websiteUrl: text("website_url").notNull(),
-  logoUrl: text("logo_url").notNull(),
+  founderName: text("founder_name"),
+  websiteUrl: text("website_url"),
+  logoUrl: text("logo_url"),
   industry: text("industry").notNull(),
-  stage: text("stage").notNull(),
-  funding: text("funding").notNull(),
-  revenue: text("revenue").notNull(),
-  employees: text("employees").notNull(),
+  stage: text("stage"),
+  funding: text("funding"),
+  revenue: text("revenue"),
+  employees: text("employees"),
 
   // analytics
   likes: bigint("likes", { mode: "number" }).notNull().default(0),
@@ -86,3 +86,4 @@ export const likes = pgTable(
 
 export type UserWithPassword = typeof users.$inferInsert;
 export type User = Omit<UserWithPassword, "hashedPassword">;
+export type Startup = typeof startups.$inferInsert;
