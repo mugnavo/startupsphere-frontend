@@ -1,6 +1,6 @@
 "use client";
 
-import { signup } from "~/lib/actions/auth";
+import { login, signup } from "~/lib/actions/auth";
 
 export default function LoginModal() {
   return (
@@ -19,7 +19,18 @@ export default function LoginModal() {
       <dialog id="login_modal" className="modal">
         <div className="modal-box">
           <h1 className="p-3 text-3xl font-bold">Login</h1>
-          <div className="flex flex-col items-center justify-center gap-5 p-8">
+          <form
+            action={async (formData: FormData) => {
+              const { error } = await login(
+                formData.get("email") as string,
+                formData.get("password") as string
+              );
+              if (error) {
+                alert(error);
+              }
+            }}
+            className="flex flex-col items-center justify-center gap-5 p-8"
+          >
             <label className="form-control w-[80%]">
               <div className="label">
                 <span className="label-text font-semibold">Email</span>
@@ -61,13 +72,16 @@ export default function LoginModal() {
             </label>
 
             <div className="modal-action">
-              <form method="dialog">
-                {/* if there is a button in form, it will close the modal */}
-                <button className="btn">Close</button>
-              </form>
+              {/* if there is a button in form, it will close the modal */}
+              <button type="submit" className="btn">
+                Login
+              </button>
             </div>
-          </div>
+          </form>
         </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
       </dialog>
       <RegisterModal />
     </>
@@ -166,6 +180,9 @@ function RegisterModal() {
           </div>
         </form>
       </div>
+      <form method="dialog" className="modal-backdrop">
+        <button>close</button>
+      </form>
     </dialog>
   );
 }
