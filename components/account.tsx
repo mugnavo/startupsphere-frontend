@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, UserRoundX } from "lucide-react";
+import { LogOut, UserRound } from "lucide-react";
 import { useState } from "react";
 import { logout } from "~/lib/actions/auth";
 
@@ -17,27 +17,35 @@ export default function Account({ user }: { user: User | null }) {
         onClick={() => handleAccountClick()}
         className="absolute right-3 top-3 z-50 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 border-yellow-400 bg-red-900 text-xl font-normal text-white"
       >
-        J
+        {user?.firstName[0] || "G"}
       </div>
-      {isShowMenu && <AccountMenu />}
+      {isShowMenu && <AccountMenu user={user} />}
     </>
   );
 }
 
-function AccountMenu() {
+function AccountMenu({ user }: { user: User | null }) {
   const menuItems = [
-    { id: 1, name: "delete account", icon: UserRoundX },
-    { id: 2, name: "log out", icon: LogOut },
+    { id: 1, name: user?.email || "Guest", icon: UserRound },
+    { id: 2, name: user ? "Logout" : "Login", icon: LogOut },
   ];
   return (
     <div className="absolute right-3 top-14 z-50 flex h-auto w-48 flex-col gap-1 rounded bg-white p-2 text-sm">
+      {user?.firstName} {user?.lastName}
       {menuItems.map((item, index) => (
         <div
           key={item.id}
-          className=" flex cursor-pointer items-center gap-2 rounded p-3 hover:bg-gray-100"
+          className="flex cursor-pointer items-center gap-2 rounded p-3 hover:bg-gray-100"
           onClick={async () => {
             if (item.id === 2) {
-              await logout();
+              if (user) {
+                await logout();
+              } else {
+                const loginModal = document.getElementById("login_modal");
+                if (loginModal instanceof HTMLDialogElement) {
+                  loginModal.showModal();
+                }
+              }
             }
           }}
         >
@@ -46,9 +54,6 @@ function AccountMenu() {
         </div>
       ))}
       <div className="m-auto mt-1 block w-3 rounded-lg border border-gray-300" />
-      <div className="m-2 cursor-pointer rounded-full bg-red-700 p-2 text-center font-bold hover:bg-red-500">
-        Add Account
-      </div>
     </div>
   );
 }
