@@ -40,13 +40,14 @@ export async function signup(newUser: Expand<Omit<User, "id"> & { password: stri
 
   const hashedPassword = await new Argon2id().hash(password);
   const userId = generateId(15);
+
   // TODO: more validation, and check if email already exists
   await db.insert(users).values({ ...newUser, hashedPassword, id: userId });
 
   const session = await lucia.createSession(userId, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-  // revalidatePath("/", "layout");
+
   return redirect("/");
 }
 
@@ -92,5 +93,5 @@ export async function logout() {
 
   const sessionCookie = lucia.createBlankSessionCookie();
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-  return redirect("/login");
+  return redirect("/");
 }

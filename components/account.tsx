@@ -2,8 +2,11 @@
 
 import { LogOut, UserRoundX } from "lucide-react";
 import { useState } from "react";
+import { logout } from "~/lib/actions/auth";
 
-export default function Account() {
+import { User } from "~/lib/schema";
+
+export default function Account({ user }: { user: User | null }) {
   const [isShowMenu, setIsShowMenu] = useState(false);
   const handleAccountClick = () => {
     setIsShowMenu(!isShowMenu);
@@ -32,6 +35,11 @@ function AccountMenu() {
         <div
           key={item.id}
           className=" flex cursor-pointer items-center gap-2 rounded p-3 hover:bg-gray-100"
+          onClick={async () => {
+            if (item.id === 2) {
+              await logout();
+            }
+          }}
         >
           <item.icon size={15} />
           {item.name}

@@ -6,6 +6,7 @@ import "~/styles/globals.css";
 import StartupMap from "~/components/StartupMap";
 import Account from "~/components/account";
 import SideMenu from "~/components/side-menu";
+import { validateRequest } from "~/lib/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,16 +15,18 @@ export const metadata: Metadata = {
   description: "3D Mapping for Startup Ecosystems",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { user } = await validateRequest();
+
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SideMenu />
-        <Account />
+        <SideMenu user={user} />
+        <Account user={user} />
         {children}
         <StartupMap />
       </body>
