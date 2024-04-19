@@ -27,3 +27,8 @@ export async function updateStartup(id: string, data: Partial<Startup>) {
   await db.update(startups).set(data).where(eq(startups.id, id));
   return { success: true };
 }
+
+export async function deleteStartup(id: string) {
+  await db.delete(startups).where(eq(startups.id, id));
+  return { success: true };
+}

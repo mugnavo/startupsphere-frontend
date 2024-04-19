@@ -2,7 +2,7 @@
 import { MoveLeft, MoveRight, Search } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { getAllStartups } from "~/lib/actions/startups";
+import { deleteStartup, getAllStartups } from "~/lib/actions/startups";
 import { type Startup } from "~/lib/schema";
 
 export default function DashboardIndex() {
@@ -61,7 +61,15 @@ export default function DashboardIndex() {
                     >
                       Edit
                     </Link>
-                    <button className="btn btn-error btn-sm">Delete</button>
+                    <button
+                      className="btn btn-error btn-sm"
+                      onClick={() => {
+                        deleteStartup(startup.id);
+                        window.location.reload();
+                      }}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
