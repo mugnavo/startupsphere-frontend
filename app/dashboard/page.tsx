@@ -55,7 +55,12 @@ export default function DashboardIndex() {
                   <td>{startup.location}</td>
                   <td>{startup.industry}</td>
                   <td className="flex gap-1">
-                    <button className="btn btn-warning btn-sm">Edit</button>
+                    <Link
+                      className="btn btn-warning btn-sm"
+                      href={`dashboard/edit?id=${startup.id}`}
+                    >
+                      Edit
+                    </Link>
                     <button className="btn btn-error btn-sm">Delete</button>
                   </td>
                 </tr>
@@ -73,7 +78,7 @@ export default function DashboardIndex() {
               className="btn bg-red-800 font-bold text-white"
             >
               Add Startup
-            </Link>{" "}
+            </Link>
           </div>
         </div>
       </div>
