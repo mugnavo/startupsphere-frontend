@@ -49,7 +49,7 @@ export default function DashboardIndex() {
           <tbody>
             {startups.map((startup, index) => (
               <tr key={index}>
-                <th>{index}</th>
+                <th>{index + 1}</th>
                 <td>{startup.name}</td>
                 <td>{startup.location}</td>
                 <td>{startup.industry}</td>
@@ -62,9 +62,9 @@ export default function DashboardIndex() {
                   </Link>
                   <button
                     className="btn btn-error btn-sm"
-                    onClick={() => {
-                      deleteStartup(startup.id);
-                      window.location.reload();
+                    onClick={async () => {
+                      await deleteStartup(startup.id);
+                      fetchStartups();
                     }}
                   >
                     Delete
