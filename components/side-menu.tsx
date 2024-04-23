@@ -23,7 +23,7 @@ const SIDEBAR_LINKS: SidebarLinkProps[] = [
 
 export default function SideMenu({ user }: { user: User | null }) {
   return (
-    <div className=" gap- absolute left-0 top-0 z-50 flex h-screen w-20 flex-col items-center justify-between bg-white p-3 pt-16 align-middle shadow-lg shadow-slate-400">
+    <div className="absolute left-0 top-0 z-50 flex h-screen w-20 flex-col items-center justify-between bg-white p-3 pt-16 align-middle shadow-sm shadow-slate-400">
       <div className="flex flex-col items-center gap-8">
         <Logo />
 

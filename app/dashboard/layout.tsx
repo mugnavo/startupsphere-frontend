@@ -1,17 +1,35 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
   return (
-    <div className="absolute top-0 z-10 flex h-screen w-full bg-white bg-opacity-95 p-6 pl-28 drop-shadow-xl">
-      <div className="mr-2 flex w-56 flex-col gap-2 border-r-2 pr-2">
-        Test dashboard sidebar (pwede ni gamitan ug .map()) - temporary styles
-        <Link href="/dashboard" className="btn btn-primary">
-          Home
-        </Link>
-        <Link href="/dashboard/analytics" className="btn btn-primary">
-          Private analytics
-        </Link>
+    <div className="absolute top-0 z-10 flex h-screen w-full flex-col bg-white bg-opacity-95 p-6 pl-28 drop-shadow-xl">
+      <div className="flex max-w-md items-center gap-8">
+        Dashboard
+        <div role="tablist" className="tabs tabs-bordered w-full">
+          <Link
+            role="tab"
+            href="/dashboard"
+            className={"tab" + (pathname === "/dashboard" ? " tab-active" : "")}
+          >
+            Home
+          </Link>
+          <Link
+            role="tab"
+            href="/dashboard/analytics"
+            className={
+              "tab" + (pathname.startsWith("/dashboard/analytics") ? " tab-active" : "")
+            }
+          >
+            Analytics
+          </Link>
+        </div>
       </div>
+
       {/* Content of dashboard pages here */}
       {children}
     </div>
