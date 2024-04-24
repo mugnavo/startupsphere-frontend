@@ -32,6 +32,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* Content of dashboard pages here */}
       {children}
+      <div className="absolute bottom-0 left-0 h-2 w-full bg-yellow-400" />
     </div>
   );
 }
