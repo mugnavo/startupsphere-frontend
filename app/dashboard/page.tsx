@@ -1,4 +1,4 @@
-import DashboardComponent from "~/components/Dashboard";
+import DashboardComponent from "~/components/dashboard";
 import { getAllStartups } from "~/lib/actions/startups";
 
 export default async function DashboardIndex() {
