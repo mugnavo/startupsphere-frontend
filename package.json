@@ -11,6 +11,8 @@
     "lint": "next lint",
     "format": "prettier --write . \"!pnpm-lock.yaml\" \"!pull_request_template.md\" --ignore-path .gitignore",
     "dz": "drizzle-kit",
+    "studio": "drizzle-kit studio",
+    "dz:push": "drizzle-kit push:pg",
     "clean": "rimraf .next node_modules"
   },
   "dependencies": {
