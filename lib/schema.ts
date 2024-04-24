@@ -1,9 +1,11 @@
 import {
   bigint,
   boolean,
+  integer,
   jsonb,
   pgTable,
   primaryKey,
+  serial,
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
@@ -34,7 +36,7 @@ export const sessions = pgTable("sessions", {
 });
 
 export const startups = pgTable("startups", {
-  id: text("id").primaryKey(),
+  id: serial("id").primaryKey(),
   name: text("name").notNull(),
   coordinates: jsonb("coordinates"),
   description: text("description"),
@@ -60,7 +62,7 @@ export const favorites = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => users.id),
-    startupId: text("startup_id")
+    startupId: integer("startup_id")
       .notNull()
       .references(() => startups.id),
 
@@ -75,7 +77,7 @@ export const likes = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => users.id),
-    startupId: text("startup_id")
+    startupId: integer("startup_id")
       .notNull()
       .references(() => startups.id),
 

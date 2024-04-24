@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import StartupDetailsModal from "~/components/modals/startup-details";
 
-import { deleteStartup, getAllStartups } from "~/lib/actions/startups";
+import { deleteStartup } from "~/lib/actions/startups";
 import { type Startup } from "~/lib/schema";
 
 export default function DashboardComponent({
@@ -19,12 +19,6 @@ export default function DashboardComponent({
   // modal controls
   const [selectedStartup, setSelectedStartup] = useState<number>();
   const [editing, setEditing] = useState<boolean>(false);
-
-  // TODO: maybe unused? and no need startups state?
-  async function fetchStartups() {
-    const startups = await getAllStartups();
-    setStartups(startups);
-  }
 
   function openCreateStartup() {
     setSelectedStartup(undefined);
@@ -77,7 +71,7 @@ export default function DashboardComponent({
           {/* head */}
           <thead>
             <tr>
-              <th></th>
+              <th>ID</th>
               <th className="w-auto">Startup Name</th>
               <th className="w-auto">Location</th>
               <th className="w-auto">Industry</th>
@@ -87,7 +81,7 @@ export default function DashboardComponent({
           <tbody>
             {startups.map((startup, index) => (
               <tr key={index}>
-                <th>{index + 1}</th>
+                <th>{startup.id}</th>
                 <td>{startup.name}</td>
                 <td>{startup.location}</td>
                 <td>{startup.industry}</td>
@@ -110,7 +104,7 @@ export default function DashboardComponent({
                     title="Delete"
                     className="btn btn-square btn-ghost btn-sm text-error"
                     onClick={async () => {
-                      await deleteStartup(startup.id);
+                      await deleteStartup(startup.id!);
                       router.refresh();
                     }}
                   >
