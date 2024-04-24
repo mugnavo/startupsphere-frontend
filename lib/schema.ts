@@ -44,9 +44,9 @@ export const startups = pgTable("startups", {
   logoUrl: text("logo_url"),
   industry: text("industry").notNull(),
   stage: text("stage"),
-  funding: text("funding"),
-  revenue: text("revenue"),
-  employees: text("employees"),
+  employees: text("employees"), // <- unnecessary?
+  foundedDate: timestamp("founded_date"),
+  contactInfo: text("contact_info"),
 
   // analytics
   likes: bigint("likes", { mode: "number" }).notNull().default(0),
