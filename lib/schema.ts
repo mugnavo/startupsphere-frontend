@@ -9,6 +9,7 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
+import type { LocationData } from "./InteractiveMapContext";
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
@@ -38,7 +39,7 @@ export const sessions = pgTable("sessions", {
 export const startups = pgTable("startups", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
-  coordinates: jsonb("coordinates"),
+  coordinates: jsonb("coordinates").$type<LocationData>(),
   description: text("description"),
   location: text("location").notNull(),
   founderName: text("founder_name"),
