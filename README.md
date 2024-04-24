@@ -14,7 +14,7 @@ Core:
 - [React 18](https://react.dev/)
 - [Next.js 14](https://nextjs.org/docs)
 - PostgreSQL via [Drizzle ORM](https://orm.drizzle.team/docs/update)
-- [Mapbox](https://docs.mapbox.com/mapbox-gl-js/guides/) via [react-map-gl](https://visgl.github.io/react-map-gl/) & [@mapbox/search-js-react](https://docs.mapbox.com/mapbox-search-js/api/react/)
+- [Mapbox](https://docs.mapbox.com/mapbox-gl-js/guides/) via [react-map-gl](https://visgl.github.io/react-map-gl/) & [mapbox-gl-geocoder](https://github.com/mapbox/mapbox-gl-geocoder)
 
 Misc:
 
