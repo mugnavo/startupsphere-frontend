@@ -9,8 +9,8 @@ import { extractRouterConfig } from "uploadthing/server";
 
 import { ourFileRouter } from "~/app/api/uploadthing/core";
 import StartupMap from "~/components/StartupMap";
-import Account from "~/components/account";
-import SideMenu from "~/components/side-menu";
+import Account from "~/components/ui/account";
+import SideMenu from "~/components/ui/side-menu";
 import { validateRequest } from "~/lib/auth";
 
 const inter = Inter({ subsets: ["latin"] });

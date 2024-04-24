@@ -9,7 +9,7 @@ import {
 import { Fragment } from "react";
 
 import { User } from "~/lib/schema";
-import LoginModal from "./modals/login-modal";
+import LoginModal from "../modals/login-modal";
 import SidebarLink, { type SidebarLinkProps } from "./sidebar-link";
 
 const SIDEBAR_LINKS: SidebarLinkProps[] = [
