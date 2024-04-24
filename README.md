@@ -18,7 +18,8 @@ Core:
 
 Misc:
 
-- Styling: [Tailwind CSS](https://tailwindcss.com/) + [daisyUI](https://daisyui.com/components/)
+- Image uploads: [Uploadthing](https://uploadthing.com/)
+- Styling: [Tailwind CSS](https://tailwindcss.com/) + [daisyUI](https://daisyui.com/components/) + [Sonner](https://sonner.emilkowal.ski/) toast component
 - Icons: [lucide-react](https://lucide.dev/)
 - Charts: [recharts](https://recharts.org/en-US/api)
 - Type safety with [TypeScript 5](https://www.typescriptlang.org/docs/)
