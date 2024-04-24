@@ -2,16 +2,21 @@
 
 import { Dispatch, SetStateAction, createContext, useContext, useState } from "react";
 
-interface LocationData {
+export interface LocationData {
   name: string;
   latitude: number;
   longitude: number;
 }
 
+interface DashboardSelection {
+  active: boolean;
+  startupName: string | undefined;
+}
+
 const InteractionContext = createContext<
   | {
-      hideDashboard: boolean;
-      setHideDashboard: Dispatch<SetStateAction<boolean>>;
+      dashboardSelection: DashboardSelection;
+      setDashboardSelection: Dispatch<SetStateAction<DashboardSelection>>;
       selectedLocation: LocationData | undefined;
       setSelectedLocation: Dispatch<SetStateAction<LocationData | undefined>>;
     }
@@ -28,14 +33,22 @@ export function useInteractiveMap() {
 }
 
 export function ContextProvider({ children }: { children: React.ReactNode }) {
-  const [hideDashboard, setHideDashboard] = useState(false);
+  const [dashboardSelection, setDashboardSelection] = useState<DashboardSelection>({
+    active: false,
+    startupName: undefined,
+  });
   const [selectedLocation, setSelectedLocation] = useState<LocationData | undefined>(
     undefined
   );
 
   return (
     <InteractionContext.Provider
-      value={{ hideDashboard, setHideDashboard, selectedLocation, setSelectedLocation }}
+      value={{
+        dashboardSelection,
+        setDashboardSelection,
+        selectedLocation,
+        setSelectedLocation,
+      }}
     >
       {children}
     </InteractionContext.Provider>

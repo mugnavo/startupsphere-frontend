@@ -6,13 +6,13 @@ import { useInteractiveMap } from "~/lib/InteractiveMapContext";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { hideDashboard } = useInteractiveMap();
+  const { dashboardSelection } = useInteractiveMap();
 
   return (
     <div
       className={
         "absolute top-0 z-10 h-screen w-full flex-col bg-white bg-opacity-95 p-6 pl-28 drop-shadow-xl" +
-        (hideDashboard ? " hidden" : " flex")
+        (dashboardSelection.active ? " hidden" : " flex")
       }
     >
       <div className="flex max-w-md items-center gap-8">

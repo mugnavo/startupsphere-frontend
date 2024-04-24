@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import type { FillExtrusionLayer } from "react-map-gl";
+import { useCallback, useState } from "react";
+import type { FillExtrusionLayer, MapLayerMouseEvent } from "react-map-gl";
 import Map, { Layer } from "react-map-gl";
+import { useInteractiveMap } from "~/lib/InteractiveMapContext";
+import Geocoder from "./map/Geocoder";
 
 const building3dLayer: FillExtrusionLayer = {
   // from https://docs.mapbox.com/mapbox-gl-js/example/3d-buildings/
@@ -49,6 +51,28 @@ export default function StartupMap() {
     bearing: -13.596730550512234,
   });
 
+  const {
+    dashboardSelection,
+    setDashboardSelection,
+    selectedLocation,
+    setSelectedLocation,
+  } = useInteractiveMap();
+
+  const onClick = useCallback(
+    (event: MapLayerMouseEvent) => {
+      // TODO: confirmation dialog
+      if (dashboardSelection.active) {
+        const locationName = setSelectedLocation({
+          latitude: event.lngLat.lat,
+          longitude: event.lngLat.lng,
+          name: "TODO: Get name from reverse geocoding API",
+        });
+        setDashboardSelection({ ...dashboardSelection, active: false });
+      }
+    },
+    [dashboardSelection, setDashboardSelection]
+  );
+
   return (
     <div className="h-screen overflow-hidden">
       <Map
@@ -56,8 +80,18 @@ export default function StartupMap() {
         {...viewState}
         onMove={(evt) => setViewState(evt.viewState)}
         style={{ width: "100%", height: "100%" }}
+        onClick={onClick}
         mapStyle="mapbox://styles/mapbox/streets-v12"
       >
+        <Geocoder
+          position="top-right"
+          mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN!}
+          onLoading={() => {}}
+          onResults={() => {}}
+          onResult={() => {}}
+          onError={() => {}}
+        />
+
         <Layer {...building3dLayer} />
       </Map>
     </div>

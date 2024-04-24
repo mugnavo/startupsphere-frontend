@@ -14,7 +14,8 @@ export default function DashboardComponent({
   initialStartups: Startup[];
 }) {
   const router = useRouter();
-  const [startups, setStartups] = useState<Startup[]>(initialStartups);
+  //const [startups, setStartups] = useState<Startup[]>(initialStartups);
+  const startups = initialStartups;
 
   // modal controls
   const [selectedStartup, setSelectedStartup] = useState<number>();
@@ -49,7 +50,7 @@ export default function DashboardComponent({
     <div className="flex h-full w-full flex-col justify-center">
       <StartupDetailsModal
         editable={editing}
-        startup={selectedStartup ? startups[selectedStartup] : undefined}
+        startup={selectedStartup !== undefined ? startups[selectedStartup] : undefined}
       />
       <div className="text-3xl">Welcome</div>
       <div className="relative mt-2 rounded-md shadow-sm">
