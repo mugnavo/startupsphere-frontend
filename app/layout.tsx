@@ -12,6 +12,7 @@ import StartupMap from "~/components/StartupMap";
 import Account from "~/components/ui/account";
 import SideMenu from "~/components/ui/side-menu";
 import { validateRequest } from "~/lib/auth";
+import { ContextProvider } from "~/lib/InteractiveMapContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -39,11 +40,13 @@ export default async function RootLayout({
            */
           routerConfig={extractRouterConfig(ourFileRouter)}
         />
-        <Toaster richColors />
-        <SideMenu user={user} />
-        <Account user={user} />
-        {children}
-        <StartupMap />
+        <ContextProvider>
+          <Toaster richColors />
+          <SideMenu user={user} />
+          <Account user={user} />
+          {children}
+          <StartupMap />
+        </ContextProvider>
       </body>
     </html>
   );
