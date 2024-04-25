@@ -33,7 +33,15 @@ export default function StartupDetailsModal({
   // TODO: update schema coordinates schema to add proper types based on LocationData
   const [currentStartupLocationData, setCurrentStartupLocationData] = useState<
     LocationData | undefined
-  >();
+  >(startup?.coordinates ?? undefined);
+
+  useEffect(() => {
+    if (startup) {
+      setCurrentStartupName(startup.name);
+      setCurrentStartupLogoUrl(startup.logoUrl ?? undefined);
+      setCurrentStartupLocationData(startup.coordinates ?? undefined);
+    }
+  }, [startup]);
 
   useEffect(() => {
     if (!dashboardSelection.active && previewingMap) {
