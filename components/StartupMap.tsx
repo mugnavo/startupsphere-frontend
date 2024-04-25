@@ -1,8 +1,10 @@
 "use client";
 
+import { GeocodingCore } from "@mapbox/search-js-core";
 import { useCallback, useState } from "react";
 import type { FillExtrusionLayer, MapLayerMouseEvent } from "react-map-gl";
 import Map, { Layer } from "react-map-gl";
+
 import { useInteractiveMap } from "~/lib/InteractiveMapContext";
 import Geocoder from "./map/Geocoder";
 
@@ -45,6 +47,8 @@ const building3dLayer: FillExtrusionLayer = {
   },
 };
 
+const geocode = new GeocodingCore({ accessToken: process.env.NEXT_PUBLIC_MAPBOX_TOKEN! });
+
 export default function StartupMap() {
   const [viewState, setViewState] = useState({
     longitude: 123.89811168536812,
@@ -62,13 +66,17 @@ export default function StartupMap() {
   } = useInteractiveMap();
 
   const onClick = useCallback(
-    (event: MapLayerMouseEvent) => {
+    async (event: MapLayerMouseEvent) => {
       // TODO: confirmation dialog
       if (dashboardSelection.active) {
-        const locationName = setSelectedLocation({
+        const geoResponse = await geocode.reverse({
+          lng: event.lngLat.lng,
+          lat: event.lngLat.lat,
+        });
+        setSelectedLocation({
           latitude: event.lngLat.lat,
           longitude: event.lngLat.lng,
-          name: "TODO: Get name from reverse geocoding API",
+          name: geoResponse.features[0].properties.full_address,
         });
         setDashboardSelection({ ...dashboardSelection, active: false });
       }
@@ -86,14 +94,16 @@ export default function StartupMap() {
         onClick={onClick}
         mapStyle="mapbox://styles/mapbox/streets-v12"
       >
-        <Geocoder
-          position="bottom-right"
-          mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN!}
-          onLoading={() => {}}
-          onResults={() => {}}
-          onResult={() => {}}
-          onError={() => {}}
-        />
+        {dashboardSelection.active && (
+          <Geocoder
+            position="bottom-right"
+            mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN!}
+            onLoading={() => {}}
+            onResults={() => {}}
+            onResult={() => {}}
+            onError={() => {}}
+          />
+        )}
 
         <Layer {...building3dLayer} />
       </Map>

@@ -18,15 +18,16 @@
   "dependencies": {
     "@lucia-auth/adapter-drizzle": "^1.0.7",
     "@mapbox/mapbox-gl-geocoder": "^5.0.2",
+    "@mapbox/search-js-core": "1.0.0-beta.20",
     "@node-rs/argon2": "^1.8.3",
     "@node-rs/bcrypt": "^1.10.4",
-    "@uploadthing/react": "^6.4.4",
-    "arctic": "^1.5.0",
+    "@uploadthing/react": "^6.5.0",
+    "arctic": "^1.6.1",
     "drizzle-orm": "^0.30.9",
     "lucia": "^3.2.0",
     "lucide-react": "^0.373.0",
     "mapbox-gl": "^3.3.0",
-    "next": "^14.2.2",
+    "next": "^14.2.3",
     "oslo": "^1.2.0",
     "pg": "^8.11.5",
     "react": "^18.2.0",
@@ -34,7 +35,7 @@
     "react-map-gl": "^7.1.7",
     "recharts": "^2.12.6",
     "sonner": "^1.4.41",
-    "uploadthing": "^6.9.0"
+    "uploadthing": "^6.10.0"
   },
   "devDependencies": {
     "@types/mapbox-gl": "^3.1.0",
@@ -47,7 +48,7 @@
     "daisyui": "^4.10.2",
     "drizzle-kit": "^0.20.17",
     "eslint": "^8.57.0",
-    "eslint-config-next": "^14.2.2",
+    "eslint-config-next": "^14.2.3",
     "eslint-config-prettier": "^9.1.0",
     "postcss": "^8.4.38",
     "prettier": "^3.2.5",
