@@ -57,6 +57,20 @@ export const startups = pgTable("startups", {
   views: bigint("views", { mode: "number" }).notNull().default(0),
 });
 
+export const views = pgTable("views", {
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  startupId: integer("startup_id")
+    .notNull()
+    .references(() => startups.id),
+  timestamp: timestamp("created_at", {
+    withTimezone: true,
+  })
+    .notNull()
+    .defaultNow(),
+});
+
 export const favorites = pgTable(
   "favorites",
   {
@@ -66,6 +80,11 @@ export const favorites = pgTable(
     startupId: integer("startup_id")
       .notNull()
       .references(() => startups.id),
+    timestamp: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
 
     // composite primary key
   },
@@ -81,6 +100,11 @@ export const likes = pgTable(
     startupId: integer("startup_id")
       .notNull()
       .references(() => startups.id),
+    timestamp: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
 
     // composite primary key
   },
