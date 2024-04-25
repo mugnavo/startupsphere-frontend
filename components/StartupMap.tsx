@@ -6,6 +6,9 @@ import Map, { Layer } from "react-map-gl";
 import { useInteractiveMap } from "~/lib/InteractiveMapContext";
 import Geocoder from "./map/Geocoder";
 
+import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
+import "mapbox-gl/dist/mapbox-gl.css";
+
 const building3dLayer: FillExtrusionLayer = {
   // from https://docs.mapbox.com/mapbox-gl-js/example/3d-buildings/
   id: "add-3d-buildings",
@@ -84,7 +87,7 @@ export default function StartupMap() {
         mapStyle="mapbox://styles/mapbox/streets-v12"
       >
         <Geocoder
-          position="top-right"
+          position="bottom-right"
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN!}
           onLoading={() => {}}
           onResults={() => {}}
