@@ -31,6 +31,17 @@ export async function signup(newUser: Expand<Omit<User, "id"> & { password: stri
     };
   }
 
+  // await db.query.users.findFirst({ where: eq(users.email, newUser.email) });
+
+  const existingUser = await db.query.users.findFirst({
+    where: eq(users.email, newUser.email),
+  });
+  if (existingUser) {
+    return {
+      error: "Email already exists!",
+    }; // Email already exists in the database
+  }
+
   const password = newUser.password;
   if (typeof password !== "string" || password.length < 6 || password.length > 255) {
     return {
