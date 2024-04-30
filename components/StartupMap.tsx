@@ -89,7 +89,7 @@ export default function StartupMap() {
         setDashboardSelection({ ...dashboardSelection, active: false });
       }
     },
-    [dashboardSelection, setDashboardSelection]
+    [dashboardSelection, setDashboardSelection, setSelectedLocation]
   );
 
   return (
@@ -114,6 +114,7 @@ export default function StartupMap() {
         )}
         {startups.map((startup) => (
           <Marker
+            key={startup.id}
             longitude={startup.coordinates?.longitude ?? 0}
             latitude={startup.coordinates?.latitude ?? 0}
             popup={new mapboxgl.Popup().setText(startup.name)}
