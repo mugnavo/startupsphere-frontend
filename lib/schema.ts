@@ -114,3 +114,5 @@ export const likes = pgTable(
 export type UserWithPassword = typeof users.$inferInsert;
 export type User = Omit<UserWithPassword, "hashedPassword">;
 export type Startup = typeof startups.$inferInsert;
+export type Favorite = typeof favorites.$inferInsert;
+export type Like = typeof likes.$inferInsert;
