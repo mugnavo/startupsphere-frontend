@@ -1,7 +1,7 @@
 "use client";
-import { Image, MoreVertical, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Image, MoreVertical, Search, X } from "lucide-react";
 
 interface Startup {
   id: number;
@@ -69,7 +69,11 @@ export default function Favorites() {
         {/* List of favorite startups */}
         <div className="mt-2 overflow-y-auto">
           {filteredFavorites.map((startup) => (
-            <div key={startup.id} className="mb-4 flex items-center justify-between">
+            <div
+              key={startup.id}
+              className="mb-4 flex cursor-pointer items-center justify-between"
+              onClick={() => router.push(`/details/${startup.id}`)}
+            >
               <div className="flex items-center">
                 <div className="mr-4 flex h-12 w-12 items-center justify-center bg-gray-200">
                   {/* eslint-disable-next-line jsx-a11y/alt-text */}
