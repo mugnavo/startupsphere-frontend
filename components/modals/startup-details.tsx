@@ -36,11 +36,9 @@ export default function StartupDetailsModal({
   >(startup?.coordinates ?? undefined);
 
   useEffect(() => {
-    if (startup) {
-      setCurrentStartupName(startup.name);
-      setCurrentStartupLogoUrl(startup.logoUrl ?? undefined);
-      setCurrentStartupLocationData(startup.coordinates ?? undefined);
-    }
+    setCurrentStartupName(startup?.name ?? undefined);
+    setCurrentStartupLogoUrl(startup?.logoUrl ?? undefined);
+    setCurrentStartupLocationData(startup?.coordinates ?? undefined);
   }, [startup]);
 
   useEffect(() => {
