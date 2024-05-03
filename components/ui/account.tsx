@@ -1,8 +1,8 @@
 "use client";
 
 import { LogOut, UserRound } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { logout } from "~/lib/actions/auth";
 
 import { User } from "~/lib/schema";
 
@@ -25,7 +25,6 @@ export default function Account({ user }: { user: User | null }) {
 }
 
 function AccountMenu({ user }: { user: User | null }) {
-  const router = useRouter();
   const menuItems = [
     { id: 1, name: user?.email || "Guest", icon: UserRound },
     { id: 2, name: user ? "Logout" : "Login", icon: LogOut },
@@ -40,10 +39,7 @@ function AccountMenu({ user }: { user: User | null }) {
           onClick={async () => {
             if (item.id === 2) {
               if (user) {
-                await fetch("/api/auth/logout", {
-                  method: "POST",
-                });
-                router.refresh();
+                await logout();
               } else {
                 const loginModal = document.getElementById("login_modal");
                 if (loginModal instanceof HTMLDialogElement) {

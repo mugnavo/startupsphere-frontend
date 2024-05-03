@@ -1,8 +1,8 @@
 import DashboardComponent from "~/components/dashboard";
-import { db } from "~/lib/db";
+import { getAllStartups } from "~/lib/actions/startups";
 
 export default async function DashboardIndex() {
-  const startups = await db.query.startups.findMany();
+  const startups = await getAllStartups();
 
   return <DashboardComponent initialStartups={startups} />;
 }

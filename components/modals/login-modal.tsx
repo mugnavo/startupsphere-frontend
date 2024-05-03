@@ -1,41 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { login, signup } from "~/lib/actions/auth";
 
 export default function LoginModal() {
-  const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  async function handleLogin(formData: FormData) {
-    setLoading(true);
-
-    sendRequest(formData);
-  }
-
-  async function sendRequest(formData: FormData) {
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: formData.get("email"),
-        password: formData.get("password"),
-      }),
-    });
-    if (res.redirected) {
-      router.refresh();
-    } else {
-      const data = await res.json();
-      if (data.error) {
-        setError(data.error);
-      }
-    }
-    setLoading(false);
-  }
-
   return (
     <>
       <button
@@ -53,7 +20,15 @@ export default function LoginModal() {
         <div className="modal-box">
           <h1 className="p-3 text-3xl font-bold">Login</h1>
           <form
-            action={handleLogin}
+            action={async (formData: FormData) => {
+              const { error } = await login(
+                formData.get("email") as string,
+                formData.get("password") as string
+              );
+              if (error) {
+                alert(error);
+              }
+            }}
             className="flex flex-col items-center justify-center gap-5 p-8"
           >
             <label className="form-control w-[80%]">
@@ -96,14 +71,9 @@ export default function LoginModal() {
               </button>
             </label>
 
-            <div className={"text-red-500" + (error ? "" : " opacity-0")}>
-              {error || "placeholder"}
-            </div>
-
             <div className="modal-action">
               {/* if there is a button in form, it will close the modal */}
-              <button type="submit" className="btn" disabled={loading}>
-                {loading && <span className="loading loading-spinner" />}
+              <button type="submit" className="btn">
                 Login
               </button>
             </div>
@@ -119,47 +89,23 @@ export default function LoginModal() {
 }
 
 function RegisterModal() {
-  const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  async function handleSignup(formData: FormData) {
-    setLoading(true);
-
-    sendRequest(formData);
-  }
-
-  async function sendRequest(formData: FormData) {
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: formData.get("email"),
-        firstName: formData.get("firstName"),
-        lastName: formData.get("lastName"),
-        location: "Earth", // TODO: temporary
-        password: formData.get("password"),
-      }),
-    });
-    if (res.redirected) {
-      router.refresh();
-    } else {
-      const data = await res.json();
-      if (data.error) {
-        setError(data.error);
-      }
-    }
-    setLoading(false);
-  }
-
   return (
     <dialog id="register_modal" className="modal">
       <div className="modal-box">
         <h1 className="p-2 text-3xl font-bold">Register</h1>
         <form
-          action={handleSignup}
+          action={async (formData: FormData) => {
+            const { error } = await signup({
+              email: formData.get("email") as string,
+              firstName: formData.get("firstName") as string,
+              lastName: formData.get("lastName") as string,
+              password: formData.get("password") as string,
+              location: "Earth", // TODO: TEMPORARY
+            });
+            if (error) {
+              alert(error);
+            }
+          }}
           className="flex flex-col items-center justify-center gap-2 p-4"
         >
           <label className="form-control w-[80%]">
@@ -226,14 +172,9 @@ function RegisterModal() {
             </button>
           </label>
 
-          <div className={"text-red-500" + (error ? "" : " opacity-0")}>
-            {error || "placeholder"}
-          </div>
-
           <div className="modal-action">
             {/* if there is a button in form, it will close the modal */}
-            <button type="submit" className="btn" disabled={loading}>
-              {loading && <span className="loading loading-spinner" />}
+            <button type="submit" className="btn">
               Sign up
             </button>
           </div>

@@ -11,6 +11,7 @@ import Geocoder from "./map/Geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { getAllStartups } from "~/lib/actions/startups";
 import { Startup } from "~/lib/schema";
 
 const building3dLayer: FillExtrusionLayer = {
@@ -53,15 +54,8 @@ const geocode = new GeocodingCore({ accessToken: process.env.NEXT_PUBLIC_MAPBOX_
 
 export default function StartupMap() {
   const [startups, setStartups] = useState<Startup[]>([]);
-
-  async function getAllStartups() {
-    const res = await fetch("/api/startups");
-    const data = await res.json();
-    setStartups(data.startups);
-  }
-
   useEffect(() => {
-    getAllStartups();
+    getAllStartups().then(setStartups);
   }, []);
 
   const [viewState, setViewState] = useState({

@@ -2,6 +2,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LocationData, useInteractiveMap } from "~/lib/InteractiveMapContext";
+import { createStartup, updateStartup } from "~/lib/actions/startups";
 import { Startup } from "~/lib/schema";
 import { capitalize, placeholderImageUrl } from "~/lib/utils";
 import { UploadDropzone } from "../uploadthing";
@@ -74,21 +75,9 @@ export default function StartupDetailsModal({
     };
 
     if (mode === "create") {
-      await fetch("/api/startups", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      await createStartup(data);
     } else {
-      await fetch("/api/startups", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      await updateStartup(startup?.id!, data);
     }
     const modal = document.getElementById("startup_details_modal") as HTMLDialogElement;
     modal.close();
