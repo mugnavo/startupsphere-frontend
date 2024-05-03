@@ -104,7 +104,6 @@ export default function DashboardComponent({
                     onClick={async () => {
                       await fetch(`/api/startups?id=${startup.id}`, {
                         method: "DELETE",
-                        body: JSON.stringify({ id: startup.id }),
                       });
                       router.refresh();
                     }}
