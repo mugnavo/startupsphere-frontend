@@ -121,7 +121,7 @@ export default function StartupMap() {
           >
             <div className="group relative text-red-500">
               📍 {startup.name}
-              <div className="absolute -top-12 hidden h-10 w-10 bg-blue-500 group-hover:block"></div>
+              <div className="absolute -top-12 hidden h-10 w-10 bg-blue-500 group-hover:flex"></div>
             </div>
           </Marker>
         ))}
