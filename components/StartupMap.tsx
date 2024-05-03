@@ -119,7 +119,10 @@ export default function StartupMap() {
             latitude={startup.coordinates?.latitude ?? 0}
             popup={new mapboxgl.Popup().setText(startup.name)}
           >
-            <div className="text-red-500">📍 {startup.name} </div>
+            <div className="group relative text-red-500">
+              📍 {startup.name}
+              <div className="absolute -top-12 hidden h-10 w-10 bg-blue-500 group-hover:block"></div>
+            </div>
           </Marker>
         ))}
         <Layer {...building3dLayer} />
