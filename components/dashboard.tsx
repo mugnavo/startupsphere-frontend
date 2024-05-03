@@ -4,8 +4,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import StartupDetailsModal from "~/components/modals/startup-details";
-
-import { deleteStartup } from "~/lib/actions/startups";
 import { type Startup } from "~/lib/schema";
 
 export default function DashboardComponent({
@@ -14,7 +12,6 @@ export default function DashboardComponent({
   initialStartups: Startup[];
 }) {
   const router = useRouter();
-  //const [startups, setStartups] = useState<Startup[]>(initialStartups);
   const startups = initialStartups;
 
   // modal controls
@@ -105,7 +102,10 @@ export default function DashboardComponent({
                     title="Delete"
                     className="btn btn-square btn-ghost btn-sm text-error"
                     onClick={async () => {
-                      await deleteStartup(startup.id!);
+                      await fetch(`/api/startups?id=${startup.id}`, {
+                        method: "DELETE",
+                        body: JSON.stringify({ id: startup.id }),
+                      });
                       router.refresh();
                     }}
                   >
