@@ -1,7 +1,7 @@
 "use client";
 
 import { GeocodingCore } from "@mapbox/search-js-core";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import type { FillExtrusionLayer, MapLayerMouseEvent } from "react-map-gl";
 import Map, { Layer, Marker } from "react-map-gl";
 
@@ -11,8 +11,6 @@ import Geocoder from "./map/Geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { getAllStartups } from "~/lib/actions/startups";
-import { Startup } from "~/lib/schema";
 
 const building3dLayer: FillExtrusionLayer = {
   // from https://docs.mapbox.com/mapbox-gl-js/example/3d-buildings/
@@ -53,10 +51,7 @@ const building3dLayer: FillExtrusionLayer = {
 const geocode = new GeocodingCore({ accessToken: process.env.NEXT_PUBLIC_MAPBOX_TOKEN! });
 
 export default function StartupMap() {
-  const [startups, setStartups] = useState<Startup[]>([]);
-  useEffect(() => {
-    getAllStartups().then(setStartups);
-  }, []);
+  const [startups, setStartups] = useState<[]>([]);
 
   const [viewState, setViewState] = useState({
     longitude: 123.89811168536812,

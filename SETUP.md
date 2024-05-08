@@ -37,8 +37,8 @@
    # https://account.mapbox.com/access-tokens
    NEXT_PUBLIC_MAPBOX_TOKEN=
 
-   # PostgreSQL connection
-   DATABASE_URL= # e.g. postgres://user:password@host:port/dbname
+   # Server URL for the Spring backend
+   NEXT_PUBLIC_BACKEND_URL=
    ```
 
 4. Run the project:

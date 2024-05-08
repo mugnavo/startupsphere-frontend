@@ -1,6 +1,6 @@
-# StartupSphere
+# startupsphere-frontend
 
-3D Mapping for Startup Ecosystems
+Frontend repository for StartupSphere, the 3D mapping platform for startup ecosystems.
 
 ## Documentation
 
@@ -13,7 +13,6 @@ Core:
 
 - [React 18](https://react.dev/)
 - [Next.js 14](https://nextjs.org/docs)
-- PostgreSQL via [Drizzle ORM](https://orm.drizzle.team/docs/update)
 - [Mapbox](https://docs.mapbox.com/mapbox-gl-js/guides/) via [react-map-gl](https://visgl.github.io/react-map-gl/) & [mapbox-gl-geocoder](https://github.com/mapbox/mapbox-gl-geocoder)
 
 Misc:

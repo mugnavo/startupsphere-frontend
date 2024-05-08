@@ -1,5 +1,6 @@
 "use client";
-import { Image, MapPin, Globe, ThumbsUp, Bookmark } from "lucide-react";
+
+import { Bookmark, Globe, Image, MapPin, ThumbsUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 

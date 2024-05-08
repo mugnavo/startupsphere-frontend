@@ -1,7 +1,8 @@
 "use client";
+
+import { Image, MoreVertical, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Image, MoreVertical, Search, X } from "lucide-react";
 
 interface Startup {
   id: number;
