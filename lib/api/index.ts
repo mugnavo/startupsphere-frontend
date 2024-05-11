@@ -43,6 +43,28 @@ export const startupControllerCreate = <TData = AxiosResponse<Startup>>(
   return axios.post(`http://localhost:3001/startups`, startup, options);
 };
 
+export const startupControllerGetOneById = <TData = AxiosResponse<Startup>>(
+  startupId: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.get(`http://localhost:3001/startups/${startupId}`, options);
+};
+
+export const startupControllerUpdate = <TData = AxiosResponse<Startup>>(
+  startupId: number,
+  startup: Startup,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.put(`http://localhost:3001/startups/${startupId}`, startup, options);
+};
+
+export const startupControllerDelete = <TData = AxiosResponse<unknown>>(
+  startupId: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.delete(`http://localhost:3001/startups/${startupId}`, options);
+};
+
 export const bookmarkControllerGetAll = <TData = AxiosResponse<Bookmark[]>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
@@ -54,6 +76,16 @@ export const bookmarkControllerCreate = <TData = AxiosResponse<Bookmark>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.post(`http://localhost:3001/bookmarks`, bookmark, options);
+};
+
+export const bookmarkControllerFindOneByUserIdAndStartupId = <
+  TData = AxiosResponse<Bookmark>,
+>(
+  userId: number,
+  startupId: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.get(`http://localhost:3001/bookmarks/${userId}/${startupId}`, options);
 };
 
 export const bookmarkControllerRemove = <TData = AxiosResponse<void>>(
@@ -94,6 +126,12 @@ export const viewControllerCreate = <TData = AxiosResponse<View>>(
   return axios.post(`http://localhost:3001/views`, view, options);
 };
 
+export const viewControllerGetAll = <TData = AxiosResponse<View[]>>(
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.get(`http://localhost:3001/views`, options);
+};
+
 export const viewControllerFindAllByStartupId = <TData = AxiosResponse<View[]>>(
   startupId: number,
   options?: AxiosRequestConfig
@@ -105,11 +143,16 @@ export type AuthControllerRegisterResult = AxiosResponse<void>;
 export type AuthControllerLoginResult = AxiosResponse<void>;
 export type StartupControllerGetAllResult = AxiosResponse<Startup[]>;
 export type StartupControllerCreateResult = AxiosResponse<Startup>;
+export type StartupControllerGetOneByIdResult = AxiosResponse<Startup>;
+export type StartupControllerUpdateResult = AxiosResponse<Startup>;
+export type StartupControllerDeleteResult = AxiosResponse<unknown>;
 export type BookmarkControllerGetAllResult = AxiosResponse<Bookmark[]>;
 export type BookmarkControllerCreateResult = AxiosResponse<Bookmark>;
+export type BookmarkControllerFindOneByUserIdAndStartupIdResult = AxiosResponse<Bookmark>;
 export type BookmarkControllerRemoveResult = AxiosResponse<void>;
 export type LikeControllerCreateResult = AxiosResponse<Like>;
 export type LikeControllerRemoveResult = AxiosResponse<void>;
 export type LikeControllerFindOneByUserIdAndStartupIdResult = AxiosResponse<Like>;
 export type ViewControllerCreateResult = AxiosResponse<View>;
+export type ViewControllerGetAllResult = AxiosResponse<View[]>;
 export type ViewControllerFindAllByStartupIdResult = AxiosResponse<View[]>;
