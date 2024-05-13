@@ -8,6 +8,7 @@
 import axios from "axios";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import type {
+  AuthResponse,
   Bookmark,
   Like,
   LoginRequest,
@@ -16,14 +17,14 @@ import type {
   View,
 } from "../schemas";
 
-export const authControllerRegister = <TData = AxiosResponse<void>>(
+export const authControllerRegister = <TData = AxiosResponse<AuthResponse>>(
   registerRequest: RegisterRequest,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.post(`http://localhost:3001/auth/register`, registerRequest, options);
 };
 
-export const authControllerLogin = <TData = AxiosResponse<void>>(
+export const authControllerLogin = <TData = AxiosResponse<AuthResponse>>(
   loginRequest: LoginRequest,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
@@ -139,8 +140,8 @@ export const viewControllerFindAllByStartupId = <TData = AxiosResponse<View[]>>(
   return axios.get(`http://localhost:3001/views/${startupId}`, options);
 };
 
-export type AuthControllerRegisterResult = AxiosResponse<void>;
-export type AuthControllerLoginResult = AxiosResponse<void>;
+export type AuthControllerRegisterResult = AxiosResponse<AuthResponse>;
+export type AuthControllerLoginResult = AxiosResponse<AuthResponse>;
 export type StartupControllerGetAllResult = AxiosResponse<Startup[]>;
 export type StartupControllerCreateResult = AxiosResponse<Startup>;
 export type StartupControllerGetOneByIdResult = AxiosResponse<Startup>;

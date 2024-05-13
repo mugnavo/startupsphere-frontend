@@ -6,6 +6,7 @@
  * OpenAPI spec version: 1.0
  */
 
+export * from "./authResponse";
 export * from "./bookmark";
 export * from "./like";
 export * from "./loginRequest";
