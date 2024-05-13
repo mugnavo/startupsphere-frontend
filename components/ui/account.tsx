@@ -2,11 +2,11 @@
 
 import { LogOut, UserRound } from "lucide-react";
 import { useState } from "react";
-import { logout } from "~/lib/actions/auth";
+import { useSession } from "~/context/hooks";
+import { User } from "~/lib/schemas";
 
-import { User } from "~/lib/schema";
-
-export default function Account({ user }: { user: User | null }) {
+export default function Account() {
+  const { user } = useSession();
   const [isShowMenu, setIsShowMenu] = useState(false);
   const handleAccountClick = () => {
     setIsShowMenu(!isShowMenu);
@@ -25,6 +25,7 @@ export default function Account({ user }: { user: User | null }) {
 }
 
 function AccountMenu({ user }: { user: User | null }) {
+  const { setUser } = useSession();
   const menuItems = [
     { id: 1, name: user?.email || "Guest", icon: UserRound },
     { id: 2, name: user ? "Logout" : "Login", icon: LogOut },
@@ -39,7 +40,8 @@ function AccountMenu({ user }: { user: User | null }) {
           onClick={async () => {
             if (item.id === 2) {
               if (user) {
-                await logout();
+                localStorage.removeItem("jwt");
+                setUser(null);
               } else {
                 const loginModal = document.getElementById("login_modal");
                 if (loginModal instanceof HTMLDialogElement) {

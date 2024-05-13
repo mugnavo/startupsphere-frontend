@@ -1,3 +1,5 @@
+"use client";
+
 import MapboxGeocoder, { GeocoderOptions } from "@mapbox/mapbox-gl-geocoder";
 import { useState } from "react";
 import { ControlPosition, Marker, MarkerProps, useControl } from "react-map-gl";

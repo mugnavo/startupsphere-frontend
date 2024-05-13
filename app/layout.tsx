@@ -11,8 +11,7 @@ import { ourFileRouter } from "~/app/api/uploadthing/core";
 import StartupMap from "~/components/StartupMap";
 import Account from "~/components/ui/account";
 import SideMenu from "~/components/ui/side-menu";
-import { validateRequest } from "~/lib/auth";
-import { ContextProvider } from "~/lib/InteractiveMapContext";
+import { ContextProvider } from "~/context/Provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,8 +25,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { user } = await validateRequest();
-
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -42,8 +39,8 @@ export default async function RootLayout({
         />
         <ContextProvider>
           <Toaster richColors />
-          <SideMenu user={user} />
-          <Account user={user} />
+          <SideMenu />
+          <Account />
           {children}
           <StartupMap />
         </ContextProvider>

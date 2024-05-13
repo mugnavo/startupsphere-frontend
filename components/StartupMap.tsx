@@ -1,16 +1,18 @@
 "use client";
 
 import { GeocodingCore } from "@mapbox/search-js-core";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { FillExtrusionLayer, MapLayerMouseEvent } from "react-map-gl";
 import Map, { Layer, Marker } from "react-map-gl";
 
-import { useInteractiveMap } from "~/lib/InteractiveMapContext";
+import { useInteractiveMap } from "~/context/hooks";
 import Geocoder from "./map/Geocoder";
 
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { startupControllerGetAll } from "~/lib/api";
+import { Startup } from "~/lib/schemas";
 
 const building3dLayer: FillExtrusionLayer = {
   // from https://docs.mapbox.com/mapbox-gl-js/example/3d-buildings/
@@ -51,7 +53,7 @@ const building3dLayer: FillExtrusionLayer = {
 const geocode = new GeocodingCore({ accessToken: process.env.NEXT_PUBLIC_MAPBOX_TOKEN! });
 
 export default function StartupMap() {
-  const [startups, setStartups] = useState<[]>([]);
+  const [startups, setStartups] = useState<Startup[]>([]);
 
   const [viewState, setViewState] = useState({
     longitude: 123.89811168536812,
@@ -60,6 +62,16 @@ export default function StartupMap() {
     pitch: 77.50180300523273,
     bearing: -13.596730550512234,
   });
+
+  async function fetchStartups() {
+    const { data } = await startupControllerGetAll();
+    if (data) {
+      setStartups(data);
+    }
+  }
+  useEffect(() => {
+    fetchStartups();
+  }, []);
 
   const {
     dashboardSelection,
@@ -110,8 +122,8 @@ export default function StartupMap() {
         {startups.map((startup) => (
           <Marker
             key={startup.id}
-            longitude={startup.coordinates?.longitude ?? 0}
-            latitude={startup.coordinates?.latitude ?? 0}
+            longitude={startup.locationLng ?? 0}
+            latitude={startup.locationLat ?? 0}
             popup={new mapboxgl.Popup().setText(startup.name)}
           >
             <div className="group relative text-red-500">

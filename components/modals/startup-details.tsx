@@ -1,9 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LocationData, useInteractiveMap } from "~/lib/InteractiveMapContext";
-import { createStartup, updateStartup } from "~/lib/actions/startups";
-import { Startup } from "~/lib/schema";
+import { useInteractiveMap } from "~/context/hooks";
+import { startupControllerCreate, startupControllerUpdate } from "~/lib/api";
+import { Startup } from "~/lib/schemas";
+import { LocationData } from "~/lib/types";
 import { capitalize, placeholderImageUrl } from "~/lib/utils";
 import { UploadDropzone } from "../uploadthing";
 
@@ -33,12 +36,28 @@ export default function StartupDetailsModal({
   // TODO: update schema coordinates schema to add proper types based on LocationData
   const [currentStartupLocationData, setCurrentStartupLocationData] = useState<
     LocationData | undefined
-  >(startup?.coordinates ?? undefined);
+  >(
+    startup
+      ? {
+          latitude: startup.locationLat,
+          longitude: startup.locationLat,
+          name: startup.locationName,
+        }
+      : undefined
+  );
 
   useEffect(() => {
     setCurrentStartupName(startup?.name ?? undefined);
     setCurrentStartupLogoUrl(startup?.logoUrl ?? undefined);
-    setCurrentStartupLocationData(startup?.coordinates ?? undefined);
+    setCurrentStartupLocationData(
+      startup
+        ? {
+            latitude: startup.locationLat,
+            longitude: startup.locationLat,
+            name: startup.locationName,
+          }
+        : undefined
+    );
   }, [startup]);
 
   useEffect(() => {
@@ -61,21 +80,21 @@ export default function StartupDetailsModal({
     const data: Startup = {
       name: formData.get("startup_name") as string,
       websiteUrl: formData.get("startup_website_url") as string,
-      industry: formData.get("startup_industry") as string,
+      categories: formData.get("startup_industry") as string,
       description: formData.get("startup_description") as string,
-      logoUrl: currentStartupLogoUrl,
+      logoUrl: currentStartupLogoUrl || "",
       founderName: formData.get("startup_foundername") as string,
-      location: formData.get("startup_location") as string,
-      coordinates: currentStartupLocationData,
+      locationName: formData.get("startup_location") as string,
+      locationLat: currentStartupLocationData?.latitude as number,
+      locationLng: currentStartupLocationData?.longitude as number,
       contactInfo: formData.get("startup_contact") as string,
-      stage: formData.get("startup_stage") as string,
-      foundedDate: new Date(formData.get("startup_founded") as string),
+      foundedDate: new Date(formData.get("startup_founded") as string).toISOString(),
     };
 
     if (mode === "create") {
-      await createStartup(data);
+      await startupControllerCreate(data);
     } else {
-      await updateStartup(startup?.id!, data);
+      await startupControllerUpdate(startup!.id, data);
     }
     const modal = document.getElementById("startup_details_modal") as HTMLDialogElement;
     modal.close();
@@ -101,13 +120,6 @@ export default function StartupDetailsModal({
             name="startup_website_url"
             placeholder="https://mugnavo.com"
             defaultValue={startup?.websiteUrl ?? undefined}
-            disabled={!editable}
-          />
-          <TextInputField
-            label="Industry"
-            name="startup_industry"
-            placeholder="Software"
-            defaultValue={startup?.industry}
             disabled={!editable}
           />
           <TextInputField
@@ -151,7 +163,7 @@ export default function StartupDetailsModal({
             label="Location"
             name="startup_location"
             placeholder="IT Park, Cebu City, Cebu"
-            defaultValue={startup?.location ?? undefined}
+            defaultValue={startup?.locationName ?? undefined}
             disabled={!editable}
           />
           <div className="form-control">
@@ -171,13 +183,6 @@ export default function StartupDetailsModal({
             name="startup_contact"
             placeholder="hello@mugnavo.com"
             defaultValue={startup?.contactInfo ?? undefined}
-            disabled={!editable}
-          />
-          <TextInputField
-            label="Funding stage"
-            name="startup_stage"
-            placeholder="Series A funding"
-            defaultValue={startup?.stage ?? undefined}
             disabled={!editable}
           />
           <TextInputField

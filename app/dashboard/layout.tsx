@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useInteractiveMap } from "~/lib/InteractiveMapContext";
+import { useInteractiveMap } from "~/context/hooks";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import StartupDetailsModal from "~/components/modals/startup-details";
+import { startupControllerDelete } from "~/lib/api";
+import { Startup } from "~/lib/schemas";
 
 export default function DashboardComponent() {
   const router = useRouter();
-  const [startups, setStartups] = useState<[]>();
+  const [startups, setStartups] = useState<Startup[]>([]);
 
   // TODO: useeffect to fetch startups
 
@@ -70,7 +72,6 @@ export default function DashboardComponent() {
               <th>ID</th>
               <th className="w-auto">Startup Name</th>
               <th className="w-auto">Location</th>
-              <th className="w-auto">Industry</th>
               <th className="w-20">Action</th>
             </tr>
           </thead>
@@ -79,8 +80,7 @@ export default function DashboardComponent() {
               <tr key={index}>
                 <th>{startup.id}</th>
                 <td>{startup.name}</td>
-                <td>{startup.location}</td>
-                <td>{startup.industry}</td>
+                <td>{startup.locationName}</td>
                 <td className="flex gap-1">
                   <button
                     title="View more details"
@@ -100,7 +100,7 @@ export default function DashboardComponent() {
                     title="Delete"
                     className="btn btn-square btn-ghost btn-sm text-error"
                     onClick={async () => {
-                      await deleteStartup(startup.id!);
+                      await startupControllerDelete(startup.id);
                       router.refresh();
                     }}
                   >

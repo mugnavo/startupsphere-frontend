@@ -1,6 +1,6 @@
 "use client";
 
-import { login, signup } from "~/lib/actions/auth";
+import { authControllerLogin, authControllerRegister } from "~/lib/api";
 
 export default function LoginModal() {
   return (
@@ -21,12 +21,14 @@ export default function LoginModal() {
           <h1 className="p-3 text-3xl font-bold">Login</h1>
           <form
             action={async (formData: FormData) => {
-              const { error } = await login(
-                formData.get("email") as string,
-                formData.get("password") as string
-              );
-              if (error) {
-                alert(error);
+              const { data } = await authControllerLogin({
+                email: formData.get("email") as string,
+                password: formData.get("password") as string,
+              });
+              if (data.access_token) {
+                localStorage.setItem("jwt", data.access_token);
+              } else if (data.error) {
+                alert(data.error);
               }
             }}
             className="flex flex-col items-center justify-center gap-5 p-8"
@@ -95,15 +97,17 @@ function RegisterModal() {
         <h1 className="p-2 text-3xl font-bold">Register</h1>
         <form
           action={async (formData: FormData) => {
-            const { error } = await signup({
+            const { data } = await authControllerRegister({
               email: formData.get("email") as string,
               firstName: formData.get("firstName") as string,
               lastName: formData.get("lastName") as string,
               password: formData.get("password") as string,
               location: "Earth", // TODO: TEMPORARY
             });
-            if (error) {
-              alert(error);
+            if (data.access_token) {
+              localStorage.setItem("jwt", data.access_token);
+            } else if (data.error) {
+              alert(data.error);
             }
           }}
           className="flex flex-col items-center justify-center gap-2 p-4"

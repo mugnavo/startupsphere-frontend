@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Heart,
   History,
@@ -8,7 +10,7 @@ import {
 } from "lucide-react";
 import { Fragment } from "react";
 
-import { User } from "~/lib/schema";
+import { useSession } from "~/context/hooks";
 import LoginModal from "../modals/login-modal";
 import SidebarLink, { type SidebarLinkProps } from "./sidebar-link";
 
@@ -21,7 +23,9 @@ const SIDEBAR_LINKS: SidebarLinkProps[] = [
   { href: "/dashboard", name: "Dashboard", icon: <LayoutDashboard size={22} /> },
 ];
 
-export default function SideMenu({ user }: { user: User | null }) {
+export default function SideMenu() {
+  const { user } = useSession();
+
   return (
     <div className="absolute left-0 top-0 z-50 flex h-screen w-20 flex-col items-center justify-between bg-white p-3 pt-16 align-middle shadow-sm shadow-slate-400">
       <div className="flex flex-col items-center gap-8">
