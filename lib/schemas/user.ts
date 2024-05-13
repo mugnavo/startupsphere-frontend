@@ -11,7 +11,6 @@ export interface User {
   createdAt: string;
   email: string;
   firstName: string;
-  hashedPassword: string;
   id: number;
   lastName: string;
   location: string;
