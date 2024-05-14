@@ -14,6 +14,6 @@ export const placeholderImageUrl =
 
 export const withAuth = {
   headers: {
-    Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+    Authorization: `Bearer ${window.localStorage.getItem("jwt")}`,
   },
 };
