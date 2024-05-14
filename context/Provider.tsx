@@ -22,8 +22,10 @@ export function ContextProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       return;
     }
-    const user = jwtDecode(jwt);
-    console.log(user);
+    const user = jwtDecode(jwt) as User;
+    if(user?.email) {
+      setUser(user);
+    }
   }
 
   useEffect(() => {

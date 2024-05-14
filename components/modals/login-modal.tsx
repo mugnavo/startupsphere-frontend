@@ -1,8 +1,12 @@
 "use client";
 
+import { jwtDecode } from "jwt-decode";
+import { useSession } from "~/context/hooks";
 import { authControllerLogin, authControllerRegister } from "~/lib/api";
+import { User } from "~/lib/schemas";
 
 export default function LoginModal() {
+  const { setUser } = useSession();
   return (
     <>
       <button
@@ -27,6 +31,10 @@ export default function LoginModal() {
               });
               if (data.access_token) {
                 localStorage.setItem("jwt", data.access_token);
+                const user = jwtDecode(data.access_token) as User;
+                if (user?.email) {
+                  setUser(user);
+                }
               } else if (data.error) {
                 alert(data.error);
               }
@@ -91,6 +99,7 @@ export default function LoginModal() {
 }
 
 function RegisterModal() {
+  const { setUser } = useSession();
   return (
     <dialog id="register_modal" className="modal">
       <div className="modal-box">
@@ -106,6 +115,10 @@ function RegisterModal() {
             });
             if (data.access_token) {
               localStorage.setItem("jwt", data.access_token);
+              const user = jwtDecode(data.access_token) as User;
+              if (user?.email) {
+                setUser(user);
+              }
             } else if (data.error) {
               alert(data.error);
             }

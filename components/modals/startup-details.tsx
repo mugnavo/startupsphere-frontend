@@ -7,7 +7,7 @@ import { useInteractiveMap } from "~/context/hooks";
 import { startupControllerCreate, startupControllerUpdate } from "~/lib/api";
 import { Startup } from "~/lib/schemas";
 import { LocationData } from "~/lib/types";
-import { capitalize, placeholderImageUrl } from "~/lib/utils";
+import { capitalize, placeholderImageUrl, withAuth } from "~/lib/utils";
 import { UploadDropzone } from "../uploadthing";
 
 export default function StartupDetailsModal({
@@ -92,9 +92,9 @@ export default function StartupDetailsModal({
     };
 
     if (mode === "create") {
-      await startupControllerCreate(data);
+      await startupControllerCreate(data, withAuth);
     } else {
-      await startupControllerUpdate(startup!.id, data);
+      await startupControllerUpdate(startup!.id, data, withAuth);
     }
     const modal = document.getElementById("startup_details_modal") as HTMLDialogElement;
     modal.close();

@@ -11,3 +11,9 @@ export function capitalize(str: string) {
 
 export const placeholderImageUrl =
   "https://utfs.io/f/6b66ba34-405b-4c82-abe3-4a658bccd9c1-4bu010.jpg";
+
+export const withAuth = {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+  },
+};
