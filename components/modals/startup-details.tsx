@@ -236,13 +236,16 @@ export default function StartupDetailsModal({
               <span className="label-text">Location from map</span>
             </div>
             <div className="flex gap-2">
-              <button type="button" className="btn btn-xs" onClick={() => previewMap()}>
-                Preview
-              </button>
+              {currentStartupLocationData && (
+                <button type="button" className="btn btn-sm" onClick={() => previewMap()}>
+                  Preview
+                </button>
+              )}
+
               {editable && (
                 <button
                   type="button"
-                  className="btn btn-xs"
+                  className="btn btn-sm"
                   onClick={() => previewMap(true)}
                 >
                   Update
