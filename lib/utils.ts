@@ -17,3 +17,28 @@ export const withAuth = {
     Authorization: `Bearer ${window.localStorage.getItem("jwt")}`,
   },
 };
+
+export const sectors = [
+  "Agriculture",
+  "Automotive",
+  "Biotechnology",
+  "Construction",
+  "Consumer Goods",
+  "Education",
+  "Energy",
+  "Entertainment",
+  "Finance",
+  "Food & Beverage",
+  "Healthcare",
+  "Hospitality",
+  "Information Technology",
+  "Manufacturing",
+  "Media",
+  "Real Estate",
+  "Retail",
+  "Telecommunication",
+  "Transportation",
+  "Travel",
+  "Utilities",
+  "Other",
+];
