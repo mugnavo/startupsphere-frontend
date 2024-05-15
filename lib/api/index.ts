@@ -14,6 +14,7 @@ import type {
   LoginRequest,
   RegisterRequest,
   Startup,
+  StartupRequest,
   View,
 } from "../schemas";
 
@@ -38,10 +39,10 @@ export const startupControllerGetAll = <TData = AxiosResponse<Startup[]>>(
 };
 
 export const startupControllerCreate = <TData = AxiosResponse<Startup>>(
-  startup: Startup,
+  startupRequest: StartupRequest,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`http://localhost:3001/startups`, startup, options);
+  return axios.post(`http://localhost:3001/startups`, startupRequest, options);
 };
 
 export const startupControllerGetOneById = <TData = AxiosResponse<Startup>>(
@@ -53,10 +54,14 @@ export const startupControllerGetOneById = <TData = AxiosResponse<Startup>>(
 
 export const startupControllerUpdate = <TData = AxiosResponse<Startup>>(
   startupId: number,
-  startup: Startup,
+  startupRequest: StartupRequest,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.put(`http://localhost:3001/startups/${startupId}`, startup, options);
+  return axios.put(
+    `http://localhost:3001/startups/${startupId}`,
+    startupRequest,
+    options
+  );
 };
 
 export const startupControllerDelete = <TData = AxiosResponse<unknown>>(

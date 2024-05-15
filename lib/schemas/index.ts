@@ -12,5 +12,6 @@ export * from "./like";
 export * from "./loginRequest";
 export * from "./registerRequest";
 export * from "./startup";
+export * from "./startupRequest";
 export * from "./user";
 export * from "./view";

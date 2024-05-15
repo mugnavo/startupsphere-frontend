@@ -6,20 +6,16 @@
  * OpenAPI spec version: 1.0
  */
 
-export interface Startup {
-  bookmarks: number;
+export interface StartupRequest {
   categories: string[];
   contactInfo: string;
   description: string;
   foundedDate: string;
   founderName: string;
-  id: number;
-  likes: number;
   locationLat: number;
   locationLng: number;
   locationName: string;
   logoUrl: string;
   name: string;
-  views: number;
   websiteUrl: string;
 }
