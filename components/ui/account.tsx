@@ -32,8 +32,12 @@ function AccountMenu({ user }: { user: User | null }) {
   ];
   return (
     <div className="absolute right-3 top-14 z-50 flex h-auto w-48 flex-col gap-1 rounded bg-white p-2 text-sm">
-      {user?.firstName} {user?.lastName}
-      {menuItems.map((item, index) => (
+      <span className="m-2">
+        {user ? `${user?.firstName} ${user?.lastName} ` : "Guest"}
+      </span>
+
+      {/* guest dont need button for their account */}
+      {(user ? menuItems : menuItems.slice(1)).map((item, index) => (
         <div
           key={item.id}
           className="flex cursor-pointer items-center gap-2 rounded p-3 hover:bg-gray-100"
