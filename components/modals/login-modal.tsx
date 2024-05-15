@@ -139,7 +139,8 @@ export default function LoginModal() {
 function RegisterModal() {
   const { setUser } = useSession();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
 
   const register = async (formData: FormData) => {
     const { data } = await authControllerRegister({
@@ -204,6 +205,13 @@ function RegisterModal() {
                 <Mail size={16} />
                 Email
               </span>
+              <span>
+                {emailError && (
+                  <span className="text-xs font-semibold text-red-400">
+                    Please enter a valid email address
+                  </span>
+                )}
+              </span>
             </div>
             <input
               type="email"
@@ -211,6 +219,15 @@ function RegisterModal() {
               required
               placeholder="Input your email"
               className="input input-bordered w-full "
+              onChange={(event) => {
+                const email = event.target.value;
+                if (email === "") {
+                  setEmailError(false);
+                } else {
+                  const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+                  setEmailError(!isValid);
+                }
+              }}
             />
           </label>
           <label className="form-control w-[80%]">
@@ -219,6 +236,13 @@ function RegisterModal() {
                 <KeyRound size={16} />
                 Password
               </span>
+              <span>
+                {passwordError && (
+                  <span className="text-xs font-semibold text-red-400">
+                    Password needs 6+ characters
+                  </span>
+                )}
+              </span>
             </div>
             <input
               type="password"
@@ -226,6 +250,10 @@ function RegisterModal() {
               required
               placeholder="Input your password"
               className="input input-bordered w-full "
+              onChange={(event) => {
+                const password = event.target.value;
+                password.length < 6 ? setPasswordError(true) : setPasswordError(false);
+              }}
             />
             <button
               type="button"
@@ -247,7 +275,11 @@ function RegisterModal() {
 
           <div className="modal-action">
             {/* if there is a button in form, it will close the modal */}
-            <button type="submit" className="btn" disabled={isLoading}>
+            <button
+              type="submit"
+              className="btn"
+              disabled={isLoading || emailError || passwordError}
+            >
               {isLoading ? (
                 <>
                   <span className="loading loading-spinner"></span>
