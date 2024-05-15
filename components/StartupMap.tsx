@@ -1,19 +1,18 @@
 "use client";
-
 import { GeocodingCore } from "@mapbox/search-js-core";
 import { useCallback, useEffect, useState } from "react";
 import type { FillExtrusionLayer, MapLayerMouseEvent } from "react-map-gl";
 import Map, { Layer, Marker } from "react-map-gl";
 
-import { useInteractiveMap } from "~/context/hooks";
-import Geocoder from "./map/Geocoder";
-
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import mapboxgl from "mapbox-gl";
+import { MapPin } from "lucide-react";
 import "mapbox-gl/dist/mapbox-gl.css";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useInteractiveMap } from "~/context/hooks";
 import { startupControllerGetAll } from "~/lib/api";
 import { Startup } from "~/lib/schemas";
-
+import Geocoder from "./map/Geocoder";
 const building3dLayer: FillExtrusionLayer = {
   // from https://docs.mapbox.com/mapbox-gl-js/example/3d-buildings/
   id: "add-3d-buildings",
@@ -54,7 +53,7 @@ const geocode = new GeocodingCore({ accessToken: process.env.NEXT_PUBLIC_MAPBOX_
 
 export default function StartupMap() {
   const [startups, setStartups] = useState<Startup[]>([]);
-
+  const router = useRouter();
   const [viewState, setViewState] = useState({
     longitude: 123.89811168536812,
     latitude: 10.296462810801557,
@@ -124,11 +123,33 @@ export default function StartupMap() {
             key={startup.id}
             longitude={startup.locationLng ?? 0}
             latitude={startup.locationLat ?? 0}
-            popup={new mapboxgl.Popup().setText(startup.name)}
           >
-            <div className="group relative text-red-500">
-              📍 {startup.name}
-              <div className="absolute -top-12 hidden h-10 w-10 bg-blue-500 group-hover:flex"></div>
+            <div
+              className="group relative  text-red-500"
+              onClick={() => {
+                router.replace(`/details/${startup.id}`);
+              }}
+            >
+              <MapPin size={40} strokeWidth={3} /> {startup.name}
+              <div className=" absolute bottom-5 hidden h-auto w-56 flex-col rounded-md  bg-slate-50 group-hover:flex">
+                <div className=" flex h-32 w-full flex-col bg-yellow-400">
+                  <Image
+                    height={500}
+                    width={504}
+                    objectPosition="top"
+                    src={startup.logoUrl || ""}
+                    alt="logo"
+                  ></Image>
+
+                  <h1 className=" relative bottom-10 m-3 text-xl font-bold text-white">
+                    {startup.name[0].toUpperCase()}
+                    {startup.name.slice(1, -1)}
+                  </h1>
+                </div>
+                <p className="m-3 line-clamp-2 h-auto w-auto overflow-hidden text-black">
+                  {startup.description}
+                </p>
+              </div>
             </div>
           </Marker>
         ))}
