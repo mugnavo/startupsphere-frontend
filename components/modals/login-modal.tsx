@@ -1,6 +1,8 @@
 "use client";
 
 import { jwtDecode } from "jwt-decode";
+import { CircleUserRound, KeyRound, Mail } from "lucide-react";
+import { useState } from "react";
 import { useSession } from "~/context/hooks";
 import { authControllerLogin, authControllerRegister } from "~/lib/api";
 import { User } from "~/lib/schemas";
@@ -100,12 +102,16 @@ export default function LoginModal() {
 
 function RegisterModal() {
   const { setUser } = useSession();
+  const [isLoading, setIsLoading] = useState(false);
+
   return (
     <dialog id="register_modal" className="modal">
-      <div className="modal-box">
-        <h1 className="p-2 text-3xl font-bold">Register</h1>
+      <div className="modal-box flex flex-col">
+        <CircleUserRound size={100} strokeWidth={1.1} className="self-center" />
+        <h1 className="self-center p-2 text-3xl font-bold">Create an Account</h1>
         <form
           action={async (formData: FormData) => {
+            setIsLoading(true);
             const { data } = await authControllerRegister({
               email: formData.get("email") as string,
               firstName: formData.get("firstName") as string,
@@ -122,21 +128,10 @@ function RegisterModal() {
             } else if (data.error) {
               alert(data.error);
             }
+            setIsLoading(false);
           }}
           className="flex flex-col items-center justify-center gap-2 p-4"
         >
-          <label className="form-control w-[80%]">
-            <div className="label">
-              <span className="label-text font-semibold">Email</span>
-            </div>
-            <input
-              type="email"
-              name="email"
-              required
-              placeholder="Input your email"
-              className="input input-bordered w-full "
-            />
-          </label>
           <label className="form-control w-[80%]">
             <div className="label">
               <span className="label-text font-semibold">First name</span>
@@ -161,9 +156,28 @@ function RegisterModal() {
               className="input input-bordered w-full "
             />
           </label>
+
           <label className="form-control w-[80%]">
             <div className="label">
-              <span className="label-text font-semibold">Password</span>
+              <span className="label-text flex items-center justify-center gap-1 font-semibold">
+                <Mail size={16} />
+                Email
+              </span>
+            </div>
+            <input
+              type="email"
+              name="email"
+              required
+              placeholder="Input your email"
+              className="input input-bordered w-full "
+            />
+          </label>
+          <label className="form-control w-[80%]">
+            <div className="label">
+              <span className="label-text flex items-center gap-1 font-semibold">
+                <KeyRound size={16} />
+                Password
+              </span>
             </div>
             <input
               type="password"
@@ -191,8 +205,15 @@ function RegisterModal() {
 
           <div className="modal-action">
             {/* if there is a button in form, it will close the modal */}
-            <button type="submit" className="btn">
-              Sign up
+            <button type="submit" className="btn" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <span className="loading loading-spinner"></span>
+                  loading
+                </>
+              ) : (
+                "Sign up"
+              )}
             </button>
           </div>
         </form>
