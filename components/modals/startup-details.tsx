@@ -87,7 +87,6 @@ export default function StartupDetailsModal({
   function previewMap(edit = false) {
     setPreviewingMap(true);
 
-    console.log(currentStartupLocationData);
     setDashboardSelection({
       active: true,
       startupName: currentStartupName,
