@@ -9,6 +9,27 @@ import { User } from "~/lib/schemas";
 
 export default function LoginModal() {
   const { setUser } = useSession();
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const login = async (formData: FormData) => {
+    const { data } = await authControllerLogin({
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+    });
+    if (data.access_token) {
+      localStorage.setItem("jwt", data.access_token);
+      const user = jwtDecode(data.access_token) as User;
+      if (user?.email) {
+        setUser(user);
+      }
+    } else if (data.error) {
+      setErrorMessage(data.error);
+    }
+    setIsLoading(false);
+  };
+
   return (
     <>
       <button
@@ -26,38 +47,40 @@ export default function LoginModal() {
         <div className="modal-box">
           <h1 className="p-3 text-3xl font-bold">Login</h1>
           <form
-            action={async (formData: FormData) => {
-              const { data } = await authControllerLogin({
-                email: formData.get("email") as string,
-                password: formData.get("password") as string,
-              });
-              if (data.access_token) {
-                localStorage.setItem("jwt", data.access_token);
-                const user = jwtDecode(data.access_token) as User;
-                if (user?.email) {
-                  setUser(user);
-                }
-              } else if (data.error) {
-                alert(data.error);
-              }
+            action={(formData: FormData) => {
+              setIsLoading(true);
+              login(formData);
             }}
-            className="flex flex-col items-center justify-center gap-5 p-8"
+            className="flex flex-col items-center justify-center gap-2 p-4"
           >
             <label className="form-control w-[80%]">
               <div className="label">
-                <span className="label-text font-semibold">Email</span>
+                <span className="label-text flex items-center justify-center gap-1 font-semibold">
+                  <Mail size={16} />
+                  Email
+                </span>
+                <span>
+                  {errorMessage && (
+                    <span className="text-xs font-semibold text-red-400">
+                      {errorMessage}
+                    </span>
+                  )}
+                </span>
               </div>
               <input
                 type="email"
                 name="email"
-                placeholder="Input your email"
                 required
+                placeholder="Input your email"
                 className="input input-bordered w-full "
               />
             </label>
             <label className="form-control w-[80%]">
               <div className="label">
-                <span className="label-text font-semibold">Password</span>
+                <span className="label-text flex items-center gap-1 font-semibold">
+                  <KeyRound size={16} />
+                  Password
+                </span>
               </div>
               <input
                 type="password"
@@ -67,6 +90,7 @@ export default function LoginModal() {
                 className="input input-bordered w-full "
               />
               <button
+                type="button"
                 onClick={() => {
                   const loginModal = document.getElementById("login_modal");
                   if (loginModal instanceof HTMLDialogElement) {
@@ -77,6 +101,11 @@ export default function LoginModal() {
                     modal.showModal();
                   }
                 }}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === "NumpadEnter") {
+                    event.preventDefault();
+                  }
+                }}
                 className="link-hover link mt-2 self-end text-xs"
               >
                 Don&apos;t have an account? Register here
@@ -85,8 +114,15 @@ export default function LoginModal() {
 
             <div className="modal-action">
               {/* if there is a button in form, it will close the modal */}
-              <button type="submit" className="btn">
-                Login
+              <button type="submit" className="btn" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <span className="loading loading-spinner"></span>
+                    Loading
+                  </>
+                ) : (
+                  "Log In"
+                )}
               </button>
             </div>
           </form>
@@ -103,6 +139,27 @@ export default function LoginModal() {
 function RegisterModal() {
   const { setUser } = useSession();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const register = async (formData: FormData) => {
+    const { data } = await authControllerRegister({
+      email: formData.get("email") as string,
+      firstName: formData.get("firstName") as string,
+      lastName: formData.get("lastName") as string,
+      password: formData.get("password") as string,
+      location: "Earth", // TODO: TEMPORARY
+    });
+    if (data.access_token) {
+      localStorage.setItem("jwt", data.access_token);
+      const user = jwtDecode(data.access_token) as User;
+      if (user?.email) {
+        setUser(user);
+      }
+    } else if (data.error) {
+      alert(data.error);
+    }
+    setIsLoading(false);
+  };
 
   return (
     <dialog id="register_modal" className="modal">
@@ -110,25 +167,9 @@ function RegisterModal() {
         <CircleUserRound size={100} strokeWidth={1.1} className="self-center" />
         <h1 className="self-center p-2 text-3xl font-bold">Create an Account</h1>
         <form
-          action={async (formData: FormData) => {
+          action={(formData: FormData) => {
             setIsLoading(true);
-            const { data } = await authControllerRegister({
-              email: formData.get("email") as string,
-              firstName: formData.get("firstName") as string,
-              lastName: formData.get("lastName") as string,
-              password: formData.get("password") as string,
-              location: "Earth", // TODO: TEMPORARY
-            });
-            if (data.access_token) {
-              localStorage.setItem("jwt", data.access_token);
-              const user = jwtDecode(data.access_token) as User;
-              if (user?.email) {
-                setUser(user);
-              }
-            } else if (data.error) {
-              alert(data.error);
-            }
-            setIsLoading(false);
+            register(formData);
           }}
           className="flex flex-col items-center justify-center gap-2 p-4"
         >
@@ -187,6 +228,7 @@ function RegisterModal() {
               className="input input-bordered w-full "
             />
             <button
+              type="button"
               onClick={() => {
                 const registerModal = document.getElementById("register_modal");
                 if (registerModal instanceof HTMLDialogElement) {
@@ -209,18 +251,18 @@ function RegisterModal() {
               {isLoading ? (
                 <>
                   <span className="loading loading-spinner"></span>
-                  loading
+                  Loading
                 </>
               ) : (
-                "Sign up"
+                "Register"
               )}
             </button>
           </div>
         </form>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
       </div>
-      <form method="dialog" className="modal-backdrop">
-        <button>close</button>
-      </form>
     </dialog>
   );
 }
