@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import StartupDetailsModal from "~/components/modals/startup-details";
 import { startupControllerDelete, startupControllerGetAll } from "~/lib/api";
 import { Startup } from "~/lib/schemas";
+import { withAuth } from "~/lib/utils";
 
 export default function DashboardComponent() {
   const router = useRouter();
@@ -110,8 +111,8 @@ export default function DashboardComponent() {
                     title="Delete"
                     className="btn btn-square btn-ghost btn-sm text-error"
                     onClick={async () => {
-                      await startupControllerDelete(startup.id);
-                      router.refresh();
+                      await startupControllerDelete(startup.id, withAuth);
+                      fetchStartups();
                     }}
                   >
                     <Trash2 />
