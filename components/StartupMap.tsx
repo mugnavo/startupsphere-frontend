@@ -6,7 +6,6 @@ import Map, { Layer, Marker } from "react-map-gl";
 
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { MapPin } from "lucide-react";
-import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -124,7 +123,6 @@ export default function StartupMap() {
             key={startup.id}
             longitude={startup.locationLng ?? 0}
             latitude={startup.locationLat ?? 0}
-            popup={new mapboxgl.Popup().setText(startup.name)}
           >
             <div
               className="group relative  text-red-500"
