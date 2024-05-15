@@ -25,8 +25,12 @@ export default function StartupDetailsModal({
 
   const router = useRouter();
 
-  const { dashboardSelection, setDashboardSelection, selectedLocation } =
-    useInteractiveMap();
+  const {
+    dashboardSelection,
+    setDashboardSelection,
+    selectedLocation,
+    setSelectedLocation,
+  } = useInteractiveMap();
   const [previewingMap, setPreviewingMap] = useState(false);
 
   const [currentStartupLogoUrl, setCurrentStartupLogoUrl] = useState<string | undefined>(
@@ -40,12 +44,15 @@ export default function StartupDetailsModal({
     startup
       ? {
           latitude: startup.locationLat,
-          longitude: startup.locationLat,
+          longitude: startup.locationLng,
           name: startup.locationName,
         }
       : undefined
   );
   const [currentStartupCategories, setCurrentStartupCategories] = useState<string[]>([]);
+  const [currentCustomLocationName, setCurrentCustomLocationName] = useState<
+    string | undefined
+  >(currentStartupLocationData?.name);
 
   useEffect(() => {
     setCurrentStartupName(startup?.name ?? undefined);
@@ -54,26 +61,40 @@ export default function StartupDetailsModal({
       startup
         ? {
             latitude: startup.locationLat,
-            longitude: startup.locationLat,
+            longitude: startup.locationLng,
             name: startup.locationName,
           }
         : undefined
     );
     setCurrentStartupCategories(startup?.categories ?? []);
+    setCurrentCustomLocationName(startup?.locationName ?? undefined);
   }, [startup]);
 
   useEffect(() => {
     if (!dashboardSelection.active && previewingMap) {
-      setCurrentStartupLocationData(selectedLocation);
+      if (selectedLocation) {
+        setCurrentStartupLocationData(selectedLocation);
+        setCurrentCustomLocationName(selectedLocation.name);
+        setSelectedLocation(undefined);
+      }
+
       const modal = document.getElementById("startup_details_modal") as HTMLDialogElement;
       modal.show();
       setPreviewingMap(false);
     }
-  }, [dashboardSelection, previewingMap, selectedLocation]);
+  }, [dashboardSelection, previewingMap, selectedLocation, setSelectedLocation]);
 
-  function previewMap() {
+  function previewMap(edit = false) {
     setPreviewingMap(true);
-    setDashboardSelection({ active: true, startupName: currentStartupName });
+
+    console.log(currentStartupLocationData);
+    setDashboardSelection({
+      active: true,
+      startupName: currentStartupName,
+      edit: edit,
+      previewLocation: edit ? undefined : currentStartupLocationData,
+    });
+
     const modal = document.getElementById("startup_details_modal") as HTMLDialogElement;
     modal.close();
   }
@@ -86,7 +107,7 @@ export default function StartupDetailsModal({
       description: formData.get("startup_description") as string,
       logoUrl: currentStartupLogoUrl || placeholderImageUrl,
       founderName: formData.get("startup_foundername") as string,
-      locationName: formData.get("startup_location") as string,
+      locationName: currentCustomLocationName || "",
       locationLat: currentStartupLocationData?.latitude as number,
       locationLng: currentStartupLocationData?.longitude as number,
       contactInfo: formData.get("startup_contact") as string,
@@ -207,19 +228,27 @@ export default function StartupDetailsModal({
             label="Location"
             name="startup_location"
             placeholder="IT Park, Cebu City, Cebu"
-            defaultValue={startup?.locationName ?? undefined}
+            value={currentCustomLocationName}
+            onChange={setCurrentCustomLocationName}
             disabled={!editable}
           />
           <div className="form-control">
             <div className="label">
               <span className="label-text">Location from map</span>
             </div>
-            <span className="test">{currentStartupLocationData?.name}</span>
             <div className="flex gap-2">
-              <button type="button" className="btn btn-xs" onClick={previewMap}>
+              <button type="button" className="btn btn-xs" onClick={() => previewMap()}>
                 Preview
               </button>
-              {editable && <button className="btn btn-xs">Update</button>}
+              {editable && (
+                <button
+                  type="button"
+                  className="btn btn-xs"
+                  onClick={() => previewMap(true)}
+                >
+                  Update
+                </button>
+              )}
             </div>
           </div>
           <TextInputField

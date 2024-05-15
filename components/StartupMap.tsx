@@ -1,18 +1,19 @@
 "use client";
-import { GeocodingCore } from "@mapbox/search-js-core";
-import { useCallback, useEffect, useState } from "react";
-import type { FillExtrusionLayer, MapLayerMouseEvent } from "react-map-gl";
-import Map, { Layer, Marker } from "react-map-gl";
-
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import { MapPin } from "lucide-react";
+import { GeocodingCore } from "@mapbox/search-js-core";
+import { ChevronLeft, MapPin } from "lucide-react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import type { FillExtrusionLayer, MapLayerMouseEvent } from "react-map-gl";
+import Map, { Layer, Marker, useMap } from "react-map-gl";
+
 import { useInteractiveMap } from "~/context/hooks";
 import { startupControllerGetAll } from "~/lib/api";
 import { Startup } from "~/lib/schemas";
 import Geocoder from "./map/Geocoder";
+
 const building3dLayer: FillExtrusionLayer = {
   // from https://docs.mapbox.com/mapbox-gl-js/example/3d-buildings/
   id: "add-3d-buildings",
@@ -82,7 +83,7 @@ export default function StartupMap() {
   const onClick = useCallback(
     async (event: MapLayerMouseEvent) => {
       // TODO: confirmation dialog
-      if (dashboardSelection.active) {
+      if (dashboardSelection.active && dashboardSelection.edit) {
         const geoResponse = await geocode.reverse({
           lng: event.lngLat.lng,
           lat: event.lngLat.lat,
@@ -92,15 +93,83 @@ export default function StartupMap() {
           longitude: event.lngLat.lng,
           name: geoResponse.features[0].properties.full_address,
         });
-        setDashboardSelection({ ...dashboardSelection, active: false });
       }
     },
-    [dashboardSelection, setDashboardSelection, setSelectedLocation]
+    [dashboardSelection.active, dashboardSelection.edit, setSelectedLocation]
   );
 
+  const { mainMap } = useMap();
+
+  function cancelPreview() {
+    setSelectedLocation(undefined);
+    setDashboardSelection({ active: false, edit: false });
+  }
+
+  function confirmPreview() {
+    setDashboardSelection({ active: false, edit: false });
+  }
+
+  useEffect(() => {
+    if (dashboardSelection.previewLocation) {
+      mainMap?.flyTo({
+        center: {
+          lng: dashboardSelection.previewLocation.longitude,
+          lat: dashboardSelection.previewLocation.latitude,
+        },
+      });
+    }
+  }, [dashboardSelection.previewLocation, mainMap]);
+
   return (
-    <div className="h-screen overflow-hidden">
+    <div className="relative h-screen overflow-hidden">
+      {dashboardSelection.active && (
+        <>
+          <div className="absolute left-0 right-0 top-12 z-50 mx-auto w-fit">
+            <div className="flex items-center justify-between gap-12 rounded-2xl bg-base-100 py-3 pl-4 pr-20 text-sm shadow-md">
+              <button onClick={cancelPreview}>
+                <ChevronLeft />
+              </button>{" "}
+              <span>
+                {dashboardSelection.edit ? "Editing " : "Viewing "}
+                <span className="font-semibold">{dashboardSelection.startupName}</span>
+              </span>
+            </div>
+          </div>
+
+          {(!dashboardSelection.edit || selectedLocation) && (
+            <div className="absolute bottom-8 left-0 right-0 z-50 mx-auto w-fit">
+              <div className="flex items-center justify-between gap-8 rounded-2xl bg-base-100 py-2 pl-4 pr-2 text-sm shadow-md">
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-2 text-[10px] font-bold">
+                    {dashboardSelection.edit ? "Selected" : "Viewing"} location:{" "}
+                    <div className="relative">
+                      <div className="absolute h-2 w-2 animate-ping rounded-full bg-info" />
+                      <div className="h-2 w-2 rounded-full bg-info" />
+                    </div>
+                  </div>
+                  <div className="max-w-72 text-xs">
+                    {dashboardSelection.previewLocation?.name || selectedLocation?.name}
+                  </div>
+                </div>
+                <div className="flex gap-1">
+                  {dashboardSelection.edit && (
+                    <button onClick={confirmPreview} className="btn btn-info">
+                      Confirm
+                    </button>
+                  )}
+
+                  <button onClick={cancelPreview} className="btn btn-ghost">
+                    {dashboardSelection.edit ? "Cancel" : "Back"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
       <Map
+        id="mainMap"
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
         {...viewState}
         onMove={(evt) => setViewState(evt.viewState)}
@@ -118,11 +187,27 @@ export default function StartupMap() {
             onError={() => {}}
           />
         )}
+        {(selectedLocation || dashboardSelection.previewLocation) && (
+          <Marker
+            longitude={
+              selectedLocation?.longitude ||
+              (dashboardSelection.previewLocation?.longitude as number)
+            }
+            latitude={
+              selectedLocation?.latitude ||
+              (dashboardSelection.previewLocation?.latitude as number)
+            }
+            offset={[0, -20]}
+          >
+            <MapPin className="text-info" size={40} strokeWidth={3} />
+          </Marker>
+        )}
         {startups.map((startup) => (
           <Marker
             key={startup.id}
             longitude={startup.locationLng ?? 0}
             latitude={startup.locationLat ?? 0}
+            offset={[0, -20]}
           >
             <div
               className="group relative  text-red-500"

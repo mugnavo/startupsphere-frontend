@@ -12,11 +12,14 @@ export function capitalize(str: string) {
 export const placeholderImageUrl =
   "https://utfs.io/f/bf5db33a-fd1e-4884-a221-79d8ce511452-9w6i5v.png";
 
-export const withAuth = {
-  headers: {
-    Authorization: `Bearer ${window.localStorage.getItem("jwt")}`,
-  },
-};
+export const withAuth =
+  typeof window === "undefined"
+    ? undefined
+    : {
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("jwt")}`,
+        },
+      };
 
 export const sectors = [
   "Agriculture",
