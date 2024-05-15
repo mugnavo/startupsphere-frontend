@@ -7,7 +7,7 @@ import { useInteractiveMap } from "~/context/hooks";
 import { startupControllerCreate, startupControllerUpdate } from "~/lib/api";
 import { Startup, StartupRequest } from "~/lib/schemas";
 import { LocationData } from "~/lib/types";
-import { capitalize, placeholderImageUrl, withAuth } from "~/lib/utils";
+import { capitalize, placeholderImageUrl, sectors, withAuth } from "~/lib/utils";
 import { UploadDropzone } from "../uploadthing";
 
 export default function StartupDetailsModal({
@@ -45,6 +45,7 @@ export default function StartupDetailsModal({
         }
       : undefined
   );
+  const [currentStartupCategories, setCurrentStartupCategories] = useState<string[]>([]);
 
   useEffect(() => {
     setCurrentStartupName(startup?.name ?? undefined);
@@ -58,6 +59,7 @@ export default function StartupDetailsModal({
           }
         : undefined
     );
+    setCurrentStartupCategories(startup?.categories ?? []);
   }, [startup]);
 
   useEffect(() => {
@@ -80,9 +82,9 @@ export default function StartupDetailsModal({
     const data = {
       name: formData.get("startup_name") as string,
       websiteUrl: formData.get("startup_website_url") as string,
-      categories: [formData.get("startup_categories") as string],
+      categories: currentStartupCategories,
       description: formData.get("startup_description") as string,
-      logoUrl: currentStartupLogoUrl || "",
+      logoUrl: currentStartupLogoUrl || placeholderImageUrl,
       founderName: formData.get("startup_foundername") as string,
       locationName: formData.get("startup_location") as string,
       locationLat: currentStartupLocationData?.latitude as number,
@@ -124,17 +126,50 @@ export default function StartupDetailsModal({
             defaultValue={startup?.websiteUrl ?? undefined}
             disabled={!editable}
           />
-          <TextInputField
-            label="Category"
-            name="startup_categories"
-            placeholder="Software"
-            defaultValue={startup?.categories[0] ?? undefined}
-            disabled={!editable}
-          />
+          <div className="dropdown">
+            <div className="form-control w-full">
+              <div className="label">
+                <span className="label-text">Categories</span>
+              </div>
+              <input
+                tabIndex={0}
+                role="button"
+                type="text"
+                name="startup_categories"
+                value={currentStartupCategories.join(", ")}
+                readOnly
+                className="input input-sm input-bordered w-full max-w-xs"
+              />
+            </div>
+            <div
+              tabIndex={0}
+              className="dropdown-content form-control z-[1] mt-1 h-56 w-full overflow-y-auto rounded-xl bg-base-200 p-2 shadow"
+            >
+              {sectors.map((sector) => (
+                <label key={sector} className="label cursor-pointer justify-start gap-2">
+                  <input
+                    type="checkbox"
+                    checked={currentStartupCategories.includes(sector)}
+                    onChange={(e) => {
+                      if (!editable) return;
+                      setCurrentStartupCategories((prev) =>
+                        e.target.checked
+                          ? [...prev, sector]
+                          : prev.filter((category) => category !== sector)
+                      );
+                    }}
+                    className="checkbox-primary checkbox"
+                  />
+                  <span className="label-text">{sector}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
           <TextInputField
             label="Description"
             name="startup_description"
-            placeholder="I wanna be a tutubi a twinkle star. Hao hao de carabao de batuten. Meow"
+            placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec odio nec eros ultricies fermentum."
             defaultValue={startup?.description ?? undefined}
             disabled={!editable}
             textarea
@@ -254,7 +289,7 @@ function TextInputField({
           name={name}
           defaultValue={defaultValue}
           value={value}
-          disabled={disabled}
+          readOnly={disabled}
           rows={4}
           onChange={onChange ? (e) => onChange(e.target.value) : undefined}
           className="textarea textarea-bordered textarea-sm h-full p-2 leading-snug"
@@ -266,7 +301,7 @@ function TextInputField({
           name={name}
           value={value}
           defaultValue={defaultValue}
-          disabled={disabled}
+          readOnly={disabled}
           onChange={onChange ? (e) => onChange(e.target.value) : undefined}
           className="input input-sm input-bordered w-full max-w-xs"
         />
