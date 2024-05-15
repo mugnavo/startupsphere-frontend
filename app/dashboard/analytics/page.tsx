@@ -13,7 +13,6 @@ export default function DashboardAnalytics() {
   async function fetchStartups() {
     const result = await startupControllerGetAll();
     if (result.data) {
-      console.log(new Date(result.data[0].foundedDate).toDateString());
       setStartups(result.data);
     }
   }

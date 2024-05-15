@@ -1,6 +1,7 @@
 "use client";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
+import { MapProvider } from "react-map-gl";
 import { User } from "~/lib/schemas";
 import { DashboardSelection, LocationData } from "~/lib/types";
 import { InteractionContext, SessionContext } from ".";
@@ -9,6 +10,8 @@ export function ContextProvider({ children }: { children: React.ReactNode }) {
   const [dashboardSelection, setDashboardSelection] = useState<DashboardSelection>({
     active: false,
     startupName: undefined,
+    edit: false,
+    previewLocation: undefined,
   });
   const [selectedLocation, setSelectedLocation] = useState<LocationData | undefined>(
     undefined
@@ -23,7 +26,7 @@ export function ContextProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     const user = jwtDecode(jwt) as User;
-    if(user?.email) {
+    if (user?.email) {
       setUser(user);
     }
   }
@@ -42,7 +45,7 @@ export function ContextProvider({ children }: { children: React.ReactNode }) {
           setSelectedLocation,
         }}
       >
-        {children}
+        <MapProvider>{children}</MapProvider>
       </InteractionContext.Provider>
     </SessionContext.Provider>
   );

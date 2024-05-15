@@ -10,10 +10,38 @@ export function capitalize(str: string) {
 }
 
 export const placeholderImageUrl =
-  "https://utfs.io/f/6b66ba34-405b-4c82-abe3-4a658bccd9c1-4bu010.jpg";
+  "https://utfs.io/f/bf5db33a-fd1e-4884-a221-79d8ce511452-9w6i5v.png";
 
-export const withAuth = {
-  headers: {
-    Authorization: `Bearer ${window.localStorage.getItem("jwt")}`,
-  },
-};
+export const withAuth =
+  typeof window === "undefined"
+    ? undefined
+    : {
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("jwt")}`,
+        },
+      };
+
+export const sectors = [
+  "Agriculture",
+  "Automotive",
+  "Biotechnology",
+  "Construction",
+  "Consumer Goods",
+  "Education",
+  "Energy",
+  "Entertainment",
+  "Finance",
+  "Food & Beverage",
+  "Healthcare",
+  "Hospitality",
+  "Information Technology",
+  "Manufacturing",
+  "Media",
+  "Real Estate",
+  "Retail",
+  "Telecommunication",
+  "Transportation",
+  "Travel",
+  "Utilities",
+  "Other",
+];
