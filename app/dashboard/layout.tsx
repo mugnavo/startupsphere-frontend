@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useInteractiveMap } from "~/context/hooks";
@@ -16,6 +17,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       }
     >
       <div className="flex max-w-md items-center gap-8">
+        <Link href="/">
+          <ArrowLeft size={20} className="cursor-pointer" />
+        </Link>
         Dashboard
         <div role="tablist" className="tabs tabs-bordered w-full">
           <Link
