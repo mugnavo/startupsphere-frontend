@@ -2,17 +2,27 @@
 
 import { BookText, MoveLeft, MoveRight, Search, SquarePen, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import StartupDetailsModal from "~/components/modals/startup-details";
-import { startupControllerDelete } from "~/lib/api";
+import { startupControllerDelete, startupControllerGetAll } from "~/lib/api";
 import { Startup } from "~/lib/schemas";
 
 export default function DashboardComponent() {
   const router = useRouter();
   const [startups, setStartups] = useState<Startup[]>([]);
 
-  // TODO: useeffect to fetch startups
+  async function fetchStartups() {
+    const result = await startupControllerGetAll();
+    if (result.data) {
+      console.log(new Date(result.data[0].foundedDate).toDateString());
+      setStartups(result.data);
+    }
+  }
+
+  useEffect(() => {
+    fetchStartups();
+  }, []);
 
   // modal controls
   const [selectedStartup, setSelectedStartup] = useState<number>();

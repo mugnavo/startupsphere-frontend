@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useInteractiveMap } from "~/context/hooks";
 import { startupControllerCreate, startupControllerUpdate } from "~/lib/api";
-import { Startup } from "~/lib/schemas";
+import { Startup, StartupRequest } from "~/lib/schemas";
 import { LocationData } from "~/lib/types";
 import { capitalize, placeholderImageUrl, withAuth } from "~/lib/utils";
 import { UploadDropzone } from "../uploadthing";
@@ -77,10 +77,10 @@ export default function StartupDetailsModal({
   }
 
   async function submitForm(formData: FormData) {
-    const data: Startup = {
+    const data = {
       name: formData.get("startup_name") as string,
       websiteUrl: formData.get("startup_website_url") as string,
-      categories: formData.get("startup_industry") as string,
+      categories: [formData.get("startup_categories") as string],
       description: formData.get("startup_description") as string,
       logoUrl: currentStartupLogoUrl || "",
       founderName: formData.get("startup_foundername") as string,
@@ -89,7 +89,7 @@ export default function StartupDetailsModal({
       locationLng: currentStartupLocationData?.longitude as number,
       contactInfo: formData.get("startup_contact") as string,
       foundedDate: new Date(formData.get("startup_founded") as string).toISOString(),
-    };
+    } satisfies StartupRequest;
 
     if (mode === "create") {
       await startupControllerCreate(data, withAuth);
@@ -120,6 +120,13 @@ export default function StartupDetailsModal({
             name="startup_website_url"
             placeholder="https://mugnavo.com"
             defaultValue={startup?.websiteUrl ?? undefined}
+            disabled={!editable}
+          />
+          <TextInputField
+            label="Category"
+            name="startup_categories"
+            placeholder="Software"
+            defaultValue={startup?.categories[0] ?? undefined}
             disabled={!editable}
           />
           <TextInputField
@@ -189,7 +196,11 @@ export default function StartupDetailsModal({
             label="Founded date"
             name="startup_founded"
             placeholder="2024/04/24"
-            defaultValue={startup?.foundedDate?.toString() ?? undefined}
+            defaultValue={
+              startup?.foundedDate
+                ? new Date(startup.foundedDate).toISOString().split("T")[0]
+                : undefined
+            }
             disabled={!editable}
             date
           />
