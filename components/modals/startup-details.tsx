@@ -98,7 +98,9 @@ export default function StartupDetailsModal({
     }
     const modal = document.getElementById("startup_details_modal") as HTMLDialogElement;
     modal.close();
-    router.refresh();
+    // TODO: proper refetch
+    window.location.reload();
+
     // TODO: loading/submitting state
   }
 
