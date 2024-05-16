@@ -197,15 +197,18 @@ export default function StartupMap() {
             offset={[0, -20]}
           >
             <div
-              className="group relative text-lg flex w-32 justify-center text-red-500"
+              className="group relative flex w-32 justify-center text-lg text-red-500"
               onClick={() => {
                 router.replace(`/details/${startup.id}`);
               }}
             >
               <CustomPin className="h-10 w-10" />
-              <div className="absolute -bottom-6 text-center font-semibold">{startup.name}</div>
-              <div className="fixed -left-20 bottom-20  z-50 hidden h-auto w-56 flex-col rounded-md bg-slate-50  shadow group-hover:z-50 group-hover:flex">
+              <div className="absolute -bottom-6 text-center text-sm font-semibold">
+                {startup.name}
+              </div>
+              <div className="absolute bottom-8 z-50 hidden h-auto w-56 flex-col rounded-md bg-slate-50  shadow group-hover:z-50 group-hover:flex">
                 <div className=" flex h-32 w-full flex-col bg-yellow-400">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     className="h-[122px] rounded-md object-cover"
                     src={startup.logoUrl || ""}
