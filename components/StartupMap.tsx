@@ -1,7 +1,7 @@
 "use client";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { GeocodingCore } from "@mapbox/search-js-core";
-import { ChevronLeft, MapPin } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -12,6 +12,7 @@ import Map, { Layer, Marker, useMap } from "react-map-gl";
 import { useInteractiveMap } from "~/context/hooks";
 import { startupControllerGetAll } from "~/lib/api";
 import { Startup } from "~/lib/schemas";
+import CustomPin from "./CustomPin";
 import Geocoder from "./map/Geocoder";
 
 const building3dLayer: FillExtrusionLayer = {
@@ -28,15 +29,7 @@ const building3dLayer: FillExtrusionLayer = {
     // Use an 'interpolate' expression to
     // add a smooth transition effect to
     // the buildings as the user zooms in.
-    "fill-extrusion-height": [
-      "interpolate",
-      ["linear"],
-      ["zoom"],
-      15,
-      0,
-      15.05,
-      ["get", "height"],
-    ],
+    "fill-extrusion-height": ["interpolate", ["linear"], ["zoom"], 15, 0, 15.05, ["get", "height"]],
     "fill-extrusion-base": [
       "interpolate",
       ["linear"],
@@ -73,12 +66,8 @@ export default function StartupMap() {
     fetchStartups();
   }, []);
 
-  const {
-    dashboardSelection,
-    setDashboardSelection,
-    selectedLocation,
-    setSelectedLocation,
-  } = useInteractiveMap();
+  const { dashboardSelection, setDashboardSelection, selectedLocation, setSelectedLocation } =
+    useInteractiveMap();
 
   const onClick = useCallback(
     async (event: MapLayerMouseEvent) => {
@@ -194,12 +183,11 @@ export default function StartupMap() {
               (dashboardSelection.previewLocation?.longitude as number)
             }
             latitude={
-              selectedLocation?.latitude ||
-              (dashboardSelection.previewLocation?.latitude as number)
+              selectedLocation?.latitude || (dashboardSelection.previewLocation?.latitude as number)
             }
             offset={[0, -20]}
           >
-            <MapPin className="text-info" size={40} strokeWidth={3} />
+            <CustomPin className="h-10 w-10 text-info" />
           </Marker>
         )}
         {startups.map((startup) => (
@@ -210,12 +198,13 @@ export default function StartupMap() {
             offset={[0, -20]}
           >
             <div
-              className="group relative  text-red-500"
+              className="group relative flex w-32 justify-center text-red-500"
               onClick={() => {
                 router.replace(`/details/${startup.id}`);
               }}
             >
-              <MapPin size={40} strokeWidth={3} /> {startup.name}
+              <CustomPin className="h-10 w-10" />
+              <div className="absolute -bottom-6 text-center font-semibold">{startup.name}</div>
               <div className=" absolute bottom-5 hidden h-auto w-56 flex-col rounded-md  bg-slate-50 group-hover:flex">
                 <div className=" flex h-32 w-full flex-col bg-yellow-400">
                   <Image
