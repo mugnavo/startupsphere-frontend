@@ -84,14 +84,19 @@ export default function StartupDetailsModal({
   }
 
   async function submitForm(formData: FormData) {
-    if (!editable) return;
+    if (!editable) {
+      setLoading(false);
+      return;
+    }
 
     if (!startupLocationData) {
+      setLoading(false);
       setError("Please select a location from the map.");
       return;
     }
 
     if (startupCategories.length === 0) {
+      setLoading(false);
       setError("Please select at least one category.");
       return;
     }
