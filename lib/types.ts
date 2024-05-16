@@ -6,5 +6,7 @@ export interface LocationData {
 
 export interface DashboardSelection {
   active: boolean;
-  startupName: string | undefined;
+  startupName?: string;
+  edit: boolean;
+  previewLocation?: LocationData;
 }

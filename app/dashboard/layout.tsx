@@ -12,7 +12,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div
       className={
-        "absolute top-0 z-10 h-screen w-full flex-col bg-white bg-opacity-95 p-6 pl-28 drop-shadow-xl" +
+        "absolute top-0 z-10 h-screen w-full flex-col overflow-y-hidden bg-white bg-opacity-95 p-6 pl-28 drop-shadow-xl" +
         (dashboardSelection.active ? " hidden" : " flex")
       }
     >
@@ -32,9 +32,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Link
             role="tab"
             href="/dashboard/analytics"
-            className={
-              "tab" + (pathname.startsWith("/dashboard/analytics") ? " tab-active" : "")
-            }
+            className={"tab" + (pathname.startsWith("/dashboard/analytics") ? " tab-active" : "")}
           >
             Analytics
           </Link>
