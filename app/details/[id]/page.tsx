@@ -1,8 +1,10 @@
 "use client";
 
 import { Bookmark, Globe, Image, MapPin, ThumbsUp } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { startupControllerGetOneById } from "~/lib/api";
+import { Startup } from "~/lib/schemas";
 
 interface StartupDetails {
   name: string;
@@ -16,8 +18,19 @@ interface StartupDetails {
 }
 
 export default function StartupDetails() {
-  const router = useRouter();
-  const [startupDetails, setStartupDetails] = useState<StartupDetails>({
+  const idParams = useParams().id;
+  const [startupDetails, setStartupDetails] = useState<Startup | null>(null);
+
+  async function fetchStartupbyID() {
+    const { data } = await startupControllerGetOneById(Number(idParams));
+    if (data) {
+      setStartupDetails(data);
+    }
+  }
+  useEffect(() => {
+    fetchStartupbyID();
+  });
+  const [startupDetails1, setStartupDetails1] = useState<StartupDetails>({
     name: "Startup Name Inc.",
     address: "Cebu City, Philippines",
     website: "www.startup.com",
@@ -45,28 +58,29 @@ export default function StartupDetails() {
     >
       <div className="flex flex-grow items-center justify-center">
         <div className="flex h-64 w-full items-center justify-center bg-gray-200">
-          <Image size={128} color="#6B7280" />
+          {startupDetails?.logoUrl ? (
+            <img src={startupDetails.logoUrl} alt={startupDetails.name} />
+          ) : (
+            <Image size={128} color="#6B7280" />
+          )}
         </div>
       </div>
       <div className="border-t border-gray-200 py-4">
         <div className="flex items-center justify-between px-6">
-          <span className="text-lg font-bold">{startupDetails.name}</span>
+          <span className="text-lg font-bold">{startupDetails?.name}</span>
 
           <ThumbsUp size={24} onClick={handleLike} className="cursor-pointer" />
         </div>
         <div className="flex items-center px-6 py-1">
           <MapPin size={16} />
-          <span className="ml-2 text-sm">{startupDetails.address}</span>
+          <span className="ml-2 text-sm">{startupDetails?.locationName}</span>
         </div>
         <div className="flex items-center px-6 py-1">
           <Globe size={16} />
-          <span className="ml-2  text-sm">{startupDetails.website}</span>
+          <span className="ml-2  text-sm">{startupDetails?.websiteUrl}</span>
         </div>
         <div className="flex justify-center py-4">
-          <div
-            className="flex cursor-pointer justify-center py-4"
-            onClick={handleSaveToFavorites}
-          >
+          <div className="flex cursor-pointer justify-center py-4" onClick={handleSaveToFavorites}>
             <Bookmark size={18} />
             <span className="ml-1 text-sm underline">Save to favorites</span>
           </div>
@@ -74,24 +88,28 @@ export default function StartupDetails() {
         <hr className="border-gray-200" />
       </div>
       <div className="flex-grow overflow-y-auto px-6 py-4">
-        <div className="mb-1 font-bold">{startupDetails.founder}</div>
+        <div className="mb-1 font-bold">{startupDetails?.founderName}</div>
         <div className="mb-4 text-sm text-gray-300">Founder</div>
-        <div className="mb-1 font-bold">{startupDetails.foundedDate}</div>
+        <div className="mb-1 font-bold">{startupDetails?.foundedDate}</div>
         <div className="mb-4 text-sm text-gray-300">Established</div>
         <div className="mb-4 text-gray-600">{startupDescription()}</div>
         <hr className="mb-4 border-gray-200" />
         <div className="text-gray-600">
           <div className="mb-2">
-            <p className="font-bold">Industry:</p> {startupDetails.industry}
+            <p className="font-bold">Categories:</p>{" "}
+            <div className="flex flex-row flex-wrap">
+              {startupDetails?.categories.map((category, index) => (
+                <span key={index} className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-sm">
+                  {category}
+                </span>
+              ))}
+            </div>
           </div>
           <div className="mb-2">
-            <p className="font-bold">Contact Info:</p> {startupDetails.contactInfo}
+            <p className="font-bold">Contact Info:</p> {startupDetails?.contactInfo}
           </div>
           <div className="mb-2">
-            <p className="font-bold">Founded Date:</p> {startupDetails.foundedDate}
-          </div>
-          <div className="mb-2">
-            <p className="font-bold">Funding Stage:</p> {startupDetails.fundingStage}
+            <p className="font-bold">Founded Date:</p> {startupDetails?.foundedDate}
           </div>
         </div>
       </div>
