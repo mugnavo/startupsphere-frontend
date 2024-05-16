@@ -3,7 +3,6 @@ import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { GeocodingCore } from "@mapbox/search-js-core";
 import { ChevronLeft, MapPin } from "lucide-react";
 import "mapbox-gl/dist/mapbox-gl.css";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import type { FillExtrusionLayer, MapLayerMouseEvent } from "react-map-gl";
@@ -210,28 +209,26 @@ export default function StartupMap() {
             offset={[0, -20]}
           >
             <div
-              className="group relative  text-red-500"
+              className="group relative text-lg  text-red-500"
               onClick={() => {
                 router.replace(`/details/${startup.id}`);
               }}
             >
-              <MapPin size={40} strokeWidth={3} /> {startup.name}
-              <div className=" absolute bottom-5 hidden h-auto w-56 flex-col rounded-md  bg-slate-50 group-hover:flex">
+              <MapPin size={40} strokeWidth={3} className="z-0" /> {startup.name}
+              <div className="fixed -left-20 bottom-20  z-50 hidden h-auto w-56 flex-col rounded-md bg-slate-50  shadow group-hover:z-50 group-hover:flex">
                 <div className=" flex h-32 w-full flex-col bg-yellow-400">
-                  <Image
-                    height={500}
-                    width={504}
-                    objectPosition="top"
+                  <img
+                    className="h-[122px] rounded-md object-cover"
                     src={startup.logoUrl || ""}
                     alt="logo"
-                  ></Image>
+                  ></img>
 
-                  <h1 className=" relative bottom-10 m-3 text-xl font-bold text-white">
+                  <h1 className="absolute bottom-10 m-3 text-xl font-bold text-white [text-shadow:_1px_1px_10px_rgb(0_0_0_/_70%)]">
                     {startup.name[0].toUpperCase()}
                     {startup.name.slice(1, -1)}
                   </h1>
                 </div>
-                <p className="m-3 line-clamp-2 h-auto w-auto overflow-hidden text-black">
+                <p className="m-3 line-clamp-2 h-auto w-auto overflow-hidden text-sm text-black">
                   {startup.description}
                 </p>
               </div>
