@@ -11,7 +11,7 @@ import Map, { Layer, Marker, useMap } from "react-map-gl";
 import { useInteractiveMap } from "~/context/hooks";
 import { startupControllerGetAll } from "~/lib/api";
 import { Startup } from "~/lib/schemas";
-import CustomPin from "./CustomPin";
+import CustomPin from "./map/CustomPin";
 import Geocoder from "./map/Geocoder";
 
 const building3dLayer: FillExtrusionLayer = {
