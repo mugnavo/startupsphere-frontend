@@ -135,6 +135,7 @@ export default function StartupDetailsModal({
         <h3 className="text-lg font-bold">{capitalize(mode)} startup</h3>
         <form
           action={(formData: FormData) => {
+            setError(undefined);
             setLoading(true);
             submitForm(formData);
           }}
