@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  Heart,
+  Bookmark,
   History,
   LayoutDashboard,
   LineChart,
@@ -17,7 +17,7 @@ import SidebarLink, { type SidebarLinkProps } from "./sidebar-link";
 const SIDEBAR_LINKS: SidebarLinkProps[] = [
   { href: "/search", name: "Search", icon: <Search size={22} /> },
   { href: "/recents", name: "Recent", icon: <History size={22} /> },
-  { href: "/favorites", name: "Favorites", icon: <Heart size={22} /> },
+  { href: "/bookmarks", name: "Bookmarks", icon: <Bookmark size={22} /> },
   { href: "/trending", name: "Trending", icon: <Megaphone size={22} /> },
   { href: "/top", name: "Top", icon: <LineChart size={22} /> },
   { href: "/dashboard", name: "Dashboard", icon: <LayoutDashboard size={22} /> },
