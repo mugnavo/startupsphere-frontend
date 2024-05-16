@@ -10,6 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { Startup } from "~/lib/schemas";
 
 const data = [
   {
@@ -46,17 +47,12 @@ const data = [
   },
 ];
 
-const arr = [1, 1, 1, 1];
-const newarr = arr.filter((value, index) => arr.indexOf(value) === index);
-console.log(newarr);
-//for all startups the chart will be how many startups are added through time
-//get all timestamps, get all, then sort
-
-export default class LChart extends PureComponent {
-  static demoUrl =
-    "https://codesandbox.io/p/sandbox/line-chart-width-xaxis-padding-8v7952";
-
+interface LChartProps {
+  startups: Startup[];
+}
+export default class LChart extends PureComponent<LChartProps> {
   render() {
+    const { startups } = this.props;
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
