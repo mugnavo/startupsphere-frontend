@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Bookmark,
-  History,
-  LayoutDashboard,
-  LineChart,
-  Megaphone,
-  Search,
-} from "lucide-react";
+import { Bookmark, History, LayoutDashboard, Megaphone, Search } from "lucide-react";
 import { Fragment } from "react";
 
 import { useSession } from "~/context/hooks";
@@ -19,7 +12,6 @@ const SIDEBAR_LINKS: SidebarLinkProps[] = [
   { href: "/recents", name: "Recent", icon: <History size={22} /> },
   { href: "/bookmarks", name: "Bookmarks", icon: <Bookmark size={22} /> },
   { href: "/trending", name: "Trending", icon: <Megaphone size={22} /> },
-  { href: "/top", name: "Top", icon: <LineChart size={22} /> },
   { href: "/dashboard", name: "Dashboard", icon: <LayoutDashboard size={22} /> },
 ];
 
@@ -35,9 +27,8 @@ export default function SideMenu() {
           item.href === "/dashboard" ? !!user /* TODO: change to user?.moderator */ : true
         ).map((item, index) => (
           <Fragment key={item.href}>
+            {index === 4 && <div className="m-2 w-3 rounded-lg border border-gray-300" />}
             <SidebarLink item={item} />
-
-            {index === 2 && <div className="m-2 w-3 rounded-lg border border-gray-300" />}
           </Fragment>
         ))}
       </div>
