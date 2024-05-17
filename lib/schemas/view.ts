@@ -11,5 +11,6 @@ export interface View {
   id: number;
   startup: Startup;
   timestamp: string;
-  user_id: number;
+  /** @nullable */
+  user_id: number | null;
 }
