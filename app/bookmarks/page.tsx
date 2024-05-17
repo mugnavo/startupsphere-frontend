@@ -120,10 +120,10 @@ export default function Bookmarks() {
                   }}
                 />
                 {selectedStartupId === startup.id && (
-                  <div className="absolute right-0 top-8 mt-1 rounded border border-gray-200 bg-white shadow-md">
+                  <div className="absolute left-5 top-2 mt-1 rounded border border-gray-200 bg-white text-sm shadow-md">
                     <ul>
                       <li
-                        className="cursor-pointer px-4 py-2"
+                        className="cursor-pointer px-5 py-2"
                         onClick={(e) => {
                           e.stopPropagation(); // Prevents triggering the onClick of the parent div
                           handleMenuItemClick("Remove");
@@ -132,7 +132,7 @@ export default function Bookmarks() {
                         Remove
                       </li>
                       <li
-                        className="cursor-pointer px-4 py-2"
+                        className="cursor-pointer border-t px-5 py-2"
                         onClick={(e) => {
                           e.stopPropagation(); // Prevents triggering the onClick of the parent div
                           handleMenuItemClick("Share");
