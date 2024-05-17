@@ -10,6 +10,9 @@ import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import type {
   AuthResponse,
   Bookmark,
+  CreateBookmarkRequest,
+  CreateLikeRequest,
+  CreateViewRequest,
   Like,
   LoginRequest,
   RegisterRequest,
@@ -73,11 +76,11 @@ export const bookmarkControllerGetAll = <TData = AxiosResponse<Bookmark[]>>(
   return axios.get(`http://localhost:3001/bookmarks`, options);
 };
 
-export const bookmarkControllerCreate = <TData = AxiosResponse<Bookmark>>(
-  bookmark: Bookmark,
+export const bookmarkControllerCreate = <TData = AxiosResponse<void>>(
+  createBookmarkRequest: CreateBookmarkRequest,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`http://localhost:3001/bookmarks`, bookmark, options);
+  return axios.post(`http://localhost:3001/bookmarks`, createBookmarkRequest, options);
 };
 
 export const bookmarkControllerFindOneByUserIdAndStartupId = <TData = AxiosResponse<Bookmark>>(
@@ -96,11 +99,18 @@ export const bookmarkControllerRemove = <TData = AxiosResponse<void>>(
   return axios.delete(`http://localhost:3001/bookmarks/${userId}/${startupId}`, options);
 };
 
-export const likeControllerCreate = <TData = AxiosResponse<Like>>(
-  like: Like,
+export const bookmarkControllerFindAllByStartupId = <TData = AxiosResponse<Bookmark[]>>(
+  startupId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`http://localhost:3001/likes`, like, options);
+  return axios.get(`http://localhost:3001/bookmarks/${startupId}`, options);
+};
+
+export const likeControllerCreate = <TData = AxiosResponse<void>>(
+  createLikeRequest: CreateLikeRequest,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.post(`http://localhost:3001/likes`, createLikeRequest, options);
 };
 
 export const likeControllerRemove = <TData = AxiosResponse<void>>(
@@ -119,11 +129,18 @@ export const likeControllerFindOneByUserIdAndStartupId = <TData = AxiosResponse<
   return axios.get(`http://localhost:3001/likes/${userId}/${startupId}`, options);
 };
 
-export const viewControllerCreate = <TData = AxiosResponse<View>>(
-  view: View,
+export const likeControllerFindAllByStartupId = <TData = AxiosResponse<Like[]>>(
+  startupId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`http://localhost:3001/views`, view, options);
+  return axios.get(`http://localhost:3001/likes/${startupId}`, options);
+};
+
+export const viewControllerCreate = <TData = AxiosResponse<void>>(
+  createViewRequest: CreateViewRequest,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.post(`http://localhost:3001/views`, createViewRequest, options);
 };
 
 export const viewControllerGetAll = <TData = AxiosResponse<View[]>>(
@@ -147,12 +164,14 @@ export type StartupControllerGetOneByIdResult = AxiosResponse<Startup>;
 export type StartupControllerUpdateResult = AxiosResponse<Startup>;
 export type StartupControllerDeleteResult = AxiosResponse<unknown>;
 export type BookmarkControllerGetAllResult = AxiosResponse<Bookmark[]>;
-export type BookmarkControllerCreateResult = AxiosResponse<Bookmark>;
+export type BookmarkControllerCreateResult = AxiosResponse<void>;
 export type BookmarkControllerFindOneByUserIdAndStartupIdResult = AxiosResponse<Bookmark>;
 export type BookmarkControllerRemoveResult = AxiosResponse<void>;
-export type LikeControllerCreateResult = AxiosResponse<Like>;
+export type BookmarkControllerFindAllByStartupIdResult = AxiosResponse<Bookmark[]>;
+export type LikeControllerCreateResult = AxiosResponse<void>;
 export type LikeControllerRemoveResult = AxiosResponse<void>;
 export type LikeControllerFindOneByUserIdAndStartupIdResult = AxiosResponse<Like>;
-export type ViewControllerCreateResult = AxiosResponse<View>;
+export type LikeControllerFindAllByStartupIdResult = AxiosResponse<Like[]>;
+export type ViewControllerCreateResult = AxiosResponse<void>;
 export type ViewControllerGetAllResult = AxiosResponse<View[]>;
 export type ViewControllerFindAllByStartupIdResult = AxiosResponse<View[]>;

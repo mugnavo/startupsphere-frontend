@@ -8,6 +8,9 @@
 
 export * from "./authResponse";
 export * from "./bookmark";
+export * from "./createBookmarkRequest";
+export * from "./createLikeRequest";
+export * from "./createViewRequest";
 export * from "./like";
 export * from "./loginRequest";
 export * from "./registerRequest";

@@ -5,10 +5,9 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSession } from "~/context/hooks";
 import {
-  likeControllerCreate,
   likeControllerFindOneByUserIdAndStartupId,
-  likeControllerRemove,
   startupControllerGetOneById,
+  viewControllerCreate,
 } from "~/lib/api";
 import { Startup } from "~/lib/schemas";
 
@@ -26,6 +25,10 @@ export default function StartupDetails() {
     try {
       const { data } = await startupControllerGetOneById(Number(startupId));
       if (data) {
+        await viewControllerCreate({
+          userId,
+          startupId: parseInt(startupId as string),
+        });
         setStartupDetails(data);
       }
     } catch (error) {
