@@ -57,11 +57,7 @@ export const startupControllerUpdate = <TData = AxiosResponse<Startup>>(
   startupRequest: StartupRequest,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.put(
-    `http://localhost:3001/startups/${startupId}`,
-    startupRequest,
-    options
-  );
+  return axios.put(`http://localhost:3001/startups/${startupId}`, startupRequest, options);
 };
 
 export const startupControllerDelete = <TData = AxiosResponse<unknown>>(
@@ -84,9 +80,7 @@ export const bookmarkControllerCreate = <TData = AxiosResponse<Bookmark>>(
   return axios.post(`http://localhost:3001/bookmarks`, bookmark, options);
 };
 
-export const bookmarkControllerFindOneByUserIdAndStartupId = <
-  TData = AxiosResponse<Bookmark>,
->(
+export const bookmarkControllerFindOneByUserIdAndStartupId = <TData = AxiosResponse<Bookmark>>(
   userId: number,
   startupId: number,
   options?: AxiosRequestConfig

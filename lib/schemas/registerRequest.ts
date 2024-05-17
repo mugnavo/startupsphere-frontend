@@ -10,6 +10,5 @@ export interface RegisterRequest {
   email: string;
   firstName: string;
   lastName: string;
-  location: string;
   password: string;
 }

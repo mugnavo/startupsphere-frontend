@@ -6,11 +6,10 @@
  * OpenAPI spec version: 1.0
  */
 import type { Startup } from "./startup";
-import type { User } from "./user";
 
 export interface View {
   id: number;
   startup: Startup;
   timestamp: string;
-  user: User;
+  user_id: number;
 }
