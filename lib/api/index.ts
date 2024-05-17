@@ -99,6 +99,13 @@ export const bookmarkControllerRemove = <TData = AxiosResponse<void>>(
   return axios.delete(`http://localhost:3001/bookmarks/${userId}/${startupId}`, options);
 };
 
+export const bookmarkControllerFindAllByUserId = <TData = AxiosResponse<Bookmark[]>>(
+  userId: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.get(`http://localhost:3001/bookmarks/${userId}`, options);
+};
+
 export const bookmarkControllerFindAllByStartupId = <TData = AxiosResponse<Bookmark[]>>(
   startupId: number,
   options?: AxiosRequestConfig
@@ -167,6 +174,7 @@ export type BookmarkControllerGetAllResult = AxiosResponse<Bookmark[]>;
 export type BookmarkControllerCreateResult = AxiosResponse<void>;
 export type BookmarkControllerFindOneByUserIdAndStartupIdResult = AxiosResponse<Bookmark>;
 export type BookmarkControllerRemoveResult = AxiosResponse<void>;
+export type BookmarkControllerFindAllByUserIdResult = AxiosResponse<Bookmark[]>;
 export type BookmarkControllerFindAllByStartupIdResult = AxiosResponse<Bookmark[]>;
 export type LikeControllerCreateResult = AxiosResponse<void>;
 export type LikeControllerRemoveResult = AxiosResponse<void>;
