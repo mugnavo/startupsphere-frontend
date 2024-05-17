@@ -16,8 +16,8 @@ export const InteractionContext = createContext<
 
 export const SessionContext = createContext<
   | {
-      user: User | null;
-      setUser: Dispatch<SetStateAction<User | null>>;
+      user: User | undefined | null;
+      setUser: Dispatch<SetStateAction<User | undefined | null>>;
     }
   | undefined
 >(undefined);

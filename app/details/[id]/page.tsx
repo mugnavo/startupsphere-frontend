@@ -3,6 +3,7 @@
 import { Bookmark, ChevronLeft, Globe, Image, MapPin, ThumbsUp } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useMap } from "react-map-gl";
 import { useSession } from "~/context/hooks";
 import {
   bookmarkControllerCreate,
@@ -25,16 +26,15 @@ export default function StartupDetails() {
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [viewed, setViewed] = useState(false);
   const router = useRouter();
+  const { mainMap } = useMap();
 
   async function fetchStartupbyID() {
     try {
       const { data } = await startupControllerGetOneById(Number(startupId));
       if (data) {
-        await viewControllerCreate({
-          userId,
-          startupId: parseInt(startupId as string),
-        });
+        mainMap?.flyTo({ center: { lat: data.locationLat, lng: data.locationLng } });
         setStartupDetails(data);
       }
     } catch (error) {
@@ -78,6 +78,18 @@ export default function StartupDetails() {
 
   useEffect(() => {
     fetchStartupbyID();
+  }, []);
+
+  useEffect(() => {
+    if (!viewed && user !== undefined) {
+      setViewed(true);
+
+      viewControllerCreate({
+        userId,
+        startupId: parseInt(startupId as string),
+      });
+      console.log("viewing");
+    }
     if (userId) {
       fetchLikeStatus();
       fetchBookmarkStatus();

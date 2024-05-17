@@ -13,11 +13,9 @@ export function ContextProvider({ children }: { children: React.ReactNode }) {
     edit: false,
     previewLocation: undefined,
   });
-  const [selectedLocation, setSelectedLocation] = useState<LocationData | undefined>(
-    undefined
-  );
+  const [selectedLocation, setSelectedLocation] = useState<LocationData | undefined>(undefined);
 
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null | undefined>(undefined);
 
   function parseUser() {
     const jwt = localStorage.getItem("jwt");
