@@ -5,11 +5,17 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSession } from "~/context/hooks";
 import {
+  bookmarkControllerCreate,
+  bookmarkControllerFindOneByUserIdAndStartupId,
+  bookmarkControllerRemove,
+  likeControllerCreate,
   likeControllerFindOneByUserIdAndStartupId,
+  likeControllerRemove,
   startupControllerGetOneById,
   viewControllerCreate,
 } from "~/lib/api";
 import { Startup } from "~/lib/schemas";
+import { withAuth } from "~/lib/utils";
 
 export default function StartupDetails() {
   const { id: startupId } = useParams();
@@ -40,7 +46,8 @@ export default function StartupDetails() {
     try {
       const { data } = await likeControllerFindOneByUserIdAndStartupId(
         userId ?? 0,
-        Number(startupId)
+        Number(startupId),
+        withAuth
       ); // Pass userId and startupId with a default value of 0
       if (data) {
         setLiked(true);
@@ -52,41 +59,72 @@ export default function StartupDetails() {
     }
   }
 
+  async function fetchBookmarkStatus() {
+    try {
+      const { data } = await bookmarkControllerFindOneByUserIdAndStartupId(
+        userId ?? 0,
+        Number(startupId),
+        withAuth
+      ); // Pass userId and startupId with a default value of 0
+      if (data) {
+        setBookmarked(true);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching bookmark status:", error);
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     fetchStartupbyID();
     if (userId) {
       fetchLikeStatus();
+      fetchBookmarkStatus();
     }
-  }, [userId]); // Fetch like status when userId changes
+  }, [userId]); // Fetch like & bookmark status when userId changes
 
-  const handleBookmarked = () => {
+  const handleBookmarked = async () => {
+    if (!userId) {
+      console.error("User not authenticated.");
+      return;
+    }
+
     console.log("Bookmarked!");
     setBookmarked(!bookmarked);
+    try {
+      if (!bookmarked) {
+        await bookmarkControllerCreate({ userId: userId, startupId: Number(startupId) }, withAuth);
+        console.log("Bookmarked!");
+      } else {
+        await bookmarkControllerRemove(userId, Number(startupId), withAuth);
+        console.log("Bookmark removed!");
+      }
+    } catch (error) {
+      console.error("Error toggling bookmark:", error);
+    }
   };
 
-  const handleLike = async () => {
-    console.log("Liked!");
-    setLiked(!liked);
-    // try {
-    //   if (!userId) {
-    //     console.error("User not authenticated.");
-    //     return;
-    //   }
+   const handleLike = async () => {
+     if (!userId) {
+       console.error("User not authenticated.");
+       return;
+     }
 
-    //   if (!liked) {
-    //     // If not liked, create a new like
-    //     await likeControllerCreate({ user: userId, startup: Number(startupId) });
-    //     console.log("Liked!");
-    //   } else {
-    //     // If already liked, remove the like
-    //     await likeControllerRemove(userId, Number(startupId));
-    //     console.log("Disliked!");
-    //   }
-    //   setLiked(!liked); // Toggle liked status
-    // } catch (error) {
-    //   console.error("Error toggling like:", error);
-    // }
-  };
+     console.log("Liked!");
+     setLiked(!liked);
+     try {
+       if (!liked) {
+         await likeControllerCreate({ userId: userId, startupId: Number(startupId)}, withAuth);
+         console.log("Liked!");
+       } else {
+         await likeControllerRemove(userId, Number(startupId), withAuth);
+         console.log("Disliked!");
+       }
+     } catch (error) {
+       console.error("Error toggling like:", error);
+     }
+   };
 
   // Parse the date string and format it
   const formattedDate = startupDetails?.foundedDate
@@ -177,15 +215,15 @@ export default function StartupDetails() {
           <hr className=" mb-4 border-gray-200" />
           <div className="flex justify-center py-4">
             <div className="flex flex-col items-center">
-              <span className="text-lg font-semibold text-blue-500">4</span>
+              <span className="text-lg font-semibold text-blue-500">{startupDetails?.likes}</span>
               <span className="text-sm">Likes</span>
             </div>
             <div className="ml-6 flex flex-col items-center">
-              <span className="text-lg font-semibold text-blue-500">20</span>
+              <span className="text-lg font-semibold text-blue-500">{startupDetails?.bookmarks}</span>
               <span className="text-sm">Bookmarks</span>
             </div>
             <div className="ml-6 flex flex-col items-center">
-              <span className="text-lg font-semibold text-blue-500">69</span>
+              <span className="text-lg font-semibold text-blue-500">{startupDetails?.views}</span>
               <span className="text-sm">Views</span>
             </div>
           </div>
