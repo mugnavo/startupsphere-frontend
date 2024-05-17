@@ -31,30 +31,32 @@ export default function DashboardAnalytics() {
   ]);
 
   const getAverageStats = (stat: keyof StartupStats): number => {
-    return (
+    const result =
       startups.reduce((accumulator, currentValue) => accumulator + currentValue[stat], 0) /
-      startups.length
-    );
+      startups.length;
+    return parseInt(result.toFixed(1));
   };
 
   async function fetchStartups() {
     const result = await startupControllerGetAll();
     if (result.data) {
       // limit 5 to display
-      setStartups(result.data);
-      setSelectedStartup(result.data);
-      setRelatedStartups(result.data);
-
-      // TODO: HANDLE EMPTY STARTUPS IDK
-      if (startups[0]) {
-        setStats({
-          views: getAverageStats("views"),
-          likes: getAverageStats("likes"),
-          bookmarks: getAverageStats("bookmarks"),
-        });
-      }
+      setStartups(result.data.slice(0, 5));
+      setSelectedStartup(result.data.slice(0, 5));
+      setRelatedStartups(result.data.slice(0, 5));
     }
   }
+
+  // TODO: HANDLE EMPTY STARTUPS IDK
+  useEffect(() => {
+    if (startups[0]) {
+      setStats({
+        views: getAverageStats("views"),
+        likes: getAverageStats("likes"),
+        bookmarks: getAverageStats("bookmarks"),
+      });
+    }
+  }, [startups]);
 
   useEffect(() => {
     setSearchResults(
@@ -315,7 +317,7 @@ export default function DashboardAnalytics() {
                   </tr>
                 </thead>
                 <tbody>
-                  {relatedStartups.slice(0, 5).map((startup, index) => (
+                  {relatedStartups.map((startup, index) => (
                     <tr key={index}>
                       <th>{startup.id}</th>
                       <td>{startup.name}</td>
