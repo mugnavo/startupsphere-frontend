@@ -4,16 +4,9 @@ import { Image, MoreVertical, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSession } from "~/context/hooks";
-import { bookmarkControllerGetAll } from "~/lib/api";
+import { bookmarkControllerFindAllByUserId } from "~/lib/api";
 import { Bookmark } from "~/lib/schemas";
 import { withAuth } from "~/lib/utils";
-
-interface Startup {
-  id: number;
-  name: string;
-  locationName: string;
-  categories: string[];
-}
 
 export default function Bookmarks() {
   const router = useRouter();
@@ -39,10 +32,8 @@ export default function Bookmarks() {
         return;
       }
 
-      const { data } = await bookmarkControllerGetAll(withAuth);
-      console.log(data);
-      const userBookmarks = data.filter((bookmark) => bookmark.user.id === userId);
-      setBookmarkStartups(userBookmarks);
+      const { data } = await bookmarkControllerFindAllByUserId(userId, withAuth);
+      setBookmarkStartups(data);
     } catch (error) {
       console.error("Error fetching bookmark startups:", error);
     }

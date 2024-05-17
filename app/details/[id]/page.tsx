@@ -105,26 +105,26 @@ export default function StartupDetails() {
     }
   };
 
-   const handleLike = async () => {
-     if (!userId) {
-       console.error("User not authenticated.");
-       return;
-     }
+  const handleLike = async () => {
+    if (!userId) {
+      console.error("User not authenticated.");
+      return;
+    }
 
-     console.log("Liked!");
-     setLiked(!liked);
-     try {
-       if (!liked) {
-         await likeControllerCreate({ userId: userId, startupId: Number(startupId)}, withAuth);
-         console.log("Liked!");
-       } else {
-         await likeControllerRemove(userId, Number(startupId), withAuth);
-         console.log("Disliked!");
-       }
-     } catch (error) {
-       console.error("Error toggling like:", error);
-     }
-   };
+    console.log("Liked!");
+    setLiked(!liked);
+    try {
+      if (!liked) {
+        await likeControllerCreate({ userId: userId, startupId: Number(startupId) }, withAuth);
+        console.log("Liked!");
+      } else {
+        await likeControllerRemove(userId, Number(startupId), withAuth);
+        console.log("Disliked!");
+      }
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
+  };
 
   // Parse the date string and format it
   const formattedDate = startupDetails?.foundedDate
@@ -219,7 +219,9 @@ export default function StartupDetails() {
               <span className="text-sm">Likes</span>
             </div>
             <div className="ml-6 flex flex-col items-center">
-              <span className="text-lg font-semibold text-blue-500">{startupDetails?.bookmarks}</span>
+              <span className="text-lg font-semibold text-blue-500">
+                {startupDetails?.bookmarks}
+              </span>
               <span className="text-sm">Bookmarks</span>
             </div>
             <div className="ml-6 flex flex-col items-center">
