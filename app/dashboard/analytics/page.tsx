@@ -32,10 +32,8 @@ export default function DashboardAnalytics() {
 
   const getAverageStats = (stat: keyof StartupStats): number => {
     return (
-      startups.reduce(
-        (accumulator, currentValue) => accumulator + currentValue[stat],
-        0
-      ) / startups.length
+      startups.reduce((accumulator, currentValue) => accumulator + currentValue[stat], 0) /
+      startups.length
     );
   };
 
@@ -43,9 +41,9 @@ export default function DashboardAnalytics() {
     const result = await startupControllerGetAll();
     if (result.data) {
       // limit 5 to display
-      setStartups(result.data.slice(0, 5));
-      setSelectedStartup(result.data.slice(0, 5));
-      setRelatedStartups(result.data.slice(0, 5));
+      setStartups(result.data);
+      setSelectedStartup(result.data);
+      setRelatedStartups(result.data);
 
       // TODO: HANDLE EMPTY STARTUPS IDK
       if (startups[0]) {
@@ -60,9 +58,7 @@ export default function DashboardAnalytics() {
 
   useEffect(() => {
     setSearchResults(
-      startups.filter((startup) =>
-        startup.name.toLowerCase().includes(searchValue.toLowerCase())
-      )
+      startups.filter((startup) => startup.name.toLowerCase().includes(searchValue.toLowerCase()))
     );
   }, [searchValue]);
 
@@ -71,9 +67,7 @@ export default function DashboardAnalytics() {
     stat_arr.sort();
     stat_arr.reverse();
     setSelectedStartup(startups.filter((startup) => startup[stat] == stat_arr[0])[0]);
-    setRelatedStartups(
-      startups.filter((startup) => stat_arr.includes(startup[stat])).slice(1)
-    );
+    setRelatedStartups(startups.filter((startup) => stat_arr.includes(startup[stat])).slice(1));
   };
 
   const handleFilters = (statOne?: keyof StartupStats, statTwo?: keyof StartupStats) => {
@@ -144,13 +138,8 @@ export default function DashboardAnalytics() {
       }
       case 2:
         {
-          const activeCategoryNames = activeCategories.map((active) =>
-            active.name.toLowerCase()
-          );
-          if (
-            activeCategoryNames.includes("likes") &&
-            activeCategoryNames.includes("views")
-          ) {
+          const activeCategoryNames = activeCategories.map((active) => active.name.toLowerCase());
+          if (activeCategoryNames.includes("likes") && activeCategoryNames.includes("views")) {
             handleFilters("likes", "views");
           } else if (
             activeCategoryNames.includes("likes") &&
@@ -326,7 +315,7 @@ export default function DashboardAnalytics() {
                   </tr>
                 </thead>
                 <tbody>
-                  {relatedStartups.map((startup, index) => (
+                  {relatedStartups.slice(0, 5).map((startup, index) => (
                     <tr key={index}>
                       <th>{startup.id}</th>
                       <td>{startup.name}</td>
