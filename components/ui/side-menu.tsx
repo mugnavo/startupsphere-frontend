@@ -24,7 +24,11 @@ export default function SideMenu() {
         <Logo />
 
         {SIDEBAR_LINKS.filter((item) =>
-          item.href === "/dashboard" ? !!user /* TODO: change to user?.moderator */ : true
+          item.href === "/dashboard"
+            ? !!user /* TODO: change to user?.moderator */
+            : ["/recents", "/bookmarks"].includes(item.href)
+              ? !!user
+              : true
         ).map((item, index) => (
           <Fragment key={item.href}>
             {index === 4 && <div className="m-2 w-3 rounded-lg border border-gray-300" />}
