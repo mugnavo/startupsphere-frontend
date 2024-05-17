@@ -61,9 +61,7 @@ export default function LoginModal() {
                 </span>
                 <span>
                   {errorMessage && (
-                    <span className="text-xs font-semibold text-red-400">
-                      {errorMessage}
-                    </span>
+                    <span className="text-xs font-semibold text-red-400">{errorMessage}</span>
                   )}
                 </span>
               </div>
@@ -148,7 +146,6 @@ function RegisterModal() {
       firstName: formData.get("firstName") as string,
       lastName: formData.get("lastName") as string,
       password: formData.get("password") as string,
-      location: "Earth", // TODO: TEMPORARY
     });
     if (data.access_token) {
       localStorage.setItem("jwt", data.access_token);
