@@ -1,6 +1,6 @@
 "use client";
 
-import { Image, MoreVertical, Search, X } from "lucide-react";
+import { MoreVertical, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSession } from "~/context/hooks";
@@ -79,8 +79,8 @@ export default function Bookmarks() {
               onClick={() => router.push(`/details/${startup.id}`)}
             >
               <div className="flex items-center">
-                <div className="mr-4 flex h-16 w-16 items-center justify-center rounded-md bg-gray-200">
-                  <Image size={24} color="#6B7280" />
+                <div className="mr-4 flex w-16 items-center justify-center rounded-md bg-gray-200">
+                  <img src={startup.logoUrl} alt={startup.name} />
                 </div>
                 <div>
                   <div className="flex flex-col">
