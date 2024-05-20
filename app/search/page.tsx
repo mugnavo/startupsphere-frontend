@@ -127,7 +127,7 @@ export default function SearchContent() {
                 >
                   <div className="flex items-center">
                     <div className="mr-4 flex h-16 w-16 items-center justify-center rounded-md bg-gray-200">
-                      <Image size={24} color="#6B7280" />
+                      <Image size={24} color="#6B7281" />
                     </div>
                     <div>
                       <div className="flex flex-col">
