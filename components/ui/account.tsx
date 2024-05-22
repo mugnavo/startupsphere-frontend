@@ -24,7 +24,7 @@ export default function Account() {
   );
 }
 
-function AccountMenu({ user }: { user: User | null }) {
+function AccountMenu({ user }: { user: User | null | undefined }) {
   const { setUser } = useSession();
   const menuItems = [
     { id: 1, name: user?.email || "Guest", icon: UserRound },
@@ -32,9 +32,7 @@ function AccountMenu({ user }: { user: User | null }) {
   ];
   return (
     <div className="absolute right-3 top-14 z-50 flex h-auto w-48 flex-col gap-1 rounded bg-white p-2 text-sm">
-      <span className="m-2">
-        {user ? `${user?.firstName} ${user?.lastName} ` : "Guest"}
-      </span>
+      <span className="m-2">{user ? `${user?.firstName} ${user?.lastName} ` : "Guest"}</span>
 
       {/* guest dont need button for their account */}
       {(user ? menuItems : menuItems.slice(1)).map((item, index) => (
