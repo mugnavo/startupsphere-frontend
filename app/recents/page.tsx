@@ -1,48 +1,32 @@
 "use client";
 
-import { Image, MoreVertical, Search, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
-interface Startup {
-  id: number;
-  name: string;
-  locationName: string;
-  categories: string[];
-}
+import { useSession } from "~/context/hooks";
+import { viewControllerFindRecentsByUserId } from "~/lib/api";
+import { View } from "~/lib/schemas";
+import { withAuth } from "~/lib/utils";
 
 export default function Recents() {
   const router = useRouter();
-  const [recentStartups, setRecentStartups] = useState<Startup[]>([]);
-  const [selectedStartupId, setSelectedStartupId] = useState<number | null>(null);
+  const [recentViews, setRecentViews] = useState<View[]>([]);
+  const { user } = useSession();
 
+  const fetchRecentStartups = async () => {
+    if (!user) return;
+    const { data } = await viewControllerFindRecentsByUserId(user.id, withAuth);
 
-  const fetchRecentStartups = () => {
-    // Fetch recent startups from a database or static data
-    // For demonstration purposes, using static data
-    const recent: Startup[] = [
-      {
-        id: 1,
-        name: "Doce Much",
-        locationName: "Luyo sa cebu doc, Cebu City",
-        categories: ["Education", "EdTech"],
-      },
-      {
-        id: 2,
-        name: "Vonnitation Albs",
-        locationName: "Mingming Lair, Cebu City",
-        categories: ["Tech", "Innovation"],
-      },
-      // Add more recent startups as needed
-    ];
-    setRecentStartups(recent);
+    // remove duplicate startups
+    const uniqueData = data.filter(
+      (value, index, self) => self.findIndex((t) => t.startup.id === value.startup.id) === index
+    );
+    setRecentViews(uniqueData);
   };
 
-  // Call fetchRecentStartups when component mounts
   useEffect(() => {
     fetchRecentStartups();
-  }, []);
-
+  }, [user]);
 
   return (
     <div className="absolute left-20 top-0 z-10 h-screen w-[22rem] bg-white p-4">
@@ -53,24 +37,24 @@ export default function Recents() {
       <div className="relative mt-2">
         {/* List of recent startups */}
         <div className="mt-2">
-          {recentStartups.map((startup) => (
+          {recentViews.map((view) => (
             <div
-              key={startup.id}
+              key={view.id}
               className="mb-2 flex cursor-pointer items-center justify-between rounded-md p-4 hover:bg-gray-100"
               style={{ height: "6rem", width: "100%" }}
-              onClick={() => router.push(`/details/${startup.id}`)}
+              onClick={() => router.push(`/details/${view.startup.id}`)}
             >
               <div className="flex items-center">
                 <div className="mr-4 flex h-16 w-16 items-center justify-center rounded-md bg-gray-200">
-                  {/* eslint-disable-next-line jsx-a11y/alt-text */}
-                  <Image size={24} color="#6B7280" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={view.startup.logoUrl} alt={view.startup.name} />
                 </div>
                 <div>
                   <div className="flex flex-col">
-                    <div className="text-sm font-semibold">{startup.name}</div>
-                    <div className="text-xs text-gray-500">{startup.locationName}</div>
+                    <div className="text-sm font-semibold">{view.startup.name}</div>
+                    <div className="text-xs text-gray-500">{view.startup.locationName}</div>
                     <div className="mt-1 flex flex-wrap">
-                      {startup.categories.map((category, index) => (
+                      {view.startup.categories.map((category, index) => (
                         <span
                           key={index}
                           className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs"

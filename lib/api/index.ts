@@ -156,6 +156,13 @@ export const viewControllerGetAll = <TData = AxiosResponse<View[]>>(
   return axios.get(`http://localhost:3001/views`, options);
 };
 
+export const viewControllerFindRecentsByUserId = <TData = AxiosResponse<View[]>>(
+  userId: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.get(`http://localhost:3001/views/${userId}`, options);
+};
+
 export const viewControllerFindAllByStartupId = <TData = AxiosResponse<View[]>>(
   startupId: number,
   options?: AxiosRequestConfig
@@ -182,4 +189,5 @@ export type LikeControllerFindOneByUserIdAndStartupIdResult = AxiosResponse<Like
 export type LikeControllerFindAllByStartupIdResult = AxiosResponse<Like[]>;
 export type ViewControllerCreateResult = AxiosResponse<void>;
 export type ViewControllerGetAllResult = AxiosResponse<View[]>;
+export type ViewControllerFindRecentsByUserIdResult = AxiosResponse<View[]>;
 export type ViewControllerFindAllByStartupIdResult = AxiosResponse<View[]>;
