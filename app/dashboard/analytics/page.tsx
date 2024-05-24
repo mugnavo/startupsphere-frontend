@@ -2,7 +2,7 @@
 
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
-import LChart from "~/components/ui/line-chart";
+//import LChart from "~/components/ui/line-chart";
 import { startupControllerGetAll } from "~/lib/api";
 import { Startup } from "~/lib/schemas";
 
@@ -297,9 +297,9 @@ export default function DashboardAnalytics() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-center bg-slate-100 p-4">
+            {/* <div className="flex items-center justify-center bg-slate-100 p-4">
               <LChart startups={startups} />
-            </div>
+            </div> */}
           </div>
 
           {/*  h-[30%] */}
