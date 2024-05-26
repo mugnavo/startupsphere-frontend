@@ -20,21 +20,25 @@ type StartupStats = {
 export default function DashboardAnalytics() {
   const statKeys: (keyof StartupStats)[] = ["views", "likes", "bookmarks"];
   const [startups, setStartups] = useState<Startup[]>([]);
-  const [searchValue, setSearchValue] = useState("");
-  const [searchResults, setSearchResults] = useState<Startup[]>([]);
   const [selectedStartup, setSelectedStartup] = useState<Startup | Startup[]>([]);
   const [relatedStartups, setRelatedStartups] = useState<Startup[]>([]);
-  const [stats, setStats] = useState({
-    views: 0,
-    likes: 0,
-    bookmarks: 0,
-  });
+
+  const [searchValue, setSearchValue] = useState("");
+  const [searchResults, setSearchResults] = useState<Startup[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const [stats, setStats] = useState<StartupStats>();
   const [categories, setCategories] = useState([
-    { id: 1, name: "All", isActive: true },
-    { id: 2, name: "Likes", isActive: false },
-    { id: 3, name: "Bookmarks", isActive: false },
-    { id: 4, name: "Views", isActive: false },
+    { name: "All", isActive: true },
+    { name: "Likes", isActive: false },
+    { name: "Bookmarks", isActive: false },
+    { name: "Views", isActive: false },
   ]);
+
+  const container = document.getElementById("container");
+  container?.addEventListener("click", () => {
+    setIsSearching(false);
+  });
 
   const [likes, setLikes] = useState<Like[]>([]);
   const [views, setViews] = useState<View[]>([]);
@@ -62,28 +66,17 @@ export default function DashboardAnalytics() {
     }
   }
 
-  useEffect(() => {
-    fetchChartData();
-  }, []);
-
-  const getAverageStats = (stat: keyof StartupStats): number => {
-    const result =
-      startups.reduce((accumulator, currentValue) => accumulator + currentValue[stat], 0) /
-      startups.length;
-    return parseInt(result.toFixed(1));
-  };
-
   async function fetchStartups() {
-    const result = await startupControllerGetAll();
-    if (result.data) {
-      // limit 5 to display
-      setStartups(result.data.slice(0, 5));
-      setSelectedStartup(result.data.slice(0, 5));
-      setRelatedStartups(result.data.slice(0, 5));
-    }
+    startupControllerGetAll()
+      .then((result) => setStartups(result.data))
+      .catch((error) => console.error("Error fetching startups:", error));
   }
 
-  // TODO: HANDLE EMPTY STARTUPS IDK
+  useEffect(() => {
+    fetchChartData();
+    fetchStartups();
+  }, []);
+
   useEffect(() => {
     if (startups[0]) {
       setStats({
@@ -92,7 +85,16 @@ export default function DashboardAnalytics() {
         bookmarks: getAverageStats("bookmarks"),
       });
     }
+    // init all upon view
+    handleFilters();
   }, [startups]);
+
+  const getAverageStats = (stat: keyof StartupStats): number => {
+    const result =
+      startups.reduce((accumulator, currentValue) => accumulator + currentValue[stat], 0) /
+      startups.length;
+    return parseFloat(result.toFixed(1));
+  };
 
   useEffect(() => {
     setSearchResults(
@@ -100,15 +102,41 @@ export default function DashboardAnalytics() {
     );
   }, [searchValue]);
 
-  const handleOneFilter = (stat: keyof StartupStats) => {
-    const stat_arr = startups.map((startup) => startup[stat]);
-    stat_arr.sort();
-    stat_arr.reverse();
-    setSelectedStartup(startups.filter((startup) => startup[stat] == stat_arr[0])[0]);
-    setRelatedStartups(startups.filter((startup) => stat_arr.includes(startup[stat])).slice(1));
-  };
+  // if a startup is selected, filters are off
+  useEffect(() => {
+    if (!Array.isArray(selectedStartup)) {
+      let updatedItems = [...categories];
+      updatedItems[0] = { ...updatedItems[0], isActive: false };
+      setCategories(updatedItems);
 
-  const handleFilters = (statOne?: keyof StartupStats, statTwo?: keyof StartupStats) => {
+      // set related startups based on the category of the selected startup
+      setRelatedStartups(
+        startups.filter(
+          (startup) =>
+            startup != selectedStartup &&
+            startup.categories.some((category) => selectedStartup.categories.includes(category))
+        )
+      );
+    }
+  }, [selectedStartup]);
+
+  // const handleAllSelected = () => {
+  //   const stat_arr = startups.map((startup) => {
+  //     const value = startup.likes + startup.views + startup.bookmarks;
+  //     return {
+  //       startup: startup,
+  //       value: value,
+  //     };
+  //   });
+  //   stat_arr.sort((a, b) => a.value - b.value).reverse();
+  //   setRelatedStartups(stat_arr.map((stat) => stat.startup).slice(0, 5));
+  // };
+
+  const handleFilters = (
+    statOne?: keyof StartupStats,
+    statTwo?: keyof StartupStats,
+    statThree?: keyof StartupStats
+  ) => {
     const stat_arr = startups.map((startup) => {
       let value: number;
 
@@ -120,43 +148,19 @@ export default function DashboardAnalytics() {
         // console.log("1");
       } else {
         value = startup.likes + startup.views + startup.bookmarks;
-        // console.log("3");
       }
-
       return {
-        name: startup.name,
+        startup: startup,
         value: value,
       };
     });
 
-    stat_arr.sort();
-    stat_arr.reverse();
+    stat_arr.sort((a, b) => a.value - b.value).reverse();
 
-    setSelectedStartup(startups.filter((startup) => startup.name == stat_arr[0].name)[0]);
-    setRelatedStartups(
-      startups
-        .filter((startup) => stat_arr.map((stat) => stat.name).includes(startup.name))
-        .reverse()
-        .slice(1)
-    );
-  };
+    setSelectedStartup(statOne ? stat_arr[0].startup : []);
+    setRelatedStartups(stat_arr.map((stat) => stat.startup).slice(statOne ? 1 : 0, 5));
 
-  const handleThreeFilters = () => {
-    const stat_arr = startups.map((startup) => ({
-      name: startup.name,
-      value: startup.likes + startup.views + startup.bookmarks,
-    }));
-
-    stat_arr.sort();
-    stat_arr.reverse();
-
-    setSelectedStartup(startups.filter((startup) => startup.name == stat_arr[0].name)[0]);
-    setRelatedStartups(
-      startups
-        .filter((startup) => stat_arr.map((stat) => stat.name).includes(startup.name))
-        .reverse()
-        .slice(1)
-    );
+    console.log(stat_arr, "hhh");
   };
 
   useEffect(() => {
@@ -171,6 +175,9 @@ export default function DashboardAnalytics() {
           handleFilters("views");
         } else if (activeCategories[0].name.toLowerCase() == "bookmarks") {
           handleFilters("bookmarks");
+        } else {
+          // all cat and selecting all 3 cat are the same, no?
+          handleFilters();
         }
         break;
       }
@@ -193,22 +200,10 @@ export default function DashboardAnalytics() {
         }
         break;
       case 3: {
-        handleFilters();
+        handleFilters("likes", "bookmarks", "views");
       }
     }
   }, [categories]);
-
-  useEffect(() => {
-    fetchStartups();
-  }, []);
-
-  useEffect(() => {
-    if (!Array.isArray(selectedStartup)) {
-      let updatedItems = [...categories];
-      updatedItems[0] = { ...updatedItems[0], isActive: false };
-      setCategories(updatedItems);
-    }
-  }, [selectedStartup]);
 
   const toggleSelected = (index: number) => {
     let updatedItems = [...categories];
@@ -220,13 +215,8 @@ export default function DashboardAnalytics() {
       (itemToMove.isActive ? 0 : 1);
 
     if (itemToMove.name.toLowerCase() == "all") {
-      updatedItems = updatedItems.map((item) => ({
-        ...item,
-        isActive: false,
-      }));
-      updatedItems.unshift({ ...itemToMove, isActive: true });
-      setSelectedStartup(startups);
-      setRelatedStartups(startups);
+      updatedItems.forEach((item) => (item.isActive = false)); // Deselect all other categories
+      updatedItems.unshift({ ...itemToMove, isActive: true }); // move all to beginning
     } //toggle selection & move it after all selected categories, if any
     else {
       updatedItems.splice(indexToInsert, 0, {
@@ -237,44 +227,55 @@ export default function DashboardAnalytics() {
         updatedItems[0] = { ...updatedItems[0], isActive: true }; //if all categories deselected, all is selected
     }
     setCategories(updatedItems);
-    if (itemToMove.isActive && activeCategories.length == 1) {
-      setSelectedStartup(startups);
-      setRelatedStartups(startups);
-    }
   };
 
   return (
     <div className=" relative mx-auto h-auto w-3/5 ">
-      {searchValue && (
+      {isSearching && (
         <div className="absolute left-1/2 top-16 z-10 flex h-48 w-full -translate-x-1/2 transform flex-col gap-2 overflow-auto rounded bg-white p-2 py-4 shadow">
-          {searchResults[0]
-            ? searchResults.map((startup, index) => (
+          {searchValue ? (
+            searchResults.length ? (
+              searchResults.map((startup, index) => (
                 <div
                   key={index}
                   className="rounded p-2 hover:bg-slate-100"
                   onClick={() => {
                     setSelectedStartup(startup);
-                    setRelatedStartups(
-                      startups.filter((otherStartup) => otherStartup.name != startup.name)
-                    );
                     setSearchValue("");
                   }}
                 >
                   {startup.name}
                 </div>
               ))
-            : searchValue && (
-                <p className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-slate-500">
-                  No Startup Found
-                </p>
-              )}
+            ) : (
+              <p className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-slate-500">
+                No Startup Found
+              </p>
+            )
+          ) : (
+            startups.map((startup, index) => (
+              <div
+                key={index}
+                className="rounded p-2 hover:bg-slate-100"
+                onClick={() => {
+                  setSelectedStartup(startup);
+                  setSearchValue("");
+                }}
+              >
+                {startup.name}
+              </div>
+            ))
+          )}
         </div>
       )}
       {startups[0] && (
         <>
           <div>
             <div>
-              <div className="relative mt-4 rounded-md shadow-sm">
+              <div
+                className="relative mt-4 rounded-md shadow-sm"
+                onClick={() => setIsSearching(true)}
+              >
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
                   <Search size={15} className="  text-gray-500" />
                 </div>
@@ -295,7 +296,7 @@ export default function DashboardAnalytics() {
             <div className="flex gap-3 overflow-x-auto pb-2.5 pt-1">
               {categories.map((category, index) => (
                 <button
-                  key={category.id}
+                  key={index}
                   onClick={() => toggleSelected(index)}
                   type="button"
                   className={`flex items-center gap-3 ${category.isActive ? "btn-active" : "btn-primary"}`}
@@ -310,9 +311,9 @@ export default function DashboardAnalytics() {
             <div className="mt-3 flex flex-col  gap-20 p-4">
               <h1 className="text-xl">
                 {Array.isArray(selectedStartup) ? (
-                  <>{selectedStartup.length} Total Startups</>
+                  <>{relatedStartups.length} Total Startups</>
                 ) : (
-                  <>{selectedStartup.name}</>
+                  <>{selectedStartup?.name}</>
                 )}
               </h1>
               <div className=" mx-auto flex w-full gap-2 ">
@@ -321,11 +322,13 @@ export default function DashboardAnalytics() {
                     <div key={index} className="flex flex-1 flex-col">
                       {Array.isArray(selectedStartup) ? (
                         <>
-                          <span className="text-3xl">{stats[stat]}</span>
+                          <span className="text-3xl">{stats ? stats[stat] : 0}</span>
                           <span>average</span>{" "}
                         </>
                       ) : (
-                        <span className="text-3xl">{selectedStartup[stat]}</span>
+                        <span className="text-3xl">
+                          {selectedStartup ? selectedStartup[stat] : 0}
+                        </span>
                       )}
                       <span>{stat}</span>
                     </div>
@@ -333,7 +336,7 @@ export default function DashboardAnalytics() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-center bg-slate-100 p-4">
+            <div className="flex items-center justify-center p-4">
               <LChart likes={likes} views={views} bookmarks={bookmarks} />
             </div>
           </div>
@@ -348,8 +351,9 @@ export default function DashboardAnalytics() {
                   <tr>
                     <th>ID</th>
                     <th className="w-auto">Startup Name</th>
-                    <th className="w-auto">Location</th>
-                    <th className="w-auto">Industry</th>
+                    <th className="w-auto">Views</th>
+                    <th className="w-auto">Likes</th>
+                    <th className="w-auto">Bookmarks</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -357,8 +361,28 @@ export default function DashboardAnalytics() {
                     <tr key={index}>
                       <th>{startup.id}</th>
                       <td>{startup.name}</td>
-                      <td>{startup.locationName}</td>
-                      <td>{startup.categories}</td>
+                      <td>{startup.views}</td>
+                      <td>{startup.likes}</td>
+                      <td>{startup.bookmarks}</td>
+                    </tr>
+                  ))}
+                  {Array.from({ length: 5 - relatedStartups.length }).map((_, index) => (
+                    <tr key={index}>
+                      <td>
+                        <div className="flex h-6  "></div>
+                      </td>
+                      <td>
+                        <div className="flex h-6 "></div>
+                      </td>
+                      <td>
+                        <div className="flex h-6 "></div>
+                      </td>
+                      <td>
+                        <div className="flex h-6 "></div>
+                      </td>
+                      <td>
+                        <div className="flex h-6"></div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
