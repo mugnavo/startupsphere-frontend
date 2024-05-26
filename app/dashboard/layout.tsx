@@ -11,6 +11,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div
+      id="container"
       className={
         "absolute top-0 z-10 h-screen w-full flex-col overflow-y-hidden bg-white bg-opacity-95 p-6 pl-28 drop-shadow-xl" +
         (dashboardSelection.active ? " hidden" : " flex")
