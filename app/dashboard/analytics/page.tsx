@@ -2,9 +2,15 @@
 
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
-//import LChart from "~/components/ui/line-chart";
-import { startupControllerGetAll } from "~/lib/api";
-import { Startup } from "~/lib/schemas";
+import LChart from "~/components/ui/line-chart";
+import {
+  bookmarkControllerGetAll,
+  likeControllerGetAll,
+  startupControllerGetAll,
+  viewControllerGetAll,
+} from "~/lib/api";
+import { Bookmark, Like, Startup, View } from "~/lib/schemas";
+import { withAuth } from "~/lib/utils";
 
 type StartupStats = {
   views: number;
@@ -29,6 +35,36 @@ export default function DashboardAnalytics() {
     { id: 3, name: "Bookmarks", isActive: false },
     { id: 4, name: "Views", isActive: false },
   ]);
+
+  const [likes, setLikes] = useState<Like[]>([]);
+  const [views, setViews] = useState<View[]>([]);
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
+
+  async function fetchChartData() {
+    const likesPromise = likeControllerGetAll(withAuth);
+    const viewsPromise = viewControllerGetAll(withAuth);
+    const bookmarksPromise = bookmarkControllerGetAll(withAuth);
+
+    const [likesRes, viewsRes, bookmarksRes] = await Promise.all([
+      likesPromise,
+      viewsPromise,
+      bookmarksPromise,
+    ]);
+
+    if (likesRes.data) {
+      setLikes(likesRes.data);
+    }
+    if (viewsRes.data) {
+      setViews(viewsRes.data);
+    }
+    if (bookmarksRes.data) {
+      setBookmarks(bookmarksRes.data);
+    }
+  }
+
+  useEffect(() => {
+    fetchChartData();
+  }, []);
 
   const getAverageStats = (stat: keyof StartupStats): number => {
     const result =
@@ -297,9 +333,9 @@ export default function DashboardAnalytics() {
                 </div>
               </div>
             </div>
-            {/* <div className="flex items-center justify-center bg-slate-100 p-4">
-              <LChart startups={startups} />
-            </div> */}
+            <div className="flex items-center justify-center bg-slate-100 p-4">
+              <LChart likes={likes} views={views} bookmarks={bookmarks} />
+            </div>
           </div>
 
           {/*  h-[30%] */}
