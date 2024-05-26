@@ -4,10 +4,7 @@ import MapboxGeocoder, { GeocoderOptions } from "@mapbox/mapbox-gl-geocoder";
 import { useState } from "react";
 import { ControlPosition, Marker, MarkerProps, useControl } from "react-map-gl";
 
-type GeocoderControlProps = Omit<
-  GeocoderOptions,
-  "accessToken" | "mapboxgl" | "marker"
-> & {
+type GeocoderControlProps = Omit<GeocoderOptions, "accessToken" | "mapboxgl" | "marker"> & {
   mapboxAccessToken: string;
   marker?: boolean | Omit<MarkerProps, "longitude" | "latitude">;
 
@@ -38,13 +35,10 @@ export default function Geocoder(props: GeocoderControlProps) {
         const { result } = evt;
         const location =
           result &&
-          (result.center ||
-            (result.geometry?.type === "Point" && result.geometry.coordinates));
+          (result.center || (result.geometry?.type === "Point" && result.geometry.coordinates));
         if (location && props.marker) {
           const markerProps = typeof props.marker === "object" ? props.marker : {};
-          setMarker(
-            <Marker {...markerProps} longitude={location[0]} latitude={location[1]} />
-          );
+          setMarker(<Marker {...markerProps} longitude={location[0]} latitude={location[1]} />);
         } else {
           setMarker(null);
         }
@@ -74,10 +68,7 @@ export default function Geocoder(props: GeocoderControlProps) {
     if (geocoder.getFlyTo() !== props.flyTo && props.flyTo !== undefined) {
       geocoder.setFlyTo(props.flyTo);
     }
-    if (
-      geocoder.getPlaceholder() !== props.placeholder &&
-      props.placeholder !== undefined
-    ) {
+    if (geocoder.getPlaceholder() !== props.placeholder && props.placeholder !== undefined) {
       geocoder.setPlaceholder(props.placeholder);
     }
     if (geocoder.getCountries() !== props.countries && props.countries !== undefined) {
