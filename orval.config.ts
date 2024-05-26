@@ -14,7 +14,7 @@ export default defineConfig({
       headers: true,
     },
     input: {
-      target: "http://localhost:3001/docs/spec.yaml",
+      target: `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/docs/spec.yaml`,
     },
   },
 });

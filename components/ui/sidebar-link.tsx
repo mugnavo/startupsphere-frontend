@@ -14,13 +14,10 @@ export default function SidebarLink({ item }: { item: SidebarLinkProps }) {
   return (
     <Link
       href={item.href}
-      prefetch
       className={`${pathname === item.href || (pathname !== "/" && pathname.startsWith(item.href)) ? " text-gray-900" : "text-gray-500"} flex cursor-pointer flex-col items-center text-center`}
     >
       {item.icon}
-      <div
-        className={`${pathname === item.href ? "font-bold" : "font-light"} mt-1 text-xs`}
-      >
+      <div className={`${pathname === item.href ? "font-bold" : "font-light"} mt-1 text-xs`}>
         {item.name}
       </div>
     </Link>

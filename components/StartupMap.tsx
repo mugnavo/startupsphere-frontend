@@ -164,6 +164,7 @@ export default function StartupMap() {
         style={{ width: "100%", height: "100%" }}
         onClick={onClick}
         mapStyle="mapbox://styles/mapbox/streets-v12"
+        projection={{ name: "globe" }}
       >
         {dashboardSelection.active && (
           <Geocoder

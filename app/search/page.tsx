@@ -1,5 +1,5 @@
 "use client";
-import { Image, Search, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { startupControllerGetAll } from "~/lib/api";
@@ -111,8 +111,8 @@ export default function SearchContent() {
                   .map((_, i) => (
                     <div key={i} className="flex flex-col items-center">
                       <div className="flex w-[90%] flex-row items-center gap-2">
-                        <div className="h-16 w-10 animate-pulse rounded-lg bg-base-300" />
-                        <div className="h-16 w-[80%] animate-pulse rounded-lg bg-base-300" />
+                        <div className="h-14 w-10 animate-pulse rounded-lg bg-base-300" />
+                        <div className="h-14 w-[80%] animate-pulse rounded-lg bg-base-300" />
                       </div>
                     </div>
                   ))}
@@ -126,8 +126,8 @@ export default function SearchContent() {
                   onClick={() => router.push(`/details/${startup.id}`)}
                 >
                   <div className="flex items-center">
-                    <div className="mr-4 flex h-16 w-16 items-center justify-center rounded-md bg-gray-200">
-                      <Image size={24} color="#6B7280" />
+                    <div className="mr-4 flex w-16 items-center justify-center rounded-md bg-gray-200">
+                      <img src={startup.logoUrl} alt={startup.name} />
                     </div>
                     <div>
                       <div className="flex flex-col">

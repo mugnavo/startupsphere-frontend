@@ -318,7 +318,7 @@ export default function StartupDetailsModal({
           {editable && (
             <div className="modal-action col-span-full flex items-center justify-end gap-2">
               {error && <div className="text-sm text-red-500">{error}</div>}
-              <button disabled={loading} className="btn">
+              <button disabled={loading || uploadingImage} className="btn">
                 {loading && <span className="loading loading-spinner" />}
                 Save
               </button>
