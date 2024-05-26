@@ -30,7 +30,6 @@ export default function DashboardAnalytics() {
     { id: 4, name: "Views", isActive: false },
   ]);
 
-  
   async function fetchStartups() {
     const result = await startupControllerGetAll();
     if (result.data) {
@@ -40,13 +39,13 @@ export default function DashboardAnalytics() {
       setRelatedStartups(result.data.slice(0, 5));
     }
   }
-  
+
   useEffect(() => {
     setSearchResults(
       startups.filter((startup) => startup.name.toLowerCase().includes(searchValue.toLowerCase()))
     );
   }, [searchValue]);
-  
+
   // TODO: HANDLE EMPTY STARTUPS IDK
   useEffect(() => {
     if (startups[0]) {
@@ -57,14 +56,13 @@ export default function DashboardAnalytics() {
       });
     }
   }, [startups]);
-  
+
   const getAverageStats = (stat: keyof StartupStats): number => {
     const result =
       startups.reduce((accumulator, currentValue) => accumulator + currentValue[stat], 0) /
       startups.length;
-    return parseInt(result.toFixed(1));
+    return parseFloat(result.toFixed(1));
   };
-  
 
   const handleOneFilter = (stat: keyof StartupStats) => {
     const stat_arr = startups.map((startup) => startup[stat]);
