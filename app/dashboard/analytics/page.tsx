@@ -35,11 +35,6 @@ export default function DashboardAnalytics() {
     { name: "Views", isActive: false },
   ]);
 
-  const container = document.getElementById("container");
-  container?.addEventListener("click", () => {
-    setIsSearching(false);
-  });
-
   const [likes, setLikes] = useState<Like[]>([]);
   const [views, setViews] = useState<View[]>([]);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
@@ -239,9 +234,11 @@ export default function DashboardAnalytics() {
                 <div
                   key={index}
                   className="rounded p-2 hover:bg-slate-100"
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setSelectedStartup(startup);
                     setSearchValue("");
+                    setIsSearching(false);
                   }}
                 >
                   {startup.name}
@@ -257,9 +254,11 @@ export default function DashboardAnalytics() {
               <div
                 key={index}
                 className="rounded p-2 hover:bg-slate-100"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   setSelectedStartup(startup);
                   setSearchValue("");
+                  setIsSearching(false);
                 }}
               >
                 {startup.name}
@@ -274,7 +273,7 @@ export default function DashboardAnalytics() {
             <div>
               <div
                 className="relative mt-4 rounded-md shadow-sm"
-                onClick={() => setIsSearching(true)}
+                onClick={() => setIsSearching(!isSearching)}
               >
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
                   <Search size={15} className="  text-gray-500" />
