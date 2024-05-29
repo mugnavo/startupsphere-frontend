@@ -24,3 +24,14 @@ Misc:
 - Type safety with [TypeScript 5](https://www.typescriptlang.org/docs/)
 - Linting & formatting with [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/)
 - [pnpm](https://pnpm.io/) package manager
+
+## Team
+
+- Tampus, Nathaniel - [dotnize](https://github.com/dotnize)
+- Baclayon, Leonel - [carefreebee](https://github.com/carefreebee)
+- Sagmon, Liden - [lninyow](https://github.com/lninyow)
+- Ursonal, Jameel - [SmolDuck02](https://github.com/SmolDuck02)
+
+<a href="https://github.com/mugnavo/startupsphere/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=mugnavo/startupsphere" />
+</a>
