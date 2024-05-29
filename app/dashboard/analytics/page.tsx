@@ -89,7 +89,7 @@ export default function DashboardAnalytics() {
     handleFilters();
   }, [startups]);
 
-  const getAverageStats = (stat: keyof StartupStats): number => {
+  function getAverageStats (stat: keyof StartupStats): number {
     const result =
       startups.reduce((accumulator, currentValue) => accumulator + currentValue[stat], 0) /
       startups.length;
@@ -120,23 +120,12 @@ export default function DashboardAnalytics() {
     }
   }, [selectedStartup]);
 
-  // const handleAllSelected = () => {
-  //   const stat_arr = startups.map((startup) => {
-  //     const value = startup.likes + startup.views + startup.bookmarks;
-  //     return {
-  //       startup: startup,
-  //       value: value,
-  //     };
-  //   });
-  //   stat_arr.sort((a, b) => a.value - b.value).reverse();
-  //   setRelatedStartups(stat_arr.map((stat) => stat.startup).slice(0, 5));
-  // };
 
-  const handleFilters = (
+  function handleFilters  (
     statOne?: keyof StartupStats,
     statTwo?: keyof StartupStats,
     statThree?: keyof StartupStats
-  ) => {
+  )  {
     const stat_arr = startups.map((startup) => {
       let value: number;
 
@@ -205,7 +194,7 @@ export default function DashboardAnalytics() {
     }
   }, [categories]);
 
-  const toggleSelected = (index: number) => {
+  function toggleSelected (index: number) {
     let updatedItems = [...categories];
     let itemToMove = updatedItems.splice(index, 1)[0]; // Remove item at index and store it
     updatedItems[0] = { ...updatedItems[0], isActive: false };
