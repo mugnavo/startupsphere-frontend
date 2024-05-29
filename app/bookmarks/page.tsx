@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreVertical, Search, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSession } from "~/context/hooks";
@@ -14,15 +14,6 @@ export default function Bookmarks() {
   const userId = user ? user.id : null;
   const [bookmarkStartups, setBookmarkStartups] = useState<Bookmark[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [selectedStartupId, setSelectedStartupId] = useState<number | null>(null);
-
-  const handleMoreOptionsClick = (id: number) => {
-    setSelectedStartupId((prevId) => (prevId === id ? null : id));
-  };
-
-  const handleMenuItemClick = (action: string) => {
-    console.log(`${action} is clicked`);
-  };
 
   const fetchBookmarkStartups = async () => {
     try {
@@ -98,40 +89,6 @@ export default function Bookmarks() {
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="relative flex items-center">
-                <MoreVertical
-                  size={24}
-                  className="cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleMoreOptionsClick(id);
-                  }}
-                />
-                {selectedStartupId === id && (
-                  <div className="absolute left-5 top-2 mt-1 rounded border border-gray-200 bg-white text-sm shadow-md">
-                    <ul>
-                      <li
-                        className="cursor-pointer px-5 py-2"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleMenuItemClick("Remove");
-                        }}
-                      >
-                        Remove
-                      </li>
-                      <li
-                        className="cursor-pointer border-t px-5 py-2"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleMenuItemClick("Share");
-                        }}
-                      >
-                        Share
-                      </li>
-                    </ul>
-                  </div>
-                )}
               </div>
             </div>
           ))}
