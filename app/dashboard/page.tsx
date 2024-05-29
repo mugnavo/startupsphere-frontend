@@ -52,6 +52,11 @@ export default function DashboardComponent() {
     openModal();
   }
 
+  function onDeleteStartup(startupId: number) {
+    startupControllerDelete(startupId, withAuth);
+    fetchStartups();
+  }
+
   function openModal() {
     const modal = document.getElementById("startup_details_modal");
     if (modal instanceof HTMLDialogElement) {
@@ -160,10 +165,7 @@ export default function DashboardComponent() {
                   <button
                     title="Delete"
                     className="btn btn-square btn-ghost btn-xs text-error hover:scale-110 hover:bg-transparent"
-                    onClick={async () => {
-                      await startupControllerDelete(startup.id, withAuth);
-                      fetchStartups();
-                    }}
+                    onClick={() => onDeleteStartup(startup.id)}
                   >
                     <Trash2 />
                   </button>
