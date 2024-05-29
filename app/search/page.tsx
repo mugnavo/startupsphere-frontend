@@ -45,7 +45,7 @@ export default function SearchContent() {
         ))
   );
 
-  function filterSelected(index: number) {
+  const filterSelected = (index: number) => {
     const updatedItems = [...categories];
     const itemToMove = updatedItems.splice(index, 1)[0]; // Remove item at index and store it
 
@@ -53,9 +53,9 @@ export default function SearchContent() {
       updatedItems.unshift({ ...itemToMove, isActive: true }); // Add the removed item to the beginning with isActive set to true
       setCategories(updatedItems);
     }
-  }
+  };
 
-  function filterDeselected(index: number) {
+  const filterDeselected = (index: number) => {
     const updatedItems = [...categories];
     const itemToMove = updatedItems.splice(index, 1)[0]; // Remove item at index and store it
 
@@ -66,7 +66,7 @@ export default function SearchContent() {
       isActive: false,
     }); // Add the removed item to the beginning with isActive set to true
     setCategories(updatedItems);
-  }
+  };
 
   return (
     <div className=" absolute left-20 top-0 z-10 h-screen w-[22rem] bg-white p-6">
