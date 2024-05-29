@@ -15,7 +15,7 @@ export default function Bookmarks() {
   const [bookmarkStartups, setBookmarkStartups] = useState<Bookmark[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const fetchBookmarkStartups = async () => {
+  async function fetchBookmarkStartups() {
     try {
       // Check if user is authenticated
       if (!userId) {
