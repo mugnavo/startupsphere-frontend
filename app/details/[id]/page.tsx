@@ -30,6 +30,15 @@ export default function StartupDetails() {
   const router = useRouter();
   const { mainMap } = useMap();
 
+  function createView() {
+    setViewed(true);
+
+    viewControllerCreate({
+      userId,
+      startupId: parseInt(startupId as string),
+    });
+  }
+
   async function fetchStartupbyID() {
     try {
       const { data } = await startupControllerGetOneById(Number(startupId));
@@ -82,13 +91,7 @@ export default function StartupDetails() {
 
   useEffect(() => {
     if (!viewed && user !== undefined) {
-      setViewed(true);
-
-      viewControllerCreate({
-        userId,
-        startupId: parseInt(startupId as string),
-      });
-      console.log("viewing");
+      createView();
     }
     if (userId) {
       fetchLikeStatus();
