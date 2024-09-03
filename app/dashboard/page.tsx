@@ -1,6 +1,6 @@
 "use client";
 
-import { BookText, MoveLeft, MoveRight, Search, SquarePen, Trash2 } from "lucide-react";
+import { Expand, MoveLeft, MoveRight, Search, SquarePen, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -106,9 +106,9 @@ export default function DashboardComponent() {
 
       {/* table */}
       <div className="overflow-x-auto">
-        <table className="table table-zebra table-sm">
+        <table className="table table-sm">
           {/* head */}
-          <thead>
+          <thead className="bg-warning">
             <tr>
               <th>ID</th>
               <th className="w-auto">Startup Name</th>
@@ -153,7 +153,7 @@ export default function DashboardComponent() {
                     onClick={() => openViewStartup(index)}
                     className="btn btn-square btn-ghost btn-xs hover:scale-110 hover:bg-transparent"
                   >
-                    <BookText />
+                    <Expand />
                   </button>
                   <button
                     title="Edit"
@@ -192,7 +192,7 @@ export default function DashboardComponent() {
           </tbody>
         </table>
         <div className="m-auto mt-3 flex w-full justify-between">
-          <div className="ml-3 flex items-center gap-6">
+          <div className="ml-3 flex items-center gap-6 italic">
             {startups.length ? (
               <>
                 {currentPage !== 1 && (
@@ -210,6 +210,7 @@ export default function DashboardComponent() {
             ) : (
               <>{""}</>
             )}
+            &nbsp; - &nbsp; {startups.length} total
           </div>
           <button onClick={openCreateStartup} className="btn bg-red-800 font-bold text-white">
             Add Startup

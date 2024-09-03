@@ -1,9 +1,8 @@
 "use client";
-import { formatDate, isSameDay } from "date-fns";
+import { format, isSameDay } from "date-fns";
 import { useEffect, useState } from "react";
 import {
   CartesianGrid,
-  Legend,
   Line,
   LineChart,
   ResponsiveContainer,
@@ -44,7 +43,7 @@ export default function Chart({
     }
 
     const dateData = dates.map((date) => {
-      const dateString = formatDate(date, "yyyy-MM-dd");
+      const dateString = format(date, "dd");
 
       const likeCount = likes.filter((like) => isSameDay(like.timestamp, date)).length;
       const viewCount = views.filter((view) => isSameDay(view.timestamp, date)).length;
@@ -54,8 +53,8 @@ export default function Chart({
 
       return {
         date: dateString,
-        likes: likeCount,
         views: viewCount,
+        likes: likeCount,
         favorites: bookmarkCount,
       };
     });
@@ -67,23 +66,23 @@ export default function Chart({
     <ResponsiveContainer width="100%" height="100%">
       <LineChart
         width={500}
-        height={250}
+        height={200}
         data={data}
         margin={{
           top: 5,
-          right: 30,
-          left: 20,
+          left: -35,
           bottom: 5,
         }}
+        className=" bg-[#fcfcfc]"
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="date" />
         <YAxis />
         <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey="likes" stroke="#8884d8" activeDot={{ r: 8 }} />
-        <Line type="monotone" dataKey="favorites" stroke="#82ca9d" />
-        <Line type="monotone" dataKey="views" stroke="#828888" />
+
+        <Line type="monotone" dataKey="views" stroke="#dc2626" />
+        <Line type="monotone" dataKey="likes" stroke="#fb923c" activeDot={{ r: 8 }} />
+        <Line type="monotone" dataKey="favorites" stroke="#fde047" />
       </LineChart>
     </ResponsiveContainer>
   );
