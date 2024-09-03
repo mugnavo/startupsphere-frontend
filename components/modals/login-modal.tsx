@@ -13,7 +13,7 @@ export default function LoginModal() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const login = async (formData: FormData) => {
+  async function login(formData: FormData) {
     const { data } = await authControllerLogin({
       email: formData.get("email") as string,
       password: formData.get("password") as string,
@@ -28,7 +28,7 @@ export default function LoginModal() {
       setErrorMessage(data.error);
     }
     setIsLoading(false);
-  };
+  }
 
   return (
     <>
@@ -140,7 +140,7 @@ function RegisterModal() {
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
 
-  const register = async (formData: FormData) => {
+  async function register(formData: FormData) {
     const { data } = await authControllerRegister({
       email: formData.get("email") as string,
       firstName: formData.get("firstName") as string,
@@ -157,7 +157,7 @@ function RegisterModal() {
       alert(data.error);
     }
     setIsLoading(false);
-  };
+  }
 
   return (
     <dialog id="register_modal" className="modal">

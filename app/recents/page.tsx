@@ -13,7 +13,7 @@ export default function Recents() {
   const [recentViews, setRecentViews] = useState<View[]>([]);
   const { user } = useSession();
 
-  const fetchRecentStartups = async () => {
+  async function fetchRecentStartups() {
     if (!user) return;
     const { data } = await viewControllerFindRecentsByUserId(user.id, withAuth);
 

@@ -30,6 +30,15 @@ export default function StartupDetails() {
   const router = useRouter();
   const { mainMap } = useMap();
 
+  function createView() {
+    setViewed(true);
+
+    viewControllerCreate({
+      userId,
+      startupId: parseInt(startupId as string),
+    });
+  }
+
   async function fetchStartupbyID() {
     try {
       const { data } = await startupControllerGetOneById(Number(startupId));
@@ -82,13 +91,7 @@ export default function StartupDetails() {
 
   useEffect(() => {
     if (!viewed && user !== undefined) {
-      setViewed(true);
-
-      viewControllerCreate({
-        userId,
-        startupId: parseInt(startupId as string),
-      });
-      console.log("viewing");
+      createView();
     }
     if (userId) {
       fetchLikeStatus();
@@ -96,7 +99,7 @@ export default function StartupDetails() {
     }
   }, [userId]); // Fetch like & bookmark status when userId changes
 
-  const handleBookmarked = async () => {
+  async function handleBookmark() {
     if (!userId) {
       console.error("User not authenticated.");
       return;
@@ -115,9 +118,9 @@ export default function StartupDetails() {
     } catch (error) {
       console.error("Error toggling bookmark:", error);
     }
-  };
+  }
 
-  const handleLike = async () => {
+  async function handleLike() {
     if (!userId) {
       console.error("User not authenticated.");
       return;
@@ -136,7 +139,7 @@ export default function StartupDetails() {
     } catch (error) {
       console.error("Error toggling like:", error);
     }
-  };
+  }
 
   // Parse the date string and format it
   const formattedDate = startupDetails?.foundedDate
@@ -189,10 +192,10 @@ export default function StartupDetails() {
           </a>
         </div>
         <div className="flex justify-center py-4">
-          <div className="flex cursor-pointer justify-center py-4" onClick={handleBookmarked}>
+          <div className="flex cursor-pointer justify-center py-4" onClick={handleBookmark}>
             <Bookmark
               size={18}
-              onClick={handleBookmarked}
+              onClick={handleBookmark}
               fill={bookmarked ? "#FFD700" : "none"}
               className={`transform cursor-pointer transition-transform ${bookmarked ? "scale-125" : "scale-100"}`}
             />
