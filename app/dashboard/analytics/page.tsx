@@ -1,7 +1,7 @@
 "use client";
 
-import { Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Album, ScanEye, Search, ThumbsUp } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import LChart from "~/components/ui/line-chart";
 import {
   bookmarkControllerGetAll,
@@ -17,16 +17,16 @@ type StartupStats = {
   likes: number;
   bookmarks: number;
 };
+
 export default function DashboardAnalytics() {
   const statKeys: (keyof StartupStats)[] = ["views", "likes", "bookmarks"];
-  const [startups, setStartups] = useState<Startup[]>([]);
-  const [selectedStartup, setSelectedStartup] = useState<Startup | Startup[]>([]);
-  const [relatedStartups, setRelatedStartups] = useState<Startup[]>([]);
 
+  const [startups, setStartups] = useState<Startup[]>([]);
+  const [selectedStartup, setSelectedStartup] = useState<Startup>();
+  const [relatedStartups, setRelatedStartups] = useState<Startup[]>([]);
   const [searchValue, setSearchValue] = useState("");
   const [searchResults, setSearchResults] = useState<Startup[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-
   const [stats, setStats] = useState<StartupStats>();
   const [categories, setCategories] = useState([
     { name: "All", isActive: true },
@@ -34,11 +34,15 @@ export default function DashboardAnalytics() {
     { name: "Bookmarks", isActive: false },
     { name: "Views", isActive: false },
   ]);
+  const backgroundColors = ["before:bg-[#dc2626]", "before:bg-[#fb923c]", "before:bg-[#fde047]"];
+  const icons = [<ScanEye size={40} />, <ThumbsUp size={40} color="white" />, <Album size={40} />];
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const [likes, setLikes] = useState<Like[]>([]);
   const [views, setViews] = useState<View[]>([]);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
 
+  //fetches all startup's like, view, bookmark counts only
   async function fetchChartData() {
     const likesPromise = likeControllerGetAll(withAuth);
     const viewsPromise = viewControllerGetAll(withAuth);
@@ -73,23 +77,8 @@ export default function DashboardAnalytics() {
   }, []);
 
   useEffect(() => {
-    if (startups[0]) {
-      setStats({
-        views: getAverageStats("views"),
-        likes: getAverageStats("likes"),
-        bookmarks: getAverageStats("bookmarks"),
-      });
-    }
-    // init all upon view
-    handleFilters();
+    if (startups) handleFilters();
   }, [startups]);
-
-  function getAverageStats (stat: keyof StartupStats): number {
-    const result =
-      startups.reduce((accumulator, currentValue) => accumulator + currentValue[stat], 0) /
-      startups.length;
-    return parseFloat(result.toFixed(1));
-  };
 
   useEffect(() => {
     setSearchResults(
@@ -99,7 +88,7 @@ export default function DashboardAnalytics() {
 
   // if a startup is selected, filters are off
   useEffect(() => {
-    if (!Array.isArray(selectedStartup)) {
+    if (selectedStartup) {
       let updatedItems = [...categories];
       updatedItems[0] = { ...updatedItems[0], isActive: false };
       setCategories(updatedItems);
@@ -109,18 +98,18 @@ export default function DashboardAnalytics() {
         startups.filter(
           (startup) =>
             startup != selectedStartup &&
-            startup.categories.some((category) => selectedStartup.categories.includes(category))
+            startup.categories.some((category) => selectedStartup?.categories.includes(category))
         )
       );
     }
   }, [selectedStartup]);
 
-
-  function handleFilters  (
+  //handle the Related Startups based on the selected filters
+  function handleFilters(
     statOne?: keyof StartupStats,
     statTwo?: keyof StartupStats,
     statThree?: keyof StartupStats
-  )  {
+  ) {
     const stat_arr = startups.map((startup) => {
       let value: number;
 
@@ -141,11 +130,13 @@ export default function DashboardAnalytics() {
 
     stat_arr.sort((a, b) => a.value - b.value).reverse();
 
-    setSelectedStartup(statOne ? stat_arr[0].startup : []);
-    setRelatedStartups(stat_arr.map((stat) => stat.startup).slice(statOne ? 1 : 0, 5));
-
-    console.log(stat_arr, "hhh");
-  };
+    // if there's a filter, assign the selected startup etc and make length of relatedSS to 6 because the 1 is made as selectedSS
+    if (statOne) setSelectedStartup(stat_arr[0]?.startup);
+    setRelatedStartups(
+      stat_arr.map((stat) => stat.startup).slice(statOne ? 1 : 0, statOne ? 6 : 5)
+    );
+    console.log(stat_arr, "relatedSS");
+  }
 
   useEffect(() => {
     const activeCategories = categories.filter((category) => category.isActive);
@@ -189,7 +180,8 @@ export default function DashboardAnalytics() {
     }
   }, [categories]);
 
-  function toggleSelected (index: number) {
+  //search filters
+  function toggleSelected(index: number) {
     let updatedItems = [...categories];
     let itemToMove = updatedItems.splice(index, 1)[0]; // Remove item at index and store it
     updatedItems[0] = { ...updatedItems[0], isActive: false };
@@ -201,6 +193,7 @@ export default function DashboardAnalytics() {
     if (itemToMove.name.toLowerCase() == "all") {
       updatedItems.forEach((item) => (item.isActive = false)); // Deselect all other categories
       updatedItems.unshift({ ...itemToMove, isActive: true }); // move all to beginning
+      setSelectedStartup(undefined); //removes selected startup, if any
     } //toggle selection & move it after all selected categories, if any
     else {
       updatedItems.splice(indexToInsert, 0, {
@@ -211,20 +204,172 @@ export default function DashboardAnalytics() {
         updatedItems[0] = { ...updatedItems[0], isActive: true }; //if all categories deselected, all is selected
     }
     setCategories(updatedItems);
-  };
+  }
 
+  //For the search suggestion modal: Close the modal if clicked outside of it
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        setIsSearching(false);
+      }
+    };
+
+    if (isSearching) {
+      document.addEventListener("click", handleClickOutside);
+    } else {
+      document.removeEventListener("click", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isSearching]);
+
+  const beforeContent = ["ave. views", "ave. likes", "ave. bookmarks"];
+  const afterContent = ["total views", "total likes", "total bookmarks"];
   return (
-    <div className=" relative mx-auto h-auto w-3/5 ">
+    <div className=" relative mx-auto flex h-auto w-3/5 flex-col gap-4 ">
+      <>
+        <div className="relative mt-4 flex justify-start gap-3">
+          <div className="pointer-events-none absolute  inset-y-0 left-0 flex items-center pl-2">
+            <Search size={15} className="  text-gray-500" />
+          </div>
+          <input
+            type="search"
+            name="search-startup"
+            id="search-startup"
+            className="block h-auto w-auto flex-1 rounded-md border-0 py-1.5 pl-7 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+            placeholder="Search Startups"
+            autoComplete="off"
+            value={searchValue}
+            onClick={() => setIsSearching(true)}
+            onChange={(e) => {
+              setSearchValue(e.target.value);
+            }}
+          />
+
+          {/* search filters */}
+          <div className="flex gap-3 overflow-x-auto  pb-1">
+            {categories.map((category, index) => (
+              <button
+                key={index}
+                onClick={() => toggleSelected(index)}
+                type="button"
+                className={`flex items-center gap-3 shadow-md  ${category.isActive ? "btn-active bg-red-800 text-white" : "btn-primary hover:bg-gray-200"}`}
+              >
+                {category.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid h-[18rem] w-full grid-cols-4 gap-2 ">
+          <div className="shadow-custom flex w-max flex-col gap-3 bg-orange-400 p-4">
+            <h1 className="text-sm">
+              {selectedStartup && selectedStartup.name ? (
+                <>{selectedStartup.name}</>
+              ) : (
+                <>{startups.length} Total Startups</>
+              )}
+            </h1>
+            <div className="  flex h-full w-full gap-2 ">
+              <div className="text-md flex flex-1 flex-col gap-1 text-center">
+                {(
+                  (selectedStartup && ["views", "likes", "bookmarks"]) || [views, likes, bookmarks]
+                ).map((stat, index) => (
+                  <div
+                    key={index}
+                    className={` relative flex w-[10rem] flex-1 items-center justify-end gap-3 rounded bg-orange-300 px-3 text-center    before:absolute before:bottom-0 before:left-0 before:top-0 before:w-2 before:rounded-s before:bg-red-800 `}
+                  >
+                    <span className={`   text-3xl`}>
+                      {(selectedStartup && selectedStartup[stat as keyof Startup]) ||
+                        parseFloat((stat.length / startups.length).toFixed(1)) ||
+                        0}
+                    </span>
+                    <span className="absolute bottom-2 left-0 right-1/3  text-[10px] leading-[0.7rem] text-gray-800">
+                      {selectedStartup ? afterContent[index] : beforeContent[index]}
+                    </span>
+                    <span className="rounded-full bg-orange-800 p-2 text-white">
+                      {icons[index]}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="shadow-custom col-span-3 flex flex-col border bg-white p-4  text-xs text-gray-500">
+            Likes / Views / Bookmarks Analytics
+            <LChart likes={likes} views={views} bookmarks={bookmarks} />
+          </div>
+        </div>
+
+        {/* table */}
+        <div className=" shadow-custom flex flex-col items-start justify-center bg-white ">
+          <span className=" w-full px-3 text-end text-xs italic text-gray-500">
+            Top 5 Startups with high ratings
+          </span>
+          <div className="w-full overflow-x-auto">
+            <table className="table ">
+              {/* head */}
+              <thead className="bg-warning">
+                <tr>
+                  <th className="font-bold">ID</th>
+                  <th className="w-auto">Startup Name</th>
+                  <th className="w-auto">Views</th>
+                  <th className="w-auto">Likes</th>
+                  <th className="w-auto">Bookmarks</th>
+                </tr>
+              </thead>
+              <tbody className="font-normal">
+                {relatedStartups.map((startup, index) => (
+                  <tr key={index} className="hover:bg-yellow-100">
+                    <th>{startup.id}</th>
+                    <td>{startup.name}</td>
+                    <td>{startup.views}</td>
+                    <td>{startup.likes}</td>
+                    <td>{startup.bookmarks}</td>
+                  </tr>
+                ))}
+
+                {/* to fill empty spaces if table data is short  */}
+                {Array.from({ length: 5 - relatedStartups.length }).map((_, index) => (
+                  <tr key={index}>
+                    <td>
+                      <div className="flex h-6  "></div>
+                    </td>
+                    <td>
+                      <div className="flex h-6 "></div>
+                    </td>
+                    <td>
+                      <div className="flex h-6 "></div>
+                    </td>
+                    <td>
+                      <div className="flex h-6 "></div>
+                    </td>
+                    <td>
+                      <div className="flex h-6"></div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </>
+
+      {/* for the search */}
       {isSearching && (
-        <div className="absolute left-1/2 top-16 z-10 flex h-48 w-full -translate-x-1/2 transform flex-col gap-2 overflow-auto rounded bg-white p-2 py-4 shadow">
+        <div
+          ref={modalRef}
+          className="absolute left-1/2 top-14 z-10 flex h-48 w-full -translate-x-1/2 transform flex-col gap-2 overflow-auto rounded bg-white p-2  shadow"
+        >
           {searchValue ? (
             searchResults.length ? (
               searchResults.map((startup, index) => (
                 <div
                   key={index}
                   className="rounded p-2 hover:bg-slate-100"
-                  onClick={(e) => {
-                    e.stopPropagation();
+                  onClick={() => {
                     setSelectedStartup(startup);
                     setSearchValue("");
                     setIsSearching(false);
@@ -243,8 +388,7 @@ export default function DashboardAnalytics() {
               <div
                 key={index}
                 className="rounded p-2 hover:bg-slate-100"
-                onClick={(e) => {
-                  e.stopPropagation();
+                onClick={() => {
                   setSelectedStartup(startup);
                   setSearchValue("");
                   setIsSearching(false);
@@ -255,129 +399,6 @@ export default function DashboardAnalytics() {
             ))
           )}
         </div>
-      )}
-      {startups[0] && (
-        <>
-          <div>
-            <div>
-              <div
-                className="relative mt-4 rounded-md shadow-sm"
-                onClick={() => setIsSearching(!isSearching)}
-              >
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
-                  <Search size={15} className="  text-gray-500" />
-                </div>
-                <input
-                  type="search"
-                  name="search-startup"
-                  id="search-startup"
-                  className="block w-full rounded-md border-0 py-1.5 pl-7 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
-                  placeholder="Search Startups"
-                  autoComplete="off"
-                  value={searchValue}
-                  onChange={(e) => {
-                    setSearchValue(e.target.value);
-                  }}
-                />
-              </div>
-            </div>
-            <div className="flex gap-3 overflow-x-auto pb-2.5 pt-1">
-              {categories.map((category, index) => (
-                <button
-                  key={index}
-                  onClick={() => toggleSelected(index)}
-                  type="button"
-                  className={`flex items-center gap-3 ${category.isActive ? "btn-active" : "btn-primary"}`}
-                >
-                  {category.name}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid h-80 w-full grid-cols-2">
-            <div className="mt-3 flex flex-col  gap-20 p-4">
-              <h1 className="text-xl">
-                {Array.isArray(selectedStartup) ? (
-                  <>{relatedStartups.length} Total Startups</>
-                ) : (
-                  <>{selectedStartup?.name}</>
-                )}
-              </h1>
-              <div className=" mx-auto flex w-full gap-2 ">
-                <div className="text-md flex flex-1 px-3 text-center">
-                  {statKeys.map((stat, index) => (
-                    <div key={index} className="flex flex-1 flex-col">
-                      {Array.isArray(selectedStartup) ? (
-                        <>
-                          <span className="text-3xl">{stats ? stats[stat] : 0}</span>
-                          <span>average</span>{" "}
-                        </>
-                      ) : (
-                        <span className="text-3xl">
-                          {selectedStartup ? selectedStartup[stat] : 0}
-                        </span>
-                      )}
-                      <span>{stat}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center justify-center p-4">
-              <LChart likes={likes} views={views} bookmarks={bookmarks} />
-            </div>
-          </div>
-
-          {/*  h-[30%] */}
-          <div className="mx-auto flex h-[30%]  items-start justify-center ">
-            {/* table */}
-            <div className="w-full overflow-x-auto">
-              <table className="table table-zebra">
-                {/* head */}
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th className="w-auto">Startup Name</th>
-                    <th className="w-auto">Views</th>
-                    <th className="w-auto">Likes</th>
-                    <th className="w-auto">Bookmarks</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {relatedStartups.map((startup, index) => (
-                    <tr key={index}>
-                      <th>{startup.id}</th>
-                      <td>{startup.name}</td>
-                      <td>{startup.views}</td>
-                      <td>{startup.likes}</td>
-                      <td>{startup.bookmarks}</td>
-                    </tr>
-                  ))}
-                  {Array.from({ length: 5 - relatedStartups.length }).map((_, index) => (
-                    <tr key={index}>
-                      <td>
-                        <div className="flex h-6  "></div>
-                      </td>
-                      <td>
-                        <div className="flex h-6 "></div>
-                      </td>
-                      <td>
-                        <div className="flex h-6 "></div>
-                      </td>
-                      <td>
-                        <div className="flex h-6 "></div>
-                      </td>
-                      <td>
-                        <div className="flex h-6"></div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </>
       )}
     </div>
   );
