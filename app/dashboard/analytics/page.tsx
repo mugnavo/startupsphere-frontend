@@ -35,7 +35,11 @@ export default function DashboardAnalytics() {
     { name: "Views", isActive: false },
   ]);
   const backgroundColors = ["before:bg-[#dc2626]", "before:bg-[#fb923c]", "before:bg-[#fde047]"];
-  const icons = [<ScanEye size={40} />, <ThumbsUp size={40} color="white" />, <Album size={40} />];
+  const icons = [
+    <ScanEye key="ScanEye" size={40} />,
+    <ThumbsUp key="ThumbsUp" size={40} color="white" />,
+    <Album key="Albums" size={40} />,
+  ];
   const modalRef = useRef<HTMLDivElement>(null);
 
   const [likes, setLikes] = useState<Like[]>([]);
@@ -228,11 +232,11 @@ export default function DashboardAnalytics() {
   const beforeContent = ["ave. views", "ave. likes", "ave. bookmarks"];
   const afterContent = ["total views", "total likes", "total bookmarks"];
   return (
-    <div className=" relative mx-auto flex h-auto w-3/5 flex-col gap-4 ">
+    <div className="relative mx-auto flex h-auto w-3/5 flex-col gap-4">
       <>
         <div className="relative mt-4 flex justify-start gap-3">
-          <div className="pointer-events-none absolute  inset-y-0 left-0 flex items-center pl-2">
-            <Search size={15} className="  text-gray-500" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
+            <Search size={15} className="text-gray-500" />
           </div>
           <input
             type="search"
@@ -249,13 +253,13 @@ export default function DashboardAnalytics() {
           />
 
           {/* search filters */}
-          <div className="flex gap-3 overflow-x-auto  pb-1">
+          <div className="flex gap-3 overflow-x-auto pb-1">
             {categories.map((category, index) => (
               <button
                 key={index}
                 onClick={() => toggleSelected(index)}
                 type="button"
-                className={`flex items-center gap-3 shadow-md  ${category.isActive ? "btn-active bg-red-800 text-white" : "btn-primary hover:bg-gray-200"}`}
+                className={`flex items-center gap-3 shadow-md ${category.isActive ? "btn-active bg-red-800 text-white" : "btn-primary hover:bg-gray-200"}`}
               >
                 {category.name}
               </button>
@@ -263,8 +267,8 @@ export default function DashboardAnalytics() {
           </div>
         </div>
 
-        <div className="grid h-[18rem] w-full grid-cols-4 gap-2 ">
-          <div className="shadow-custom flex w-max flex-col gap-3 bg-orange-400 p-4">
+        <div className="grid h-[18rem] w-full grid-cols-4 gap-2">
+          <div className="flex w-max flex-col gap-3 bg-orange-400 p-4 shadow-custom">
             <h1 className="text-sm">
               {selectedStartup && selectedStartup.name ? (
                 <>{selectedStartup.name}</>
@@ -272,21 +276,21 @@ export default function DashboardAnalytics() {
                 <>{startups.length} Total Startups</>
               )}
             </h1>
-            <div className="  flex h-full w-full gap-2 ">
+            <div className="flex h-full w-full gap-2">
               <div className="text-md flex flex-1 flex-col gap-1 text-center">
                 {(
                   (selectedStartup && ["views", "likes", "bookmarks"]) || [views, likes, bookmarks]
                 ).map((stat, index) => (
                   <div
                     key={index}
-                    className={` relative flex w-[10rem] flex-1 items-center justify-end gap-3 rounded bg-orange-300 px-3 text-center    before:absolute before:bottom-0 before:left-0 before:top-0 before:w-2 before:rounded-s before:bg-red-800 `}
+                    className={`relative flex w-[10rem] flex-1 items-center justify-end gap-3 rounded bg-orange-300 px-3 text-center before:absolute before:bottom-0 before:left-0 before:top-0 before:w-2 before:rounded-s before:bg-red-800`}
                   >
-                    <span className={`   text-3xl`}>
+                    <span className={`text-3xl`}>
                       {(selectedStartup && selectedStartup[stat as keyof Startup]) ||
                         parseFloat((stat.length / startups.length).toFixed(1)) ||
                         0}
                     </span>
-                    <span className="absolute bottom-2 left-0 right-1/3  text-[10px] leading-[0.7rem] text-gray-800">
+                    <span className="absolute bottom-2 left-0 right-1/3 text-[10px] leading-[0.7rem] text-gray-800">
                       {selectedStartup ? afterContent[index] : beforeContent[index]}
                     </span>
                     <span className="rounded-full bg-orange-800 p-2 text-white">
@@ -297,19 +301,19 @@ export default function DashboardAnalytics() {
               </div>
             </div>
           </div>
-          <div className="shadow-custom col-span-3 flex flex-col border bg-white p-4  text-xs text-gray-500">
+          <div className="col-span-3 flex flex-col border bg-white p-4 text-xs text-gray-500 shadow-custom">
             Likes / Views / Bookmarks Analytics
             <LChart likes={likes} views={views} bookmarks={bookmarks} />
           </div>
         </div>
 
         {/* table */}
-        <div className=" shadow-custom flex flex-col items-start justify-center bg-white ">
-          <span className=" w-full px-3 text-end text-xs italic text-gray-500">
+        <div className="flex flex-col items-start justify-center bg-white shadow-custom">
+          <span className="w-full px-3 text-end text-xs italic text-gray-500">
             Top 5 Startups with high ratings
           </span>
           <div className="w-full overflow-x-auto">
-            <table className="table ">
+            <table className="table">
               {/* head */}
               <thead className="bg-warning">
                 <tr>
@@ -335,16 +339,16 @@ export default function DashboardAnalytics() {
                 {Array.from({ length: 5 - relatedStartups.length }).map((_, index) => (
                   <tr key={index}>
                     <td>
-                      <div className="flex h-6  "></div>
+                      <div className="flex h-6"></div>
                     </td>
                     <td>
-                      <div className="flex h-6 "></div>
+                      <div className="flex h-6"></div>
                     </td>
                     <td>
-                      <div className="flex h-6 "></div>
+                      <div className="flex h-6"></div>
                     </td>
                     <td>
-                      <div className="flex h-6 "></div>
+                      <div className="flex h-6"></div>
                     </td>
                     <td>
                       <div className="flex h-6"></div>
@@ -361,7 +365,7 @@ export default function DashboardAnalytics() {
       {isSearching && (
         <div
           ref={modalRef}
-          className="absolute left-1/2 top-14 z-10 flex h-48 w-full -translate-x-1/2 transform flex-col gap-2 overflow-auto rounded bg-white p-2  shadow"
+          className="absolute left-1/2 top-14 z-10 flex h-48 w-full -translate-x-1/2 transform flex-col gap-2 overflow-auto rounded bg-white p-2 shadow"
         >
           {searchValue ? (
             searchResults.length ? (
