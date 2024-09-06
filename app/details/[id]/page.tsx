@@ -225,7 +225,15 @@ export default function StartupDetails() {
             </div>
           </div>
           <div className="mb-2">
-            <p className="font-bold">Contact Info:</p> {startupDetails?.contactInfo}
+            <p className="font-bold">Contact Info:</p>
+            <a
+              href={`mailto:${startupDetails?.contactInfo}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className=" text-m  text-blue-500 underline hover:text-blue-700"
+            >
+              {startupDetails?.contactInfo}
+            </a>
           </div>
           <hr className=" mb-4 border-gray-200" />
           <div className="flex justify-center py-4">
