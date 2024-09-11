@@ -17,57 +17,69 @@ export default function Recents() {
     if (!user) return;
     const { data } = await viewControllerFindRecentsByUserId(user.id, withAuth);
 
-    // remove duplicate startups
+    // Remove duplicate startups
     const uniqueData = data.filter(
       (value, index, self) => self.findIndex((t) => t.startup.id === value.startup.id) === index
     );
     setRecentViews(uniqueData);
-  };
+  }
 
   useEffect(() => {
     fetchRecentStartups();
   }, [user]);
 
   return (
-    <div className="absolute left-20 top-0 z-10 h-screen w-[22rem] bg-white p-4">
-      <div className="flex items-center justify-between">
+    <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col bg-white p-6">
+      <div className="mb-4 flex items-center justify-between">
         <span className="text-lg font-semibold">Recents</span>
         <X size={20} onClick={() => router.replace("/")} className="cursor-pointer" />
       </div>
-      <div className="relative mt-2">
-        {/* List of recent startups */}
+      <div className="flex-1 overflow-y-auto">
         <div className="mt-2">
-          {recentViews.map((view) => (
-            <div
-              key={view.id}
-              className="mb-2 flex cursor-pointer items-center justify-between rounded-md p-4 hover:bg-gray-100"
-              style={{ height: "6rem", width: "100%" }}
-              onClick={() => router.push(`/details/${view.startup.id}`)}
-            >
-              <div className="flex items-center">
-                <div className="mr-4 flex h-16 w-16 items-center justify-center rounded-md bg-gray-200">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={view.startup.logoUrl} alt={view.startup.name} />
-                </div>
-                <div>
-                  <div className="flex flex-col">
-                    <div className="text-sm font-semibold">{view.startup.name}</div>
-                    <div className="text-xs text-gray-500">{view.startup.locationName}</div>
-                    <div className="mt-1 flex flex-wrap">
-                      {view.startup.categories.map((category, index) => (
-                        <span
-                          key={index}
-                          className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs"
-                        >
-                          {category}
-                        </span>
-                      ))}
+          {recentViews.length === 0 ? (
+            <div className="mt-5 flex flex-col items-center">
+              <p className="text-gray-500">No recent startups</p>
+            </div>
+          ) : (
+            recentViews.map((view) => (
+              <div
+                key={view.id}
+                className="mb-1 flex cursor-pointer items-center justify-between rounded-md p-2 shadow-none hover:bg-gray-100"
+                onClick={() => router.push(`/details/${view.startup.id}`)}
+              >
+                <div className="flex w-full items-center">
+                  <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">
+                    <img
+                      src={view.startup.logoUrl}
+                      alt={view.startup.name}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex flex-col">
+                      <div className="text-sm font-semibold">{view.startup.name}</div>
+                      <div className="text-xs text-gray-500">{view.startup.locationName}</div>
+                      <div className="mt-1 flex flex-wrap">
+                        {view.startup.categories.slice(0, 3).map((category, index) => (
+                          <span
+                            key={index}
+                            className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs"
+                          >
+                            {category}
+                          </span>
+                        ))}
+                        {view.startup.categories.length > 3 && (
+                          <span className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs text-gray-500">
+                            ...
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>

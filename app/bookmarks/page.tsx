@@ -28,7 +28,7 @@ export default function Bookmarks() {
     } catch (error) {
       console.error("Error fetching bookmark startups:", error);
     }
-  };
+  }
 
   useEffect(() => {
     if (userId) {
@@ -41,44 +41,51 @@ export default function Bookmarks() {
   );
 
   return (
-    <div className="absolute left-20 top-0 z-10 h-screen w-[22rem] bg-white p-4">
-      <div className="flex items-center justify-between">
+    <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col bg-white p-6">
+      <div className="mb-4 flex items-center justify-between">
         <span className="text-lg font-semibold">Bookmarks</span>
         <X size={20} onClick={() => router.replace("/")} className="cursor-pointer" />
       </div>
-      <div className="relative mt-2">
-        <div className="relative">
-          <input
-            type="search"
-            name="search-bookmarks"
-            id="search-bookmarks"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="block w-full rounded-md border-0 py-1.5 pl-10 pr-4 text-sm text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
-            placeholder="Search Bookmarks"
-          />
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Search size={15} className="text-gray-500" />
-          </div>
+      <div className="relative mb-4">
+        <input
+          type="search"
+          name="search-bookmarks"
+          id="search-bookmarks"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="block w-full rounded-md border-0 py-1.5 pl-10 pr-4 text-sm text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+          placeholder="Search Bookmarks"
+        />
+        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+          <Search size={15} className="text-gray-500" />
         </div>
-        <div className="mt-2">
-          {filteredBookmarks.map(({ id, startup }) => (
+      </div>
+      <div className="flex-1 overflow-y-auto">
+        {filteredBookmarks.length === 0 ? (
+          <div className="mt-5 flex flex-col items-center">
+            <p className="text-gray-500">No bookmarks found</p>
+          </div>
+        ) : (
+          filteredBookmarks.map(({ id, startup }) => (
             <div
               key={id}
-              className="mb-2 flex cursor-pointer items-center justify-between rounded-md p-4 hover:bg-gray-100"
-              style={{ height: "6rem", width: "100%" }}
+              className="mb-2 flex cursor-pointer items-center justify-between rounded-md p-2 shadow-none hover:bg-gray-100"
               onClick={() => router.push(`/details/${startup.id}`)}
             >
-              <div className="flex items-center">
-                <div className="mr-4 flex w-16 items-center justify-center rounded-md bg-gray-200">
-                  <img src={startup.logoUrl} alt={startup.name} />
+              <div className="flex w-full items-center">
+                <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">
+                  <img
+                    src={startup.logoUrl}
+                    alt={startup.name}
+                    className="h-full w-full object-cover"
+                  />
                 </div>
-                <div>
+                <div className="flex-1">
                   <div className="flex flex-col">
                     <div className="text-sm font-semibold">{startup.name}</div>
                     <div className="text-xs text-gray-500">{startup.locationName}</div>
                     <div className="mt-1 flex flex-wrap">
-                      {startup.categories.map((category, index) => (
+                      {startup.categories.slice(0, 3).map((category, index) => (
                         <span
                           key={index}
                           className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs"
@@ -86,13 +93,18 @@ export default function Bookmarks() {
                           {category}
                         </span>
                       ))}
+                      {startup.categories.length > 3 && (
+                        <span className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs text-gray-500">
+                          ...
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+          ))
+        )}
       </div>
     </div>
   );

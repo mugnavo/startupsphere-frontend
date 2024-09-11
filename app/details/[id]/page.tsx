@@ -160,7 +160,11 @@ export default function StartupDetails() {
         </div>
         <div className="flex h-64 w-full items-center justify-center bg-gray-200">
           {startupDetails?.logoUrl ? (
-            <img src={startupDetails.logoUrl} alt={startupDetails.name} />
+            <img
+              src={startupDetails.logoUrl}
+              alt={startupDetails.name}
+              className="h-full max-h-64 w-auto max-w-full object-contain"
+            />
           ) : (
             <Image size={128} color="#6B7280" />
           )}
@@ -230,27 +234,10 @@ export default function StartupDetails() {
               href={`mailto:${startupDetails?.contactInfo}`}
               target="_blank"
               rel="noopener noreferrer"
-              className=" text-m  text-blue-500 underline hover:text-blue-700"
+              className="text-m text-blue-500 underline hover:text-blue-700"
             >
               {startupDetails?.contactInfo}
             </a>
-          </div>
-          <hr className=" mb-4 border-gray-200" />
-          <div className="flex justify-center py-4">
-            <div className="flex flex-col items-center">
-              <span className="text-lg font-semibold text-blue-500">{startupDetails?.likes}</span>
-              <span className="text-sm">Likes</span>
-            </div>
-            <div className="ml-6 flex flex-col items-center">
-              <span className="text-lg font-semibold text-blue-500">
-                {startupDetails?.bookmarks}
-              </span>
-              <span className="text-sm">Bookmarks</span>
-            </div>
-            <div className="ml-6 flex flex-col items-center">
-              <span className="text-lg font-semibold text-blue-500">{startupDetails?.views}</span>
-              <span className="text-sm">Views</span>
-            </div>
           </div>
         </div>
       </div>
