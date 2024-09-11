@@ -195,7 +195,7 @@ export default function StartupDetails() {
             {startupDetails?.websiteUrl}
           </a>
         </div>
-        <div className="flex justify-center py-4">
+        <div className="flex justify-center py-2">
           <div className="flex cursor-pointer justify-center py-4" onClick={handleBookmark}>
             <Bookmark
               size={18}
@@ -210,7 +210,7 @@ export default function StartupDetails() {
         </div>
         <hr className="border-gray-200" />
       </div>
-      <div className="flex-grow overflow-y-auto px-6 py-4">
+      <div className="flex-grow overflow-y-auto px-6 py-2">
         <div className="mb-1 font-bold">{startupDetails?.founderName}</div>
         <div className="mb-4 text-sm text-gray-300">Founder</div>
         <div className="mb-1 font-bold">{formattedDate}</div>
@@ -228,7 +228,7 @@ export default function StartupDetails() {
               ))}
             </div>
           </div>
-          <div className="mb-2">
+          <div className="mb-4">
             <p className="font-bold">Contact Info:</p>
             <a
               href={`mailto:${startupDetails?.contactInfo}`}
@@ -238,6 +238,23 @@ export default function StartupDetails() {
             >
               {startupDetails?.contactInfo}
             </a>
+          </div>
+          <hr className="mb-2 border-gray-200" />
+          <div className="flex justify-center py-4">
+            <div className="flex flex-col items-center">
+              <span className="text-lg font-semibold text-blue-500">{startupDetails?.likes}</span>
+              <span className="text-sm">Likes</span>
+            </div>
+            <div className="ml-6 flex flex-col items-center">
+              <span className="text-lg font-semibold text-blue-500">
+                {startupDetails?.bookmarks}
+              </span>
+              <span className="text-sm">Bookmarks</span>
+            </div>
+            <div className="ml-6 flex flex-col items-center">
+              <span className="text-lg font-semibold text-blue-500">{startupDetails?.views}</span>
+              <span className="text-sm">Views</span>
+            </div>
           </div>
         </div>
       </div>
