@@ -204,8 +204,7 @@ export default function StartupMap() {
                   ></img>
 
                   <h1 className="absolute bottom-10 m-3 text-xl font-bold text-white [text-shadow:_1px_1px_10px_rgb(0_0_0_/_70%)]">
-                    {startup.name[0].toUpperCase()}
-                    {startup.name.slice(1, -1)}
+                    {startup.name}
                   </h1>
                 </div>
                 <p className="m-3 line-clamp-2 h-auto w-auto overflow-hidden text-sm text-black">
