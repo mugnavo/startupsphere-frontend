@@ -69,14 +69,14 @@ export default function SearchContent() {
   }
 
   return (
-    <div className=" absolute left-20 top-0 z-10 h-screen w-[22rem] bg-white p-6">
-      <div className=" flex items-center justify-between">
+    <div className="absolute left-20 top-0 z-10 h-screen w-[22rem] bg-white p-6">
+      <div className="flex items-center justify-between">
         <span>Search</span>
         <X size={20} onClick={() => router.replace("/")} className="cursor-pointer" />
       </div>
       <div className="relative mt-2 rounded-md shadow-sm">
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
-          <Search size={15} className="  text-gray-500" />
+          <Search size={15} className="text-gray-500" />
         </div>
         <input
           type="search"
@@ -121,20 +121,23 @@ export default function SearchContent() {
               filteredStartups.map((startup) => (
                 <div
                   key={startup.id}
-                  className="mb-2 flex cursor-pointer items-center justify-between rounded-md p-4 hover:bg-gray-100"
-                  style={{ height: "6rem", width: "100%" }}
+                  className="mb-1 flex cursor-pointer items-center justify-between rounded-md p-2 shadow-none hover:bg-gray-100"
                   onClick={() => router.push(`/details/${startup.id}`)}
                 >
-                  <div className="flex items-center">
-                    <div className="mr-4 flex w-16 items-center justify-center rounded-md bg-gray-200">
-                      <img src={startup.logoUrl} alt={startup.name} />
+                  <div className="flex w-full items-center">
+                    <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">
+                      <img
+                        src={startup.logoUrl}
+                        alt={startup.name}
+                        className="h-full w-full object-cover"
+                      />
                     </div>
-                    <div>
+                    <div className="flex-1">
                       <div className="flex flex-col">
                         <div className="text-sm font-semibold">{startup.name}</div>
                         <div className="text-xs text-gray-500">{startup.locationName}</div>
                         <div className="mt-1 flex flex-wrap">
-                          {startup.categories.map((category, index) => (
+                          {startup.categories.slice(0, 3).map((category, index) => (
                             <span
                               key={index}
                               className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs"
@@ -142,6 +145,11 @@ export default function SearchContent() {
                               {category}
                             </span>
                           ))}
+                          {startup.categories.length > 3 && (
+                            <span className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs text-gray-500">
+                              ...
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
