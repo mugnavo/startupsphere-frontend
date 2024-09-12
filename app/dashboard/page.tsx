@@ -91,7 +91,7 @@ export default function DashboardComponent() {
       <div className="text-3xl">Welcome</div>
       <div className="relative mt-2 rounded-md shadow-sm">
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
-          <Search size={15} className="  text-gray-500" />
+          <Search size={15} className="text-gray-500" />
         </div>
         <input
           value={searchValue}
@@ -212,7 +212,7 @@ export default function DashboardComponent() {
             )}
             &nbsp; - &nbsp; {startups.length} total
           </div>
-          <button onClick={openCreateStartup} className="btn bg-red-800 font-bold text-white">
+          <button onClick={openCreateStartup} className="btn bg-yellow-600 font-bold text-white">
             Add Startup
           </button>
         </div>

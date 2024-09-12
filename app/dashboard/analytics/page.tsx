@@ -259,7 +259,7 @@ export default function DashboardAnalytics() {
                 key={index}
                 onClick={() => toggleSelected(index)}
                 type="button"
-                className={`flex items-center gap-3 shadow-md ${category.isActive ? "btn-active bg-red-800 text-white" : "btn-primary hover:bg-gray-200"}`}
+                className={`flex items-center gap-3 shadow-md ${category.isActive ? "btn-active bg-yellow-600 text-white" : "btn-primary hover:bg-gray-200"}`}
               >
                 {category.name}
               </button>
@@ -283,7 +283,7 @@ export default function DashboardAnalytics() {
                 ).map((stat, index) => (
                   <div
                     key={index}
-                    className={`relative flex w-[10rem] flex-1 items-center justify-end gap-3 rounded bg-orange-300 px-3 text-center before:absolute before:bottom-0 before:left-0 before:top-0 before:w-2 before:rounded-s before:bg-red-800`}
+                    className={`relative flex w-[10rem] flex-1 items-center justify-end gap-3 rounded bg-orange-300 px-3 text-center before:absolute before:bottom-0 before:left-0 before:top-0 before:w-2 before:rounded-s before:bg-yellow-600`}
                   >
                     <span className={`text-3xl`}>
                       {(selectedStartup && selectedStartup[stat as keyof Startup]) ||

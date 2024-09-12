@@ -18,7 +18,7 @@ export default withUt({
         cit: {
           ...defaultThemes["bumblebee"],
           primary: "#f4c522",
-          secondary: "#8a252c",
+          secondary: "#f4c522",
         },
       },
     ],

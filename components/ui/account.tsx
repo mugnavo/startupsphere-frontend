@@ -15,7 +15,7 @@ export default function Account() {
     <>
       <div
         onClick={() => handleAccountClick()}
-        className="absolute right-3 top-3 z-50 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 border-yellow-400 bg-red-900 text-xl font-normal text-white"
+        className="absolute right-3 top-3 z-50 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 border-yellow-400 bg-yellow-600 text-xl font-normal text-white"
       >
         {user?.firstName[0] || "G"}
       </div>

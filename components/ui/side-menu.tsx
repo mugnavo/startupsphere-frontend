@@ -43,5 +43,5 @@ export default function SideMenu() {
 }
 
 function Logo() {
-  return <div className="absolute left-0 top-0 h-12 w-full bg-red-800"></div>;
+  return <div className="absolute left-0 top-0 h-12 w-full bg-yellow-600"></div>;
 }
