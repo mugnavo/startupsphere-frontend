@@ -174,7 +174,7 @@ export default function StartupMap() {
             }
             offset={[0, -20]}
           >
-            <CustomPin className="h-10 w-10 text-info" />
+            /* <CustomPin className="h-10 w-10 text-info" /> */
           </Marker>
         )}
         {startups.map((startup) => (
@@ -190,13 +190,13 @@ export default function StartupMap() {
                 router.replace(`/details/${startup.id}`);
               }}
             >
-              <CustomPin className="h-10 w-10" />
+              <CustomPin className="h-8 w-8" startupimage={startup.logoUrl} />
               <div className="absolute -bottom-6 text-center text-sm font-semibold">
                 {startup.name}
               </div>
-              <div className="absolute bottom-8 z-50 hidden h-auto w-56 flex-col rounded-md bg-slate-50 shadow group-hover:z-50 group-hover:flex">
+              {/* <div className="absolute bottom-8 z-50 hidden h-auto w-56 flex-col rounded-md bg-slate-50 shadow group-hover:z-50 group-hover:flex">
                 <div className="flex h-32 w-full flex-col bg-yellow-400">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  * eslint-disable-next-line @next/next/no-img-element 
                   <img
                     className="h-[122px] rounded-md object-cover"
                     src={startup.logoUrl || ""}
@@ -210,7 +210,7 @@ export default function StartupMap() {
                 <p className="m-3 line-clamp-2 h-auto w-auto overflow-hidden text-sm text-black">
                   {startup.description}
                 </p>
-              </div>
+              </div> */}
             </div>
           </Marker>
         ))}
