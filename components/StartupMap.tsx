@@ -190,10 +190,16 @@ export default function StartupMap() {
                 router.replace(`/details/${startup.id}`);
               }}
             >
-              <CustomPin className="h-8 w-8" startupimage={startup.logoUrl} />
+              <CustomPin
+                className="h-8 w-8"
+                startupimage={startup.logoUrl}
+                categories={startup.categories}
+                startupname={startup.name}
+              />
               <div className="absolute -bottom-6 text-center text-sm font-semibold">
                 {startup.name}
               </div>
+
               {/* <div className="absolute bottom-8 z-50 hidden h-auto w-56 flex-col rounded-md bg-slate-50 shadow group-hover:z-50 group-hover:flex">
                 <div className="flex h-32 w-full flex-col bg-yellow-400">
                   * eslint-disable-next-line @next/next/no-img-element 
