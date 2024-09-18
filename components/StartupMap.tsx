@@ -173,9 +173,7 @@ export default function StartupMap() {
               selectedLocation?.latitude || (dashboardSelection.previewLocation?.latitude as number)
             }
             offset={[0, -20]}
-          >
-            /* <CustomPin className="h-10 w-10 text-info" /> */
-          </Marker>
+          ></Marker>
         )}
         {startups.map((startup) => (
           <Marker
