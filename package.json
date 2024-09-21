@@ -19,7 +19,7 @@
   "dependencies": {
     "@mapbox/mapbox-gl-geocoder": "^5.0.3",
     "@mapbox/search-js-core": "1.0.0-beta.22",
-    "@uploadthing/react": "^6.8.0",
+    "@uploadthing/react": "^7.0.2",
     "axios": "^1.7.7",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
@@ -33,7 +33,7 @@
     "react-map-gl": "^7.1.7",
     "recharts": "^2.12.7",
     "sonner": "^1.5.0",
-    "uploadthing": "^6.13.3"
+    "uploadthing": "^7.0.2"
   },
   "devDependencies": {
     "@types/mapbox-gl": "^3.4.0",
