@@ -45,3 +45,16 @@ export const sectors = [
   "Utilities",
   "Other",
 ];
+
+export const investorTypes = [
+  "Angel",
+  "Corporate",
+  "Venture Capitalist",
+  "Crowdfunding",
+  "Institution",
+  "Accelerator",
+  "Seed",
+  "Strategic",
+  "Impact",
+  "Incubator",
+];
