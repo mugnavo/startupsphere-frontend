@@ -16,7 +16,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         (dashboardSelection.active ? " hidden" : " flex")
       }
     >
-      <div className="flex max-w-md items-center gap-8">
+      <div className="flex max-w-3xl items-center gap-8">
         <Link href="/">
           <ArrowLeft size={20} className="cursor-pointer" />
         </Link>
@@ -27,7 +27,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             href="/dashboard"
             className={"tab" + (pathname === "/dashboard" ? " tab-active" : "")}
           >
-            Home
+            Startups
+          </Link>
+          <Link
+            role="tab"
+            href="/dashboard/investors"
+            className={"tab" + (pathname.startsWith("/dashboard/investors") ? " tab-active" : "")}
+          >
+            Investors
           </Link>
           <Link
             role="tab"
@@ -35,6 +42,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             className={"tab" + (pathname.startsWith("/dashboard/analytics") ? " tab-active" : "")}
           >
             Analytics
+          </Link>
+          <Link
+            role="tab"
+            href="/dashboard/audit"
+            className={"tab" + (pathname.startsWith("/dashboard/audit") ? " tab-active" : "")}
+          >
+            Audit Trail
+          </Link>
+          <Link
+            role="tab"
+            href="/dashboard/apilogs"
+            className={"tab" + (pathname.startsWith("/dashboard/apilogs") ? " tab-active" : "")}
+          >
+            API Logs
           </Link>
         </div>
       </div>
