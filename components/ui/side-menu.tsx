@@ -7,18 +7,19 @@ import { useSession } from "~/context/hooks";
 import LoginModal from "../modals/login-modal";
 import SidebarLink, { type SidebarLinkProps } from "./sidebar-link";
 
+const size = 25;
 const SIDEBAR_LINKS: SidebarLinkProps[] = [
-  { href: "/search", name: "Search", icon: <Search size={22} /> },
-  { href: "/recents", name: "Recent", icon: <History size={22} /> },
-  { href: "/bookmarks", name: "Bookmarks", icon: <Bookmark size={22} /> },
-  { href: "/dashboard", name: "Dashboard", icon: <LayoutDashboard size={22} /> },
+  { href: "/search", name: "Search", icon: <Search size={size} /> },
+  { href: "/recents", name: "Recent", icon: <History size={size} /> },
+  { href: "/bookmarks", name: "Bookmarks", icon: <Bookmark size={size} /> },
+  { href: "/dashboard", name: "Dashboard", icon: <LayoutDashboard size={size} /> },
 ];
 
 export default function SideMenu() {
   const { user } = useSession();
 
   return (
-    <div className="absolute left-0 top-0 z-50 flex h-screen w-20 flex-col items-center justify-between bg-white p-3 pt-16 align-middle shadow-sm shadow-slate-400">
+    <div className="absolute left-0 top-0 z-50 flex h-screen w-20 flex-col items-center justify-between bg-white bg-opacity-70 p-3 pt-16 align-middle shadow-sm shadow-slate-400">
       <div className="flex flex-col items-center gap-8">
         <Logo />
 
@@ -43,5 +44,15 @@ export default function SideMenu() {
 }
 
 function Logo() {
-  return <div className="absolute left-0 top-0 h-12 w-full bg-yellow-600"></div>;
+  return (
+    <div className="absolute left-0 top-0 flex h-12 w-full items-center justify-center bg-yellow-600 shadow-csm">
+      {/* <img
+        src={"logo.png"}
+        alt="startupsphere logo"
+        width={100}
+        height={100}
+        className="h-12 w-12 select-none"
+      /> */}
+    </div>
+  );
 }

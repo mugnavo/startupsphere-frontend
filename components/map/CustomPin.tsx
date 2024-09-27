@@ -57,7 +57,7 @@ export default function CustomPin({
             >
               <defs>
                 <clipPath id="circleView">
-                  <circle cx="12" cy="12" r="6" />
+                  <circle cx="12" cy="11" r="6" />
                 </clipPath>
               </defs>
               <path
@@ -65,8 +65,8 @@ export default function CustomPin({
                 d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
                 clipRule="evenodd"
               />
-              <foreignObject x="6" y="6" width="12" height="12" clipPath="url(#circleView)">
-                <div className="flex h-full w-full items-center justify-center">
+              <foreignObject x="6" y="5" width="12" height="12" clipPath="url(#circleView)">
+                <div className="absolute top-0 flex h-full w-full items-center justify-center bg-white rounded-full">
                   <img src={startupimage} alt="Custom Pin" className="h-full w-full rounded-full" />
                 </div>
               </foreignObject>
