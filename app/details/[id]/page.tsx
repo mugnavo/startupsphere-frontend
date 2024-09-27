@@ -173,12 +173,14 @@ export default function StartupDetails() {
       <div className="border-t border-gray-200 py-4">
         <div className="flex items-center justify-between px-6">
           <span className="text-lg font-bold">{startupDetails?.name}</span>
-          <ThumbsUp
-            size={24}
-            onClick={handleLike}
-            fill={liked ? "gold" : "none"}
-            className={`transform cursor-pointer transition-transform ${liked ? "rotate-12 scale-125" : "rotate-0"}`}
-          />
+          {user && (
+            <ThumbsUp
+              size={24}
+              onClick={handleLike}
+              fill={liked ? "gold" : "none"}
+              className={`transform cursor-pointer transition-transform ${liked ? "rotate-12 scale-125" : "rotate-0"}`}
+            />
+          )}
         </div>
         <div className="flex items-center px-6 py-1">
           <MapPin size={24} />
@@ -196,17 +198,19 @@ export default function StartupDetails() {
           </a>
         </div>
         <div className="flex justify-center py-2">
-          <div className="flex cursor-pointer justify-center py-4" onClick={handleBookmark}>
-            <Bookmark
-              size={18}
-              onClick={handleBookmark}
-              fill={bookmarked ? "#FFD700" : "none"}
-              className={`transform cursor-pointer transition-transform ${bookmarked ? "scale-125" : "scale-100"}`}
-            />
-            <span className="ml-1 text-sm underline">
-              {bookmarked ? "Remove Bookmark" : "Add Bookmark"}
-            </span>
-          </div>
+          {user && (
+            <div className="flex cursor-pointer justify-center py-4" onClick={handleBookmark}>
+              <Bookmark
+                size={18}
+                onClick={handleBookmark}
+                fill={bookmarked ? "#FFD700" : "none"}
+                className={`transform cursor-pointer transition-transform ${bookmarked ? "scale-125" : "scale-100"}`}
+              />
+              <span className="ml-1 text-sm underline">
+                {bookmarked ? "Remove Bookmark" : "Add Bookmark"}
+              </span>
+            </div>
+          )}
         </div>
         <hr className="border-gray-200" />
       </div>
