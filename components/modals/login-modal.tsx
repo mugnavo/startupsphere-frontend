@@ -142,6 +142,13 @@ function RegisterModal() {
   const [mismatch, setMismatch] = useState(false);
 
   async function register(formData: FormData) {
+    console.log("Form Data:", {
+      email: formData.get("email"),
+      firstName: formData.get("firstName"),
+      lastName: formData.get("lastName"),
+      password: formData.get("password"),
+      role: formData.get("role"),
+    });
     const { data } = await authControllerRegister({
       email: formData.get("email") as string,
       firstName: formData.get("firstName") as string,
@@ -289,11 +296,11 @@ function RegisterModal() {
                 </span>
               </div>
               <select className="select select-bordered w-full" name="role">
-                <option selected value="Member">
+                <option defaultValue="member " value="member">
                   Member
                 </option>
-                <option value="Founder">Founder</option>
-                <option value="Investor">Investor</option>
+                <option value="founder">Founder</option>
+                <option value="investor">Investor</option>
               </select>
             </label>
             <button
