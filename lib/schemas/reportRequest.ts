@@ -5,8 +5,11 @@
  * API documentation for StartupSphere, the 3D mapping platform for startup ecosystems.
  * OpenAPI spec version: 1.0
  */
+import type { User } from "./user";
 
-export interface CreateLikeRequest {
-  startupId: number;
-  userId: number;
+export interface ReportRequest {
+  fileType: string;
+  generatedBy: User;
+  name: string;
+  url: string;
 }
