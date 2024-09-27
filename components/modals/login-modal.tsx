@@ -1,7 +1,7 @@
 "use client";
 
 import { jwtDecode } from "jwt-decode";
-import { CircleUserRound, KeyRound, Mail } from "lucide-react";
+import { CircleUserRound, KeyRound, Mail, UserRoundPen } from "lucide-react";
 import { useState } from "react";
 import { useSession } from "~/context/hooks";
 import { authControllerLogin, authControllerRegister } from "~/lib/api";
@@ -70,7 +70,7 @@ export default function LoginModal() {
                 name="email"
                 required
                 placeholder="Input your email"
-                className="input input-bordered w-full "
+                className="input input-bordered w-full"
               />
             </label>
             <label className="form-control w-[80%]">
@@ -85,7 +85,7 @@ export default function LoginModal() {
                 name="password"
                 required
                 placeholder="Input your password"
-                className="input input-bordered w-full "
+                className="input input-bordered w-full"
               />
               <button
                 type="button"
@@ -139,6 +139,7 @@ function RegisterModal() {
   const [isLoading, setIsLoading] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [mismatch, setMismatch] = useState(false);
 
   async function register(formData: FormData) {
     const { data } = await authControllerRegister({
@@ -146,6 +147,7 @@ function RegisterModal() {
       firstName: formData.get("firstName") as string,
       lastName: formData.get("lastName") as string,
       password: formData.get("password") as string,
+      role: formData.get("role") as string,
     });
     if (data.access_token) {
       localStorage.setItem("jwt", data.access_token);
@@ -180,7 +182,7 @@ function RegisterModal() {
               name="firstName"
               required
               placeholder="John"
-              className="input input-bordered w-full "
+              className="input input-bordered w-full"
             />
           </label>
           <label className="form-control w-[80%]">
@@ -192,7 +194,7 @@ function RegisterModal() {
               name="lastName"
               required
               placeholder="Doe"
-              className="input input-bordered w-full "
+              className="input input-bordered w-full"
             />
           </label>
 
@@ -215,7 +217,7 @@ function RegisterModal() {
               name="email"
               required
               placeholder="Input your email"
-              className="input input-bordered w-full "
+              className="input input-bordered w-full"
               onChange={(event) => {
                 const email = event.target.value;
                 if (email === "") {
@@ -242,16 +244,58 @@ function RegisterModal() {
               </span>
             </div>
             <input
+              id="password"
               type="password"
               name="password"
               required
               placeholder="Input your password"
-              className="input input-bordered w-full "
+              className="input input-bordered w-full"
               onChange={(event) => {
                 const password = event.target.value;
-                password.length < 6 ? setPasswordError(true) : setPasswordError(false);
+                setPasswordError(password.length < 6 || password.length === 0);
               }}
             />
+            {/* retype password */}
+            <div className="label">
+              <span className="label-text flex items-center gap-1 font-semibold">
+                <KeyRound size={16} />
+                Confirm Password
+              </span>
+              <span>
+                {mismatch && (
+                  <span className="text-xs font-semibold text-red-400">
+                    Password is not matched
+                  </span>
+                )}
+              </span>
+            </div>
+            <input
+              type="password"
+              name="retype-password"
+              required
+              placeholder="Confirm your password"
+              className="input input-bordered w-full"
+              onChange={(event) => {
+                const confirmPassword = event.target.value;
+                const originalPassword = document.getElementById("password") as HTMLInputElement;
+                setMismatch(confirmPassword !== originalPassword.value);
+              }}
+            />
+            <label className="form-control w-full">
+              <div className="label">
+                <span className="label-text flex items-center gap-1 font-semibold">
+                  <UserRoundPen size={16} />
+                  Select Role
+                </span>
+              </div>
+              <select className="select select-bordered w-full" name="role">
+                <option selected value="Member">
+                  Member
+                </option>
+                <option value="Founder">Founder</option>
+                <option value="Investor">Investor</option>
+              </select>
+            </label>
             <button
               type="button"
               onClick={() => {
@@ -275,7 +319,7 @@ function RegisterModal() {
             <button
               type="submit"
               className="btn"
-              disabled={isLoading || emailError || passwordError}
+              disabled={isLoading || emailError || passwordError || mismatch}
             >
               {isLoading ? (
                 <>
