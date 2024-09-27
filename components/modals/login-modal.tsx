@@ -142,13 +142,6 @@ function RegisterModal() {
   const [mismatch, setMismatch] = useState(false);
 
   async function register(formData: FormData) {
-    console.log("Form Data:", {
-      email: formData.get("email"),
-      firstName: formData.get("firstName"),
-      lastName: formData.get("lastName"),
-      password: formData.get("password"),
-      role: formData.get("role"),
-    });
     const { data } = await authControllerRegister({
       email: formData.get("email") as string,
       firstName: formData.get("firstName") as string,

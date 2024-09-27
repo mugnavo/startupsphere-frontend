@@ -110,9 +110,10 @@ export default function DashboardComponent() {
           {/* head */}
           <thead className="bg-warning">
             <tr>
-              <th>ID</th>
-              <th className="w-auto">Startup Name</th>
+              {/* <th>ID</th> */}
+              <th className="w-64">Startup Name</th>
               <th className="w-auto">Location</th>
+              <th className="w-auto">Categories</th>
               <th className="w-20">Action</th>
             </tr>
           </thead>
@@ -144,9 +145,10 @@ export default function DashboardComponent() {
               ))}
             {filteredStartups.map((startup, index) => (
               <tr key={index}>
-                <th>{startup.id}</th>
+                {/* <th>{startup.id}</th> */}
                 <td>{startup.name}</td>
-                <td>{startup.locationName}</td>
+                <td className="max-w-xs truncate">{startup.locationName}</td>
+                <td className="max-w-xs truncate">{startup.categories.join(", ")}</td>
                 <td className="flex gap-1.5">
                   <button
                     title="View more details"
