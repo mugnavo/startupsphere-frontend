@@ -27,7 +27,7 @@ export default function SideMenu() {
         {SIDEBAR_LINKS.filter((item) =>
           item.href === "/dashboard"
             ? user?.moderator
-            : ["/recents", "/bookmarks"].includes(item.href)
+            : ["/recents", "/bookmarks", "/reports"].includes(item.href)
               ? !!user
               : true
         ).map((item, index) => (

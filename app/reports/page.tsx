@@ -6,6 +6,7 @@ import { reportControllerDelete, reportControllerGetAllByUserId } from "~/lib/ap
 import { Report } from "~/lib/schemas"; // Report schema
 import { withAuth } from "~/lib/utils";
 import { useSession } from "~/context/hooks"; // Import the session context
+import DeleteConfirmationModal from "~/components/modals/delete-modal"; // Import the modal component
 
 export default function ReportsPage() {
   const { user } = useSession(); // Get the current user from session
@@ -14,6 +15,8 @@ export default function ReportsPage() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = Math.ceil(reports.length / 10); // Number of records per page
+  const [isModalOpen, setModalOpen] = useState(false); // State to manage modal visibility
+  const [reportToDelete, setReportToDelete] = useState<number | null>(null); // Track which report to delete
 
   async function fetchReports() {
     if (!userId) {
@@ -41,20 +44,21 @@ export default function ReportsPage() {
     }
   }, [userId]);
 
-  async function onDeleteReport(reportId: number) {
-    try {
-      await reportControllerDelete(reportId, withAuth);
-      fetchReports(); // Re-fetch reports after deletion
-    } catch (error) {
-      console.error("Failed to delete report:", error);
-      // Handle error (e.g., show a notification)
-    }
+  function onDeleteReport(reportId: number) {
+    reportControllerDelete(reportId, withAuth);
+    fetchReports();
   }
 
   function downloadReport(reportId: number) {
     // Add your download logic here
     console.log(`Downloading report with ID: ${reportId}`);
   }
+
+  // Open the modal for confirmation
+  const handleOpenModal = (reportId: number) => {
+    setReportToDelete(reportId);
+    setModalOpen(true);
+  };
 
   // Pagination logic
   const filteredReports = reports.slice((currentPage - 1) * 10, currentPage * 10);
@@ -121,7 +125,7 @@ export default function ReportsPage() {
                     <button
                       title="Remove"
                       className="btn btn-square btn-ghost btn-xs text-error hover:scale-110 hover:bg-transparent"
-                      onClick={() => onDeleteReport(report.id)}
+                      onClick={() => handleOpenModal(report.id)} // Open the modal on click
                     >
                       <Trash2 />
                     </button>
@@ -154,6 +158,21 @@ export default function ReportsPage() {
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {isModalOpen && reportToDelete !== null && (
+        <DeleteConfirmationModal
+          onDelete={() => {
+            onDeleteReport(reportToDelete);
+            setModalOpen(false);
+            setReportToDelete(null);
+          }}
+          onClose={() => {
+            setModalOpen(false);
+            setReportToDelete(null);
+          }}
+        />
+      )}
     </div>
   );
 }

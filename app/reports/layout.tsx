@@ -7,7 +7,7 @@ export default function ReportLayout({ children }: { children: React.ReactNode }
   return (
     <div className="absolute top-0 z-10 h-screen w-full flex-col overflow-y-hidden bg-white bg-opacity-95 p-6 pl-28 drop-shadow-xl">
       <div className="flex max-w-3xl items-center gap-8">
-        <Link href="/dashboard">
+        <Link href="/">
           <ArrowLeft size={20} className="cursor-pointer" />
         </Link>
         Reports
