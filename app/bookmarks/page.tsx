@@ -42,6 +42,9 @@ export default function Bookmarks() {
 
   return (
     <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col bg-white p-6">
+      {/* the gradient div */}
+      <div className="absolute inset-0 z-[-10] h-[8rem] bg-gradient-to-b from-yellow-600 to-transparent opacity-80" />
+
       <div className="mb-4 flex items-center justify-between">
         <span className="text-lg font-semibold">Bookmarks</span>
         <X size={20} onClick={() => router.replace("/")} className="cursor-pointer" />
