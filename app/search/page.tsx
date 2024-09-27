@@ -117,6 +117,7 @@ export default function SearchContent() {
       <div className={` ${!searchFocus ? "flex" : "hidden"}`}>
         {searchFocusType.map((item, index) => (
           <button
+            key={item.name}
             onClick={() => setSearchFocus(item.name)}
             type="button"
             className={`flex w-full items-center gap-3 bg-white px-3 py-2 text-gray-400 ring-1 ring-gray-300 hover:bg-gradient-to-r hover:font-bold hover:text-white ${index == 0 ? "rounded-l-full hover:from-[#FFC312] hover:via-[#EE5A24] hover:to-[#EA2027]" : "rounded-r-full hover:from-[#68d8d6] hover:via-[#00a6fb] hover:to-[#00509d]"}`}
@@ -179,6 +180,7 @@ export default function SearchContent() {
 }
 
 function Items({ list }: { list: Startup[] | Investor[] | (Startup | Investor)[] }) {
+  const router = useRouter();
   return (
     <>
       {list.map((item) => {
