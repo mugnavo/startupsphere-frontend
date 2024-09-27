@@ -258,6 +258,13 @@ export const reportControllerDelete = <TData = AxiosResponse<unknown>>(
   return axios.delete(`http://localhost:3001/reports/${reportId}`, options);
 };
 
+export const reportControllerGetAllByUserId = <TData = AxiosResponse<Report[]>>(
+  userId: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.get(`http://localhost:3001/reports/user/${userId}`, options);
+};
+
 export type AuthControllerRegisterResult = AxiosResponse<AuthResponse>;
 export type AuthControllerLoginResult = AxiosResponse<AuthResponse>;
 export type AuthControllerMeResult = AxiosResponse<User>;
@@ -291,3 +298,4 @@ export type ReportControllerCreateResult = AxiosResponse<Report>;
 export type ReportControllerGetOneByIdResult = AxiosResponse<Report>;
 export type ReportControllerUpdateResult = AxiosResponse<Report>;
 export type ReportControllerDeleteResult = AxiosResponse<unknown>;
+export type ReportControllerGetAllByUserIdResult = AxiosResponse<Report[]>;
