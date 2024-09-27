@@ -3,7 +3,6 @@
 import { LogOut, UserRound } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSession } from "~/context/hooks";
-import { User } from "~/lib/schemas";
 
 export default function Account() {
   const { user } = useSession();
@@ -50,7 +49,7 @@ export default function Account() {
           {Array.from({ length: 2 }, (_, index) => (
             <div
               key={index}
-              className="flex cursor-pointer items-center gap-2 rounded p-3 hover:bg-gray-100"
+              className={`flex ${user || index === 1 ? "cursor-pointer hover:bg-gray-100" : ""} items-center gap-2 rounded p-3`}
               onClick={async () => {
                 if (index === 1) {
                   if (user) {
