@@ -361,7 +361,7 @@ export default function DashboardAnalytics() {
         </div>
       </>
 
-      {/* for the search */}
+      {/* SEARCH SUGGESTION BOX */}
       {isSearching && (
         <div
           ref={modalRef}
