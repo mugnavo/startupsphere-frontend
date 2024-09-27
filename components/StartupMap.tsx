@@ -95,7 +95,6 @@ export default function StartupMap() {
     });
   }, [mainMap]);
 
-  console.log(startups)
   return (
     <div className="relative h-screen overflow-hidden">
       {dashboardSelection.active && (
@@ -198,38 +197,20 @@ export default function StartupMap() {
               <div className="absolute -bottom-6 text-center text-sm font-semibold">
                 {startup.name}
               </div>
-
-              {/* <div className="absolute bottom-8 z-50 hidden h-auto w-56 flex-col rounded-md bg-slate-50 shadow group-hover:z-50 group-hover:flex">
-                <div className="flex h-32 w-full flex-col bg-yellow-400">
-                  * eslint-disable-next-line @next/next/no-img-element 
-                  <img
-                    className="h-[122px] rounded-md object-cover"
-                    src={startup.logoUrl || ""}
-                    alt="logo"
-                  ></img>
-
-                  <h1 className="absolute bottom-10 m-3 text-xl font-bold text-white [text-shadow:_1px_1px_10px_rgb(0_0_0_/_70%)]">
-                    {startup.name}
-                  </h1>
-                </div>
-                <p className="m-3 line-clamp-2 h-auto w-auto overflow-hidden text-sm text-black">
-                  {startup.description}
-                </p>
-              </div> */}
             </div>
           </Marker>
         ))}
 
+        {/* change to investors */}
         {startups.map((startup) => (
-        
           <Marker
             key={startup.id}
-            longitude={(Number(startup.locationLng) + 0.01) ?? 0}
-  latitude={(Number(startup.locationLat) + 0.01) ?? 0}
+            longitude={Number(startup.locationLng) + 0.01 ?? 0}
+            latitude={Number(startup.locationLat) + 0.01 ?? 0}
             offset={[0, -20]}
           >
             <div
-              className="group relative flex w-32 justify-center text-lg text-red-600 "
+              className="group relative flex w-32 justify-center text-lg text-red-600"
               onClick={() => {
                 router.replace(`/details/${startup.id}`);
               }}
@@ -243,24 +224,6 @@ export default function StartupMap() {
               <div className="absolute -bottom-6 text-center text-sm font-semibold">
                 {startup.name}
               </div>
-
-              {/* <div className="absolute bottom-8 z-50 hidden h-auto w-56 flex-col rounded-md bg-slate-50 shadow group-hover:z-50 group-hover:flex">
-                <div className="flex h-32 w-full flex-col bg-yellow-400">
-                  * eslint-disable-next-line @next/next/no-img-element 
-                  <img
-                    className="h-[122px] rounded-md object-cover"
-                    src={startup.logoUrl || ""}
-                    alt="logo"
-                  ></img>
-
-                  <h1 className="absolute bottom-10 m-3 text-xl font-bold text-white [text-shadow:_1px_1px_10px_rgb(0_0_0_/_70%)]">
-                    {startup.name}
-                  </h1>
-                </div>
-                <p className="m-3 line-clamp-2 h-auto w-auto overflow-hidden text-sm text-black">
-                  {startup.description}
-                </p>
-              </div> */}
             </div>
           </Marker>
         ))}
