@@ -179,6 +179,7 @@ export default function SearchContent() {
 }
 
 function Items({ list }: { list: Startup[] | Investor[] | (Startup | Investor)[] }) {
+  const router = useRouter();
   return (
     <>
       {list.map((item) => {
