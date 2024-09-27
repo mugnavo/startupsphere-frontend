@@ -205,8 +205,8 @@ export default function StartupMap() {
         {startups.map((startup) => (
           <Marker
             key={startup.id}
-            longitude={Number(startup.locationLng) + 0.01 ?? 0}
-            latitude={Number(startup.locationLat) + 0.01 ?? 0}
+            longitude={Number(startup.locationLng || 0) + 0.01}
+            latitude={Number(startup.locationLat || 0) + 0.01}
             offset={[0, -20]}
           >
             <div
