@@ -1,6 +1,6 @@
 "use client";
 
-import { Bookmark, History, LayoutDashboard, Search } from "lucide-react";
+import { Bookmark, History, LayoutDashboard, Search, ClipboardPenLine } from "lucide-react";
 import { Fragment } from "react";
 
 import { useSession } from "~/context/hooks";
@@ -13,6 +13,7 @@ const SIDEBAR_LINKS: SidebarLinkProps[] = [
   { href: "/recents", name: "Recent", icon: <History size={size} /> },
   { href: "/bookmarks", name: "Bookmarks", icon: <Bookmark size={size} /> },
   { href: "/dashboard", name: "Dashboard", icon: <LayoutDashboard size={size} /> },
+  { href: "/reports", name: "Reports", icon: <ClipboardPenLine size={size} /> },
 ];
 
 export default function SideMenu() {
@@ -26,7 +27,7 @@ export default function SideMenu() {
         {SIDEBAR_LINKS.filter((item) =>
           item.href === "/dashboard"
             ? user?.moderator
-            : ["/recents", "/bookmarks"].includes(item.href)
+            : ["/recents", "/bookmarks", "/reports"].includes(item.href)
               ? !!user
               : true
         ).map((item, index) => (

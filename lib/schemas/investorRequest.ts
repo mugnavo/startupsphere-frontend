@@ -6,24 +6,18 @@
  * OpenAPI spec version: 1.0
  */
 
-export interface Startup {
-  bookmarks: number;
-  capital: number;
-  categories: string[];
+export interface InvestorRequest {
   contactInfo: string;
   description: string;
-  foundedDate: string;
-  founderName: string;
-  fundingStage: string;
   id: number;
-  likes: number;
+  investment_focus: string;
   locationLat: number;
   locationLng: number;
   locationName: string;
   logoUrl: string;
   managerId?: number;
   name: string;
-  teamSize: number;
-  views: number;
+  total_funds: number;
+  type: string;
   websiteUrl: string;
 }

@@ -57,7 +57,7 @@ export default function StartupDetails() {
         userId ?? 0,
         Number(startupId),
         withAuth
-      ); // Pass userId and startupId with a default value of 0
+      );
       if (data) {
         setLiked(true);
       }
@@ -74,7 +74,7 @@ export default function StartupDetails() {
         userId ?? 0,
         Number(startupId),
         withAuth
-      ); // Pass userId and startupId with a default value of 0
+      );
       if (data) {
         setBookmarked(true);
       }
@@ -97,7 +97,7 @@ export default function StartupDetails() {
       fetchLikeStatus();
       fetchBookmarkStatus();
     }
-  }, [userId]); // Fetch like & bookmark status when userId changes
+  }, [userId]);
 
   async function handleBookmark() {
     if (!userId) {
@@ -141,7 +141,6 @@ export default function StartupDetails() {
     }
   }
 
-  // Parse the date string and format it
   const formattedDate = startupDetails?.foundedDate
     ? new Date(startupDetails.foundedDate).toLocaleDateString("en-US", {
         month: "short",
@@ -173,7 +172,7 @@ export default function StartupDetails() {
       <div className="border-t border-gray-200 py-4">
         <div className="flex items-center justify-between px-6">
           <span className="text-lg font-bold">{startupDetails?.name}</span>
-          {user && (
+          {userId && (
             <ThumbsUp
               size={24}
               onClick={handleLike}
@@ -186,7 +185,7 @@ export default function StartupDetails() {
           <MapPin size={24} />
           <span className="ml-2 text-sm">{startupDetails?.locationName}</span>
         </div>
-        <div className="flex items-center px-6 py-1">
+        <div className="flex items-center px-6 py-2">
           <Globe size={16} />
           <a
             href={startupDetails?.websiteUrl}
@@ -197,12 +196,11 @@ export default function StartupDetails() {
             {startupDetails?.websiteUrl}
           </a>
         </div>
-        <div className="flex justify-center py-2">
-          {user && (
-            <div className="flex cursor-pointer justify-center py-4" onClick={handleBookmark}>
+        {userId && (
+          <div className="flex justify-center py-1">
+            <div className="flex cursor-pointer justify-center py-2" onClick={handleBookmark}>
               <Bookmark
                 size={18}
-                onClick={handleBookmark}
                 fill={bookmarked ? "#FFD700" : "none"}
                 className={`transform cursor-pointer transition-transform ${bookmarked ? "scale-125" : "scale-100"}`}
               />
@@ -210,8 +208,8 @@ export default function StartupDetails() {
                 {bookmarked ? "Remove Bookmark" : "Add Bookmark"}
               </span>
             </div>
-          )}
-        </div>
+          </div>
+        )}
         <hr className="border-gray-200" />
       </div>
       <div className="flex-grow overflow-y-auto px-6 py-2">
@@ -223,7 +221,7 @@ export default function StartupDetails() {
         <hr className="mb-4 border-gray-200" />
         <div className="text-gray-600">
           <div className="mb-2">
-            <p className="font-bold">Categories:</p>{" "}
+            <p className="font-bold">Categories:</p>
             <div className="flex flex-row flex-wrap">
               {startupDetails?.categories.map((category, index) => (
                 <span key={index} className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-sm">
@@ -254,10 +252,6 @@ export default function StartupDetails() {
                 {startupDetails?.bookmarks}
               </span>
               <span className="text-sm">Bookmarks</span>
-            </div>
-            <div className="ml-6 flex flex-col items-center">
-              <span className="text-lg font-semibold text-blue-500">{startupDetails?.views}</span>
-              <span className="text-sm">Views</span>
             </div>
           </div>
         </div>
