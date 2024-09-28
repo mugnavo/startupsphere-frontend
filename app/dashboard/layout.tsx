@@ -20,12 +20,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <Link href="/">
           <ArrowLeft size={20} className="cursor-pointer" />
         </Link>
-        Dashboard
         <div role="tablist" className="tabs tabs-bordered w-full">
           <Link
             role="tab"
             href="/dashboard"
             className={"tab" + (pathname === "/dashboard" ? " tab-active" : "")}
+          >
+            Dashboard
+          </Link>
+          <Link
+            role="tab"
+            href="/dashboard/startups"
+            className={"tab" + (pathname.startsWith("/dashboard/startups") ? " tab-active" : "")}
           >
             Startups
           </Link>
@@ -35,13 +41,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             className={"tab" + (pathname.startsWith("/dashboard/investors") ? " tab-active" : "")}
           >
             Investors
-          </Link>
-          <Link
-            role="tab"
-            href="/dashboard/analytics"
-            className={"tab" + (pathname.startsWith("/dashboard/analytics") ? " tab-active" : "")}
-          >
-            Analytics
           </Link>
           <Link
             role="tab"
