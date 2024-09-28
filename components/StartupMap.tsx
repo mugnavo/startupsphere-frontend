@@ -185,7 +185,7 @@ export default function StartupMap() {
             <div
               className="group relative flex w-32 justify-center text-lg text-sky-600"
               onClick={() => {
-                router.replace(`/details/${startup.id}`);
+                router.replace(`/startup/${startup.id}`);
               }}
             >
               <CustomPin
@@ -212,7 +212,7 @@ export default function StartupMap() {
             <div
               className="group relative flex w-32 justify-center text-lg text-red-600"
               onClick={() => {
-                router.replace(`/details/${startup.id}`);
+                router.replace(`/startup/${startup.id}`);
               }}
             >
               <CustomPin
