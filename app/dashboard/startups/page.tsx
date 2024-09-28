@@ -1,6 +1,16 @@
 "use client";
 
-import { Expand, MoveLeft, MoveRight, Search, SquarePen, Trash2 } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronsUpDown,
+  ChevronUp,
+  Expand,
+  MoveLeft,
+  MoveRight,
+  Search,
+  SquarePen,
+  Trash2,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -16,6 +26,8 @@ export default function DashboardComponent() {
   const [loading, setLoading] = useState(true);
   const pageSize = Math.ceil(startups.length / 10); // Number of records per page
   const [searchValue, setSearchValue] = useState<string>("");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [sortColumn, setSortColumn] = useState<"name" | "location" | "categories">("name");
 
   async function fetchStartups() {
     const result = await startupControllerGetAll();
@@ -76,9 +88,30 @@ export default function DashboardComponent() {
     }
   }
 
-  // sort first by id, then filter by name, then paginate
+  function toggleSortOrder(column: "name" | "location" | "categories") {
+    if (sortColumn === column) {
+      setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+    } else {
+      setSortColumn(column);
+      setSortOrder("asc");
+    }
+  }
+
+  //sort  by name*|| location || category, did not change this code (then filter by name, then paginate)
   const filteredStartups = startups
-    .sort((a, b) => a.id - b.id)
+    .sort((a, b) => {
+      if (sortColumn === "name") {
+        return sortOrder === "asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+      } else if (sortColumn === "location") {
+        return sortOrder === "asc"
+          ? a.locationName.localeCompare(b.locationName)
+          : b.locationName.localeCompare(a.locationName);
+      } else {
+        return sortOrder === "asc"
+          ? a.categories.join(", ").localeCompare(b.categories.join(", "))
+          : b.categories.join(", ").localeCompare(a.categories.join(", "));
+      }
+    })
     .filter((startup) => startup.name.toLowerCase().includes(searchValue.toLowerCase()))
     .slice((currentPage - 1) * 10, currentPage * 10);
 
@@ -111,9 +144,42 @@ export default function DashboardComponent() {
           <thead className="bg-warning">
             <tr>
               {/* <th>ID</th> */}
-              <th className="w-64">Startup Name</th>
-              <th className="w-auto">Location</th>
-              <th className="w-auto">Categories</th>
+              <th className="flex w-64 cursor-pointer" onClick={() => toggleSortOrder("name")}>
+                Startup Name
+                {sortColumn === "name" ? (
+                  sortOrder === "asc" ? (
+                    <ChevronUp strokeWidth={3} size={16} className="ml-1 inline" />
+                  ) : (
+                    <ChevronDown strokeWidth={3} size={16} className="ml-1 inline" />
+                  )
+                ) : (
+                  <ChevronsUpDown size={16} className="ml-1 inline" strokeWidth={1.5} />
+                )}
+              </th>
+              <th className="w-auto cursor-pointer" onClick={() => toggleSortOrder("location")}>
+                Location
+                {sortColumn === "location" ? (
+                  sortOrder === "asc" ? (
+                    <ChevronUp strokeWidth={3} size={16} className="ml-1 inline" />
+                  ) : (
+                    <ChevronDown strokeWidth={3} size={16} className="ml-1 inline" />
+                  )
+                ) : (
+                  <ChevronsUpDown size={16} className="ml-1 inline" strokeWidth={1.5} />
+                )}
+              </th>
+              <th className="w-auto cursor-pointer" onClick={() => toggleSortOrder("categories")}>
+                Categories
+                {sortColumn === "categories" ? (
+                  sortOrder === "asc" ? (
+                    <ChevronUp strokeWidth={3} size={16} className="ml-1 inline" />
+                  ) : (
+                    <ChevronDown strokeWidth={3} size={16} className="ml-1 inline" />
+                  )
+                ) : (
+                  <ChevronsUpDown size={16} className="ml-1 inline" strokeWidth={1.5} />
+                )}
+              </th>
               <th className="w-20">Action</th>
             </tr>
           </thead>
