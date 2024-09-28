@@ -87,7 +87,11 @@ export default function SearchContent() {
     <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col gap-1 bg-[#fefefe] p-5 pb-3 shadow-sm shadow-slate-400">
       {/* the gradient div */}
       <div className="absolute inset-0 z-[-10] h-[8rem] bg-gradient-to-b from-yellow-600 to-transparent opacity-80" />
-
+      <div>
+        <button className="bg-white-400 absolute bottom-8 right-8 z-50 rounded-full p-4 text-gray-400 shadow-lg transition duration-300 ease-in-out hover:bg-blue-700">
+          Generate Reports
+        </button>
+      </div>
       <div className="flex items-center justify-between">
         <span className="text-yellow-800">{searchFocus ? searchFocus : "Search"}</span>
         <X size={20} onClick={() => router.replace("/")} className="cursor-pointer" />
