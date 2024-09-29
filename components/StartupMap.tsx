@@ -106,7 +106,7 @@ export default function StartupMap() {
               </button>{" "}
               <span>
                 {dashboardSelection.edit ? "Editing " : "Viewing "}
-                <span className="font-semibold">{dashboardSelection.startupName}</span>
+                <span className="font-semibold">{dashboardSelection.entityName}</span>
               </span>
             </div>
           </div>
