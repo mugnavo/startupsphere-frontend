@@ -9,7 +9,6 @@
 export interface InvestorRequest {
   contactInfo: string;
   description: string;
-  id: number;
   investment_focus: string;
   locationLat: number;
   locationLng: number;
