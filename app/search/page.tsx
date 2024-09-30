@@ -1,5 +1,5 @@
 "use client";
-import { ArrowLeft, Cog, Filter, HandCoins, Search, X } from "lucide-react";
+import { ArrowLeft, Cog, Filter, HandCoins, Search, SquareMousePointer, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import router from "next/router";
 import { useEffect, useState } from "react";
@@ -7,7 +7,7 @@ import { startupControllerGetAll } from "~/lib/api";
 import { Startup } from "~/lib/schemas";
 import { Investor } from "~/lib/schemas/investor";
 import { investorTypes, sectors } from "~/lib/utils";
-
+import { motion } from "framer-motion";
 export default function SearchContent() {
   const router = useRouter();
   const [startups, setStartups] = useState<Startup[]>([]);
@@ -15,6 +15,7 @@ export default function SearchContent() {
   const [loading, setLoading] = useState(true);
   const [searchFocus, setSearchFocus] = useState<string>("");
   const [showFilters, setShowFilters] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const searchFocusType = [
     { name: "Startups", icon: <Cog size={24} /> },
     { name: "Investors", icon: <HandCoins size={24} /> },
@@ -87,7 +88,24 @@ export default function SearchContent() {
     <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col gap-1 bg-[#fefefe] p-5 pb-3 shadow-sm shadow-slate-400">
       {/* the gradient div */}
       <div className="absolute inset-0 z-[-10] h-[8rem] bg-gradient-to-b from-yellow-600 to-transparent opacity-80" />
-
+      <motion.div
+        onHoverStart={() => setIsHovered(true)}
+        onHoverEnd={() => setIsHovered(false)}
+        whileHover={{
+          scaleX: 1.5,
+          transformOrigin: "bottom",
+        }}
+      >
+        {isHovered ? (
+          <button className="bg-white-400 absolute bottom-8 right-8 z-50 rounded-full p-4 text-gray-400 shadow-lg transition duration-300 ease-in-out hover:bg-gray-700">
+            Generate Reports
+          </button>
+        ) : (
+          <div className="bg-white-400 absolute bottom-8 right-8 z-50 rounded-full p-4 text-gray-400 shadow-lg transition duration-300 ease-in-out hover:bg-gray-700">
+            <SquareMousePointer />
+          </div>
+        )}
+      </motion.div>
       <div className="flex items-center justify-between">
         <span className="text-yellow-800">{searchFocus ? searchFocus : "Search"}</span>
         <X size={20} onClick={() => router.replace("/")} className="cursor-pointer" />
