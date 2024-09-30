@@ -100,13 +100,14 @@ export default function SearchContent() {
             initial={{ opacity: 0, y: 10 }} // Set initial opacity and position
             animate={{ opacity: 1, y: 0 }} // Animate to full opacity and neutral position
             exit={{ opacity: 0, y: -10 }} // Exit with fade-out and position change
-            className="bg-white-700 text-gray absolute bottom-8 right-8 z-50 rounded-full p-4 shadow-lg transition duration-300 ease-in-out"
+            className="absolute bottom-8 right-8 z-50 rounded-full bg-red-900 px-6 py-2 text-white shadow-lg transition duration-300 ease-in-out hover:shadow-2xl"
+            style={{ whiteSpace: "nowrap" }}
           >
             Generate Reports
           </motion.button>
         ) : (
           // SquareMousePointer Icon
-          <div className="absolute bottom-8 right-8 z-50 rounded-full p-4 shadow-lg transition duration-300 ease-in-out">
+          <div className="absolute bottom-8 right-8 z-50 rounded-full bg-white p-2 shadow-lg transition duration-300 ease-in-out">
             <SquareMousePointer />
           </div>
         )}
