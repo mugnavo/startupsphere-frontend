@@ -91,17 +91,22 @@ export default function SearchContent() {
       <motion.div
         onHoverStart={() => setIsHovered(true)}
         onHoverEnd={() => setIsHovered(false)}
-        whileHover={{
-          scaleX: 1.5,
-          transformOrigin: "bottom",
-        }}
+        className="absolute bottom-8 right-8 z-50" // Ensure relative positioning of the container
       >
+        {/* Conditionally render based on hover state */}
         {isHovered ? (
-          <button className="bg-white-400 absolute bottom-8 right-8 z-50 rounded-full p-4 text-gray-400 shadow-lg transition duration-300 ease-in-out hover:bg-gray-700">
+          // Generate Reports Button
+          <motion.button
+            initial={{ opacity: 0, y: 10 }} // Set initial opacity and position
+            animate={{ opacity: 1, y: 0 }} // Animate to full opacity and neutral position
+            exit={{ opacity: 0, y: -10 }} // Exit with fade-out and position change
+            className="bg-white-700 text-gray absolute bottom-8 right-8 z-50 rounded-full p-4 shadow-lg transition duration-300 ease-in-out"
+          >
             Generate Reports
-          </button>
+          </motion.button>
         ) : (
-          <div className="bg-white-400 absolute bottom-8 right-8 z-50 rounded-full p-4 text-gray-400 shadow-lg transition duration-300 ease-in-out hover:bg-gray-700">
+          // SquareMousePointer Icon
+          <div className="absolute bottom-8 right-8 z-50 rounded-full p-4 shadow-lg transition duration-300 ease-in-out">
             <SquareMousePointer />
           </div>
         )}
