@@ -47,7 +47,7 @@ export default function Recents() {
               <div
                 key={view.id}
                 className="mb-1 flex cursor-pointer items-center justify-between rounded-md p-2 shadow-none hover:bg-gray-100"
-                onClick={() => router.push(`/details/${view.startup.id}`)}
+                onClick={() => router.push(`/startup/${view.startup.id}`)}
               >
                 <div className="flex w-full items-center">
                   <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">

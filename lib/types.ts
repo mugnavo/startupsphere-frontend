@@ -6,7 +6,7 @@ export interface LocationData {
 
 export interface DashboardSelection {
   active: boolean;
-  startupName?: string;
+  entityName?: string;
   edit: boolean;
   previewLocation?: LocationData;
 }

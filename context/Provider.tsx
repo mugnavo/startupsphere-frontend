@@ -2,16 +2,16 @@
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import { MapProvider } from "react-map-gl";
+import { authControllerMe } from "~/lib/api";
 import { User } from "~/lib/schemas";
 import { DashboardSelection, LocationData } from "~/lib/types";
-import { InteractionContext, SessionContext } from ".";
-import { authControllerMe } from "~/lib/api";
 import { withAuth } from "~/lib/utils";
+import { InteractionContext, SessionContext } from ".";
 
 export function ContextProvider({ children }: { children: React.ReactNode }) {
   const [dashboardSelection, setDashboardSelection] = useState<DashboardSelection>({
     active: false,
-    startupName: undefined,
+    entityName: undefined,
     edit: false,
     previewLocation: undefined,
   });
