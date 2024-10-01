@@ -214,11 +214,11 @@ export default function SearchContent() {
   );
 }
 
-function Items({ list }: { list: Startup[] | Investor[] | [Investor[], Startup[]] }) {
+function Items({ list }: { list: Startup[] | Investor[] }) {
   const router = useRouter();
   return (
     <>
-      {list.flat().map((item) => {
+      {list.map((item) => {
         const isStartup = item.hasOwnProperty("founderName");
         return (
           <div
