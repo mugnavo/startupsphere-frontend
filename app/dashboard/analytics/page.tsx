@@ -59,13 +59,13 @@ export default function DashboardAnalytics() {
     ]);
 
     if (likesRes.data) {
-      setLikes(likesRes.data);
+      setLikes(likesRes.data.filter((data) => data.user != null));
     }
     if (viewsRes.data) {
-      setViews(viewsRes.data);
+      setViews(viewsRes.data.filter((data) => data.user_id != null));
     }
     if (bookmarksRes.data) {
-      setBookmarks(bookmarksRes.data);
+      setBookmarks(bookmarksRes.data.filter((data) => data.user != null));
     }
   }
 
@@ -139,7 +139,6 @@ export default function DashboardAnalytics() {
     setRelatedStartups(
       stat_arr.map((stat) => stat.startup).slice(statOne ? 1 : 0, statOne ? 6 : 5)
     );
-    console.log(stat_arr, "relatedSS");
   }
 
   useEffect(() => {
@@ -204,8 +203,10 @@ export default function DashboardAnalytics() {
         ...itemToMove,
         isActive: !itemToMove.isActive,
       });
-      if (itemToMove.isActive && activeCategories.length == 1)
+      if (itemToMove.isActive && activeCategories.length == 1) {
         updatedItems[0] = { ...updatedItems[0], isActive: true }; //if all categories deselected, all is selected
+        setSelectedStartup(undefined);
+      }
     }
     setCategories(updatedItems);
   }
@@ -229,8 +230,10 @@ export default function DashboardAnalytics() {
     };
   }, [isSearching]);
 
-  const beforeContent = ["ave. views", "ave. likes", "ave. bookmarks"];
-  const afterContent = ["total views", "total likes", "total bookmarks"];
+  // console.log(startups.length, views.length, likes.length, bookmarks.length);
+  // console.log(views);
+  const allStartupData = ["ave. views", "ave. likes", "ave. bookmarks"];
+  const startupData = ["total views", "total likes", "total bookmarks"];
   return (
     <div className="relative mx-auto flex h-auto w-3/5 flex-col gap-4">
       <>
@@ -291,7 +294,7 @@ export default function DashboardAnalytics() {
                         0}
                     </span>
                     <span className="absolute bottom-2 left-0 right-1/3 text-[10px] leading-[0.7rem] text-gray-800">
-                      {selectedStartup ? afterContent[index] : beforeContent[index]}
+                      {selectedStartup ? startupData[index] : allStartupData[index]}
                     </span>
                     <span className="rounded-full bg-orange-800 p-2 text-white">
                       {icons[index]}
