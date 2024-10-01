@@ -5,11 +5,10 @@
  * API documentation for StartupSphere, the 3D mapping platform for startup ecosystems.
  * OpenAPI spec version: 1.0
  */
-import type { User } from "./user";
 
 export interface Report {
   file_type: string;
-  generated_by: User;
+  generated_by: number;
   id: number;
   name: string;
   timestamp: string;

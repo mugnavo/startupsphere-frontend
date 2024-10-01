@@ -7,6 +7,7 @@
  */
 
 export interface CreateLikeRequest {
-  startupId: number;
+  investorId?: number;
+  startupId?: number;
   userId: number;
 }

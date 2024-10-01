@@ -7,10 +7,12 @@
  */
 
 export interface Investor {
+  bookmarks: number;
   contactInfo: string;
   description: string;
   id: number;
   investment_focus: string;
+  likes: number;
   locationLat: number;
   locationLng: number;
   locationName: string;
@@ -19,5 +21,6 @@ export interface Investor {
   name: string;
   total_funds: number;
   type: string;
+  views: number;
   websiteUrl: string;
 }
