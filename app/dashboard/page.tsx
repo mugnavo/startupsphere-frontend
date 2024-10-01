@@ -20,7 +20,7 @@ type StartupStats = {
 
 export default function DashboardAnalytics() {
   const statKeys: (keyof StartupStats)[] = ["views", "likes", "bookmarks"];
-
+  const [loading, setLoading] = useState(true);
   const [startups, setStartups] = useState<Startup[]>([]);
   const [selectedStartup, setSelectedStartup] = useState<Startup>();
   const [relatedStartups, setRelatedStartups] = useState<Startup[]>([]);
@@ -59,23 +59,26 @@ export default function DashboardAnalytics() {
     ]);
 
     if (likesRes.data) {
-      setLikes(likesRes.data);
+      setLikes(likesRes.data.filter((data) => data.user != null));
     }
     if (viewsRes.data) {
-      setViews(viewsRes.data);
+      setViews(viewsRes.data.filter((data) => data.user_id != null));
     }
     if (bookmarksRes.data) {
-      setBookmarks(bookmarksRes.data);
+      setBookmarks(bookmarksRes.data.filter((data) => data.user != null));
     }
+    setLoading(false);
   }
 
   async function fetchStartups() {
     startupControllerGetAll()
       .then((result) => setStartups(result.data))
-      .catch((error) => console.error("Error fetching startups:", error));
+      .catch((error) => console.error("Error fetching startups:", error))
+      .finally(() => setLoading(false));
   }
 
   useEffect(() => {
+    setLoading(true);
     fetchChartData();
     fetchStartups();
   }, []);
@@ -139,7 +142,6 @@ export default function DashboardAnalytics() {
     setRelatedStartups(
       stat_arr.map((stat) => stat.startup).slice(statOne ? 1 : 0, statOne ? 6 : 5)
     );
-    console.log(stat_arr, "relatedSS");
   }
 
   useEffect(() => {
@@ -206,6 +208,7 @@ export default function DashboardAnalytics() {
       });
       if (itemToMove.isActive && activeCategories.length == 1)
         updatedItems[0] = { ...updatedItems[0], isActive: true }; //if all categories deselected, all is selected
+      setSelectedStartup(undefined); //removes selected startup, if any
     }
     setCategories(updatedItems);
   }
@@ -229,8 +232,8 @@ export default function DashboardAnalytics() {
     };
   }, [isSearching]);
 
-  const beforeContent = ["ave. views", "ave. likes", "ave. bookmarks"];
-  const afterContent = ["total views", "total likes", "total bookmarks"];
+  const allStartupData = ["ave. views", "ave. likes", "ave. bookmarks"];
+  const startupData = ["total views", "total likes", "total bookmarks"];
   return (
     <div className="relative mx-auto flex h-auto w-3/5 flex-col gap-4">
       <>
@@ -242,7 +245,7 @@ export default function DashboardAnalytics() {
             type="search"
             name="search-startup"
             id="search-startup"
-            className="block h-auto w-auto flex-1 rounded-md border-0 py-1.5 pl-7 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+            className="block h-auto w-auto flex-1 rounded-md border-0 py-1.5 pl-7 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
             placeholder="Search Startups"
             autoComplete="off"
             value={searchValue}
@@ -270,7 +273,11 @@ export default function DashboardAnalytics() {
         <div className="grid h-[18rem] w-full grid-cols-4 gap-2">
           <div className="flex w-max flex-col gap-3 bg-orange-400 p-4 shadow-custom">
             <h1 className="text-sm">
-              {selectedStartup && selectedStartup.name ? (
+              {loading ? (
+                <div className="flex h-6 w-full items-center">
+                  <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                </div>
+              ) : selectedStartup && selectedStartup.name ? (
                 <>{selectedStartup.name}</>
               ) : (
                 <>{startups.length} Total Startups</>
@@ -286,12 +293,14 @@ export default function DashboardAnalytics() {
                     className={`relative flex w-[10rem] flex-1 items-center justify-end gap-3 rounded bg-orange-300 px-3 text-center before:absolute before:bottom-0 before:left-0 before:top-0 before:w-2 before:rounded-s before:bg-yellow-600`}
                   >
                     <span className={`text-3xl`}>
-                      {(selectedStartup && selectedStartup[stat as keyof Startup]) ||
-                        parseFloat((stat.length / startups.length).toFixed(1)) ||
-                        0}
+                      {loading
+                        ? 0
+                        : selectedStartup
+                          ? selectedStartup[stat as keyof Startup]
+                          : parseFloat((stat.length / startups.length).toFixed(1))}
                     </span>
                     <span className="absolute bottom-2 left-0 right-1/3 text-[10px] leading-[0.7rem] text-gray-800">
-                      {selectedStartup ? afterContent[index] : beforeContent[index]}
+                      {selectedStartup ? startupData[index] : allStartupData[index]}
                     </span>
                     <span className="rounded-full bg-orange-800 p-2 text-white">
                       {icons[index]}
@@ -318,15 +327,45 @@ export default function DashboardAnalytics() {
               <thead className="bg-warning">
                 <tr>
                   <th className="font-bold">ID</th>
-                  <th className="w-auto">Startup Name</th>
+                  <th className="w-1/2">Startup Name</th>
                   <th className="w-auto">Views</th>
                   <th className="w-auto">Likes</th>
                   <th className="w-auto">Bookmarks</th>
                 </tr>
               </thead>
               <tbody className="font-normal">
+                {loading &&
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i}>
+                      <td>
+                        <div className="flex h-6 w-full items-center">
+                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                        </div>
+                      </td>
+                      <td>
+                        <div className="flex h-6 w-full items-center">
+                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                        </div>
+                      </td>
+                      <td>
+                        <div className="flex h-6 w-full items-center">
+                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                        </div>
+                      </td>
+                      <td>
+                        <div className="flex h-6 w-full items-center">
+                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                        </div>
+                      </td>
+                      <td>
+                        <div className="flex h-6 w-full items-center">
+                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
                 {relatedStartups.map((startup, index) => (
-                  <tr key={index} className="hover:bg-yellow-100">
+                  <tr key={index}>
                     <th>{startup.id}</th>
                     <td>{startup.name}</td>
                     <td>{startup.views}</td>
