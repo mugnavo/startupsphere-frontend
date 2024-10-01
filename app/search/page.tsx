@@ -1,16 +1,16 @@
 "use client";
+import { motion } from "framer-motion";
 import { ArrowLeft, Cog, Filter, HandCoins, Search, SquareMousePointer, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import router from "next/router";
 import { useEffect, useState } from "react";
-import { startupControllerGetAll } from "~/lib/api";
+import { investorControllerGetAll, startupControllerGetAll } from "~/lib/api";
 import { Startup } from "~/lib/schemas";
 import { Investor } from "~/lib/schemas/investor";
 import { investorTypes, sectors } from "~/lib/utils";
-import { motion } from "framer-motion";
 export default function SearchContent() {
   const router = useRouter();
   const [startups, setStartups] = useState<Startup[]>([]);
+  const [investors, setInvestors] = useState<Investor[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [searchFocus, setSearchFocus] = useState<string>("");
@@ -29,6 +29,13 @@ export default function SearchContent() {
     }))
   );
 
+  async function fetchInvestors() {
+    const { data } = await investorControllerGetAll();
+    if (data) {
+      setInvestors(data);
+    }
+  }
+
   async function fetchStartups() {
     const { data } = await startupControllerGetAll();
     if (data) {
@@ -40,6 +47,7 @@ export default function SearchContent() {
   useEffect(() => {
     setLoading(true);
     fetchStartups();
+    fetchInvestors();
   }, []);
 
   const filteredStartups = startups.filter(
@@ -53,15 +61,15 @@ export default function SearchContent() {
         ))
   );
 
-  const investors: Investor[] = [];
-
   const filteredInvestors = investors.filter(
     (investor) =>
       (searchQuery === "" || investor.name.toLowerCase().includes(searchQuery.toLowerCase())) && // check if searchquery is empty to show startups
       (categories.every((category) => !category.isActive) || // check if no category is selected to show all startups
-        categories
-          .filter((category) => category.isActive)
-          .some((activeCategory) => investor.type === activeCategory.name))
+        [investor.type].some((investorType) =>
+          categories
+            .filter((category) => category.isActive)
+            .some((activeCategory) => investorType === activeCategory.name)
+        ))
   );
 
   function filterSelected(index: number) {
@@ -121,6 +129,12 @@ export default function SearchContent() {
           onClick={() => {
             setSearchFocus("");
             setShowFilters(false);
+            setCategories((cat) =>
+              cat.map((category) => ({
+                ...category,
+                isActive: false,
+              }))
+            );
           }}
           className="absolute inset-0 flex w-fit cursor-pointer items-center pl-2 text-gray-500"
         >
@@ -185,16 +199,13 @@ export default function SearchContent() {
                     </div>
                   ))}
               </div>
+            ) : searchFocus ? (
+              <Items list={searchFocus == "Startups" ? filteredStartups : filteredInvestors} />
             ) : (
-              <Items
-                list={
-                  searchFocus
-                    ? searchFocus == "Startups"
-                      ? filteredStartups
-                      : filteredInvestors
-                    : ([] as (Startup | Investor)[]).concat(filteredStartups, filteredInvestors)
-                }
-              />
+              <>
+                <Items list={filteredStartups} />
+                <Items list={filteredInvestors} />
+              </>
             )}
           </div>
         </div>
@@ -203,11 +214,11 @@ export default function SearchContent() {
   );
 }
 
-function Items({ list }: { list: Startup[] | Investor[] | (Startup | Investor)[] }) {
+function Items({ list }: { list: Startup[] | Investor[] | [Investor[], Startup[]] }) {
   const router = useRouter();
   return (
     <>
-      {list.map((item) => {
+      {list.flat().map((item) => {
         const isStartup = item.hasOwnProperty("founderName");
         return (
           <div
