@@ -193,7 +193,7 @@ export default function StartupMap() {
             offset={[0, -20]}
           >
             <div
-              className="group relative flex w-32 justify-center text-lg text-sky-600"
+              className="group relative flex w-32 justify-center text-lg text-red-600"
               onClick={() => {
                 router.replace(`/startup/${startup.id}`);
               }}
@@ -220,7 +220,7 @@ export default function StartupMap() {
             offset={[0, -20]}
           >
             <div
-              className="group relative flex w-32 justify-center text-lg text-red-600"
+              className="group relative flex w-32 justify-center text-lg text-sky-600"
               onClick={() => {
                 router.replace(`/investor/${investor.id}`);
               }}

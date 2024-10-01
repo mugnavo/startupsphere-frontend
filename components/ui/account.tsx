@@ -3,7 +3,6 @@
 import { LogOut, UserRound } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSession } from "~/context/hooks";
-import { User } from "~/lib/schemas";
 
 export default function Account() {
   const { user } = useSession();
@@ -35,7 +34,11 @@ export default function Account() {
         onClick={() => setIsShowMenu(!isShowMenu)}
         className="absolute right-3 top-3 z-50 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 border-yellow-400 bg-yellow-600 text-xl font-normal text-white"
       >
-        {user?.firstName[0] || "G"}
+        {user?.avatarUrl ? (
+          <img src={user.avatarUrl} className="h-full w-full rounded-full object-cover" />
+        ) : (
+          user?.firstName[0] || "G"
+        )}
       </div>
 
       {/* account menu modal */}
@@ -50,7 +53,7 @@ export default function Account() {
           {Array.from({ length: 2 }, (_, index) => (
             <div
               key={index}
-              className="flex cursor-pointer items-center gap-2 rounded p-3 hover:bg-gray-100"
+              className={`flex ${user || index === 1 ? "cursor-pointer hover:bg-gray-100" : ""} items-center gap-2 rounded p-3`}
               onClick={async () => {
                 if (index === 1) {
                   if (user) {
