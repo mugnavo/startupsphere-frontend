@@ -4,24 +4,24 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useInteractiveMap } from "~/context/hooks";
-import { startupControllerCreate, startupControllerUpdate } from "~/lib/api";
-import { Startup, StartupRequest } from "~/lib/schemas";
+import { investorControllerCreate, investorControllerUpdate } from "~/lib/api";
+import { Investor, InvestorRequest } from "~/lib/schemas";
 import { LocationData } from "~/lib/types";
-import { capitalize, placeholderImageUrl, sectors, withAuth } from "~/lib/utils";
+import { capitalize, placeholderImageUrl, withAuth } from "~/lib/utils";
 import { UploadDropzone } from "../uploadthing";
 
-export default function StartupDetailsModal({
+export default function InvestorDetailsModal({
   editable = false,
-  startup,
+  investor,
 }: {
   editable: boolean;
-  startup: Startup | undefined;
+  investor: Investor | undefined;
 }) {
-  // Used for Create, View, and Edit startups
-  // - create = editable with undefined startup
-  // - edit = editable with startup
-  // - view = not editable with startup
-  const mode = editable ? (startup ? "edit" : "create") : "view";
+  // Used for Create, View, and Edit investors
+  // - create = editable with undefined investor
+  // - edit = editable with investor
+  // - view = not editable with investor
+  const mode = editable ? (investor ? "edit" : "create") : "view";
 
   const router = useRouter();
 
@@ -33,37 +33,37 @@ export default function StartupDetailsModal({
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  const [startupLogoUrl, setStartupLogoUrl] = useState<string | undefined>();
-  const [startupName, setStartupName] = useState<string | undefined>();
-  const [startupLocationData, setStartupLocationData] = useState<LocationData | undefined>();
-  const [startupCategories, setStartupCategories] = useState<string[]>([]);
+  const [investorLogoUrl, setInvestorLogoUrl] = useState<string | undefined>();
+  const [investorName, setInvestorName] = useState<string | undefined>();
+  const [investorLocationData, setInvestorLocationData] = useState<LocationData | undefined>();
+  //   const [investorCategories, setInvestorCategories] = useState<string[]>([]);
   const [customLocationName, setCustomLocationName] = useState<string | undefined>();
 
   useEffect(() => {
-    setStartupName(startup?.name ?? undefined);
-    setStartupLogoUrl(startup?.logoUrl ?? undefined);
-    setStartupLocationData(
-      startup
+    setInvestorName(investor?.name ?? undefined);
+    setInvestorLogoUrl(investor?.logoUrl ?? undefined);
+    setInvestorLocationData(
+      investor
         ? {
-            latitude: startup.locationLat,
-            longitude: startup.locationLng,
-            name: startup.locationName,
+            latitude: investor.locationLat,
+            longitude: investor.locationLng,
+            name: investor.locationName,
           }
         : undefined
     );
-    setStartupCategories(startup?.categories ?? []);
-    setCustomLocationName(startup?.locationName ?? undefined);
-  }, [startup]);
+    // setInvestorCategories(investor?.categories ?? []);
+    setCustomLocationName(investor?.locationName ?? undefined);
+  }, [investor]);
 
   useEffect(() => {
     if (!dashboardSelection.active && previewingMap) {
       if (selectedLocation) {
-        setStartupLocationData(selectedLocation);
+        setInvestorLocationData(selectedLocation);
         setCustomLocationName(selectedLocation.name);
         setSelectedLocation(undefined);
       }
 
-      const modal = document.getElementById("startup_details_modal") as HTMLDialogElement;
+      const modal = document.getElementById("investor_details_modal") as HTMLDialogElement;
       modal.show();
       setPreviewingMap(false);
     }
@@ -74,12 +74,12 @@ export default function StartupDetailsModal({
 
     setDashboardSelection({
       active: true,
-      entityName: startupName,
+      entityName: investorName,
       edit: edit,
-      previewLocation: edit ? undefined : startupLocationData,
+      previewLocation: edit ? undefined : investorLocationData,
     });
 
-    const modal = document.getElementById("startup_details_modal") as HTMLDialogElement;
+    const modal = document.getElementById("investor_details_modal") as HTMLDialogElement;
     modal.close();
   }
 
@@ -89,42 +89,42 @@ export default function StartupDetailsModal({
       return;
     }
 
-    if (!startupLocationData) {
+    if (!investorLocationData) {
       setLoading(false);
       setError("Please select a location from the map.");
       return;
     }
 
-    if (startupCategories.length === 0) {
-      setLoading(false);
-      setError("Please select at least one category.");
-      return;
-    }
+    // if (investorCategories.length === 0) {
+    //   setLoading(false);
+    //   setError("Please select at least one category.");
+    //   return;
+    // }
 
     const data = {
-      name: formData.get("startup_name") as string,
-      websiteUrl: formData.get("startup_website_url") as string,
-      categories: startupCategories,
-      description: formData.get("startup_description") as string,
-      logoUrl: startupLogoUrl || placeholderImageUrl,
-      founderName: formData.get("startup_foundername") as string,
+      name: formData.get("investor_name") as string,
+      websiteUrl: formData.get("investor_website_url") as string,
+      //   categories: investorCategories,
+      description: formData.get("investor_description") as string,
+      logoUrl: investorLogoUrl || placeholderImageUrl,
+      //   founderName: formData.get("investor_foundername") as string,
       locationName: customLocationName || "",
-      locationLat: startupLocationData?.latitude as number,
-      locationLng: startupLocationData?.longitude as number,
-      contactInfo: formData.get("startup_contact") as string,
-      foundedDate: new Date(formData.get("startup_founded") as string).toISOString(),
-      teamSize: parseInt(formData.get("startup_teamsize") as string),
-      capital: parseInt(formData.get("startup_capital") as string),
-      fundingStage: formData.get("startup_fundingstage") as string,
-    } satisfies StartupRequest;
+      locationLat: investorLocationData?.latitude as number,
+      locationLng: investorLocationData?.longitude as number,
+      contactInfo: formData.get("investor_contact") as string,
+      type: formData.get("investor_type") as string,
+      investment_focus: formData.get("investor_investment_focus") as string,
+      total_funds: parseInt(formData.get("investor_total_funds") as string),
+      //   foundedDate: new Date(formData.get("investor_founded") as string).toISOString(),
+    } satisfies InvestorRequest;
 
     if (mode === "create") {
-      await startupControllerCreate(data, withAuth);
+      await investorControllerCreate(data, withAuth);
     } else {
-      await startupControllerUpdate(startup!.id, data, withAuth);
+      await investorControllerUpdate(investor!.id, data, withAuth);
     }
     setLoading(false);
-    const modal = document.getElementById("startup_details_modal") as HTMLDialogElement;
+    const modal = document.getElementById("investor_details_modal") as HTMLDialogElement;
     modal.close();
     // TODO: proper refetch
     window.location.reload();
@@ -133,9 +133,9 @@ export default function StartupDetailsModal({
   }
 
   return (
-    <dialog id="startup_details_modal" className="modal">
+    <dialog id="investor_details_modal" className="modal">
       <div className="modal-box max-w-3xl">
-        <h3 className="text-lg font-bold">{capitalize(mode)} startup</h3>
+        <h3 className="text-lg font-bold">{capitalize(mode)} investor</h3>
         <form
           action={(formData: FormData) => {
             setError(undefined);
@@ -146,22 +146,30 @@ export default function StartupDetailsModal({
         >
           <TextInputField
             required
-            label="Startup name"
-            name="startup_name"
+            label="Investor name"
+            name="investor_name"
             placeholder="Mugnavo"
-            value={startupName}
-            onChange={setStartupName}
+            value={investorName}
+            onChange={setInvestorName}
             disabled={!editable || loading}
           />
           <TextInputField
             required
             label="Website URL"
-            name="startup_website_url"
+            name="investor_website_url"
             placeholder="https://mugnavo.com"
-            defaultValue={startup?.websiteUrl ?? undefined}
+            defaultValue={investor?.websiteUrl ?? undefined}
             disabled={!editable || loading}
           />
-          <div className="dropdown">
+          <TextInputField
+            required
+            label="Type"
+            name="investor_type"
+            placeholder="Accelerator"
+            defaultValue={investor?.type ?? undefined}
+            disabled={!editable || loading}
+          />
+          {/* <div className="dropdown">
             <div className="form-control w-full">
               <div className="label">
                 <span className="label-text">Categories</span>
@@ -170,8 +178,8 @@ export default function StartupDetailsModal({
                 tabIndex={0}
                 role="button"
                 type="text"
-                name="startup_categories"
-                value={startupCategories.length ? startupCategories.join(", ") : "(select)"}
+                name="investor_categories"
+                value={investorCategories.length ? investorCategories.join(", ") : "(select)"}
                 readOnly
                 className="input input-sm input-bordered w-full max-w-xs"
               />
@@ -184,10 +192,10 @@ export default function StartupDetailsModal({
                 <label key={sector} className="label cursor-pointer justify-start gap-2">
                   <input
                     type="checkbox"
-                    checked={startupCategories.includes(sector)}
+                    checked={investorCategories.includes(sector)}
                     onChange={(e) => {
                       if (!editable || loading) return;
-                      setStartupCategories((prev) =>
+                      setInvestorCategories((prev) =>
                         e.target.checked
                           ? [...prev, sector]
                           : prev.filter((category) => category !== sector)
@@ -199,14 +207,14 @@ export default function StartupDetailsModal({
                 </label>
               ))}
             </div>
-          </div>
+          </div> */}
 
           <TextInputField
             required
             label="Description"
-            name="startup_description"
+            name="investor_description"
             placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec odio nec eros ultricies fermentum."
-            defaultValue={startup?.description ?? undefined}
+            defaultValue={investor?.description ?? undefined}
             disabled={!editable || loading}
             textarea
           />
@@ -215,8 +223,8 @@ export default function StartupDetailsModal({
               <span className="label-text">Logo</span>
             </div>
             <Image
-              src={startupLogoUrl || placeholderImageUrl}
-              alt="Startup logo"
+              src={investorLogoUrl || placeholderImageUrl}
+              alt="Investor logo"
               width={512}
               height={512}
               className="rounded-lg"
@@ -239,7 +247,7 @@ export default function StartupDetailsModal({
                     return files;
                   }}
                   onClientUploadComplete={(e) => {
-                    setStartupLogoUrl(e[0].url);
+                    setInvestorLogoUrl(e[0].url);
                     setError(undefined);
                     setUploadingImage(false);
                   }}
@@ -253,16 +261,17 @@ export default function StartupDetailsModal({
           </div>
           <TextInputField
             required
-            label="Founder name"
-            name="startup_foundername"
-            placeholder="John Doe"
-            defaultValue={startup?.founderName ?? undefined}
+            label="Contact email/number"
+            name="investor_contact"
+            placeholder="hello@mugnavo.com"
+            defaultValue={investor?.contactInfo ?? undefined}
             disabled={!editable || loading}
           />
+
           <TextInputField
             required
             label="Location"
-            name="startup_location"
+            name="investor_location"
             placeholder="IT Park, Cebu City, Cebu"
             value={customLocationName}
             onChange={setCustomLocationName}
@@ -273,7 +282,7 @@ export default function StartupDetailsModal({
               <span className="label-text">Location from map</span>
             </div>
             <div className="flex gap-2">
-              {startupLocationData && (
+              {investorLocationData && (
                 <button
                   disabled={loading}
                   type="button"
@@ -291,56 +300,26 @@ export default function StartupDetailsModal({
                   className="btn btn-sm"
                   onClick={() => previewMap(true)}
                 >
-                  {startupLocationData ? "Edit" : "Select"}
+                  {investorLocationData ? "Edit" : "Select"}
                 </button>
               )}
             </div>
           </div>
           <TextInputField
             required
-            label="Contact email/number"
-            name="startup_contact"
-            placeholder="hello@mugnavo.com"
-            defaultValue={startup?.contactInfo ?? undefined}
+            label="Investment focus"
+            name="investor_investment_focus"
+            placeholder="SaaS, E-commerce, Healthtech"
+            defaultValue={investor?.investment_focus ?? undefined}
             disabled={!editable || loading}
           />
           <TextInputField
             required
-            label="Founded date"
-            name="startup_founded"
-            placeholder="2024/04/24"
-            defaultValue={
-              startup?.foundedDate
-                ? new Date(startup.foundedDate).toISOString().split("T")[0]
-                : undefined
-            }
-            disabled={!editable || loading}
-            type="date"
-          />
-          <TextInputField
-            required
-            label="Team size"
-            name="startup_teamsize"
+            label="Total funds"
             type="number"
-            placeholder="10"
-            defaultValue={startup?.teamSize.toString() ?? "10"}
-            disabled={!editable || loading}
-          />
-          <TextInputField
-            required
-            label="Capital"
-            name="startup_capital"
-            type="number"
-            placeholder="10000"
-            defaultValue={startup?.capital.toString() ?? "10000"}
-            disabled={!editable || loading}
-          />
-          <TextInputField
-            required
-            label="Funding stage"
-            name="startup_fundingstage"
-            placeholder="Series A"
-            defaultValue={startup?.fundingStage ?? "Series A"}
+            name="investor_total_funds"
+            placeholder="150000"
+            defaultValue={investor?.total_funds.toString() ?? undefined}
             disabled={!editable || loading}
           />
 

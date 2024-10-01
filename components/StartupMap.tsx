@@ -9,8 +9,8 @@ import type { MapLayerMouseEvent } from "react-map-gl";
 import Map, { Marker, useMap } from "react-map-gl";
 
 import { useInteractiveMap } from "~/context/hooks";
-import { startupControllerGetAll } from "~/lib/api";
-import { Startup } from "~/lib/schemas";
+import { investorControllerGetAll, startupControllerGetAll } from "~/lib/api";
+import type { Investor, Startup } from "~/lib/schemas";
 import CustomPin from "./map/CustomPin";
 import Geocoder from "./map/Geocoder";
 
@@ -18,6 +18,8 @@ const geocode = new GeocodingCore({ accessToken: process.env.NEXT_PUBLIC_MAPBOX_
 
 export default function StartupMap() {
   const [startups, setStartups] = useState<Startup[]>([]);
+  const [investors, setInvestors] = useState<Investor[]>([]);
+
   const router = useRouter();
   const [viewState, setViewState] = useState({
     longitude: 123.89811168536812,
@@ -33,8 +35,16 @@ export default function StartupMap() {
       setStartups(data);
     }
   }
+
+  async function fetchInvestors() {
+    const { data } = await investorControllerGetAll();
+    if (data) {
+      setInvestors(data);
+    }
+  }
   useEffect(() => {
     fetchStartups();
+    fetchInvestors();
   }, []);
 
   const { dashboardSelection, setDashboardSelection, selectedLocation, setSelectedLocation } =
@@ -106,7 +116,7 @@ export default function StartupMap() {
               </button>{" "}
               <span>
                 {dashboardSelection.edit ? "Editing " : "Viewing "}
-                <span className="font-semibold">{dashboardSelection.startupName}</span>
+                <span className="font-semibold">{dashboardSelection.entityName}</span>
               </span>
             </div>
           </div>
@@ -202,27 +212,27 @@ export default function StartupMap() {
         ))}
 
         {/* change to investors */}
-        {startups.map((startup) => (
+        {investors.map((investor) => (
           <Marker
-            key={startup.id}
-            longitude={Number(startup.locationLng || 0) + 0.01}
-            latitude={Number(startup.locationLat || 0) + 0.01}
+            key={investor.id}
+            longitude={investor.locationLng ?? 0}
+            latitude={investor.locationLat ?? 0}
             offset={[0, -20]}
           >
             <div
               className="group relative flex w-32 justify-center text-lg text-red-600"
               onClick={() => {
-                router.replace(`/startup/${startup.id}`);
+                router.replace(`/investor/${investor.id}`);
               }}
             >
               <CustomPin
                 className="h-8 w-8"
-                startupimage={startup.logoUrl}
-                categories={startup.categories}
-                startupname={startup.name}
+                startupimage={investor.logoUrl}
+                categories={[investor.type]}
+                startupname={investor.name}
               />
               <div className="absolute -bottom-6 text-center text-sm font-semibold">
-                {startup.name}
+                {investor.name}
               </div>
             </div>
           </Marker>
