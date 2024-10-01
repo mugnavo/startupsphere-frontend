@@ -112,6 +112,9 @@ export default function InvestorDetailsModal({
       locationLat: investorLocationData?.latitude as number,
       locationLng: investorLocationData?.longitude as number,
       contactInfo: formData.get("investor_contact") as string,
+      type: formData.get("investor_type") as string,
+      investment_focus: formData.get("investor_investment_focus") as string,
+      total_funds: parseInt(formData.get("investor_total_funds") as string),
       //   foundedDate: new Date(formData.get("investor_founded") as string).toISOString(),
     } satisfies InvestorRequest;
 
@@ -156,6 +159,14 @@ export default function InvestorDetailsModal({
             name="investor_website_url"
             placeholder="https://mugnavo.com"
             defaultValue={investor?.websiteUrl ?? undefined}
+            disabled={!editable || loading}
+          />
+          <TextInputField
+            required
+            label="Type"
+            name="investor_type"
+            placeholder="Accelerator"
+            defaultValue={investor?.type ?? undefined}
             disabled={!editable || loading}
           />
           {/* <div className="dropdown">
@@ -248,14 +259,15 @@ export default function InvestorDetailsModal({
               </div>
             )}
           </div>
-          {/* <TextInputField
+          <TextInputField
             required
-            label="Founder name"
-            name="investor_foundername"
-            placeholder="John Doe"
-            defaultValue={investor?.founderName ?? undefined}
+            label="Contact email/number"
+            name="investor_contact"
+            placeholder="hello@mugnavo.com"
+            defaultValue={investor?.contactInfo ?? undefined}
             disabled={!editable || loading}
-          /> */}
+          />
+
           <TextInputField
             required
             label="Location"
@@ -295,25 +307,21 @@ export default function InvestorDetailsModal({
           </div>
           <TextInputField
             required
-            label="Contact email/number"
-            name="investor_contact"
-            placeholder="hello@mugnavo.com"
-            defaultValue={investor?.contactInfo ?? undefined}
+            label="Investment focus"
+            name="investor_investment_focus"
+            placeholder="SaaS, E-commerce, Healthtech"
+            defaultValue={investor?.investment_focus ?? undefined}
             disabled={!editable || loading}
           />
-          {/* <TextInputField
+          <TextInputField
             required
-            label="Founded date"
-            name="investor_founded"
-            placeholder="2024/04/24"
-            defaultValue={
-              investor?.foundedDate
-                ? new Date(investor.foundedDate).toISOString().split("T")[0]
-                : undefined
-            }
+            label="Total funds"
+            type="number"
+            name="investor_total_funds"
+            placeholder="150000"
+            defaultValue={investor?.total_funds.toString() ?? undefined}
             disabled={!editable || loading}
-            date
-          /> */}
+          />
 
           {editable && (
             <div className="modal-action col-span-full flex items-center justify-end gap-2">
@@ -344,7 +352,7 @@ function TextInputField({
   value,
   required,
   onChange,
-  date,
+  type = "text",
 }: {
   label: string;
   name: string;
@@ -353,7 +361,7 @@ function TextInputField({
   value?: string;
   disabled?: boolean;
   textarea?: boolean;
-  date?: boolean;
+  type?: string;
   required?: boolean;
   onChange?: (value: string) => void;
 }) {
@@ -376,7 +384,7 @@ function TextInputField({
         />
       ) : (
         <input
-          type={date ? "date" : "text"}
+          type={type}
           placeholder={placeholder}
           name={name}
           value={value}
