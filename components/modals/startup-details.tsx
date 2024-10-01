@@ -113,6 +113,9 @@ export default function StartupDetailsModal({
       locationLng: startupLocationData?.longitude as number,
       contactInfo: formData.get("startup_contact") as string,
       foundedDate: new Date(formData.get("startup_founded") as string).toISOString(),
+      teamSize: parseInt(formData.get("startup_teamsize") as string),
+      capital: parseInt(formData.get("startup_capital") as string),
+      fundingStage: formData.get("startup_fundingstage") as string,
     } satisfies StartupRequest;
 
     if (mode === "create") {
@@ -312,7 +315,33 @@ export default function StartupDetailsModal({
                 : undefined
             }
             disabled={!editable || loading}
-            date
+            type="date"
+          />
+          <TextInputField
+            required
+            label="Team size"
+            name="startup_teamsize"
+            type="number"
+            placeholder="10"
+            defaultValue={startup?.teamSize.toString() ?? "10"}
+            disabled={!editable || loading}
+          />
+          <TextInputField
+            required
+            label="Capital"
+            name="startup_capital"
+            type="number"
+            placeholder="10000"
+            defaultValue={startup?.capital.toString() ?? "10000"}
+            disabled={!editable || loading}
+          />
+          <TextInputField
+            required
+            label="Funding stage"
+            name="startup_fundingstage"
+            placeholder="Series A"
+            defaultValue={startup?.fundingStage ?? "Series A"}
+            disabled={!editable || loading}
           />
 
           {editable && (
@@ -344,7 +373,7 @@ function TextInputField({
   value,
   required,
   onChange,
-  date,
+  type = "text",
 }: {
   label: string;
   name: string;
@@ -353,7 +382,7 @@ function TextInputField({
   value?: string;
   disabled?: boolean;
   textarea?: boolean;
-  date?: boolean;
+  type?: string;
   required?: boolean;
   onChange?: (value: string) => void;
 }) {
@@ -376,7 +405,7 @@ function TextInputField({
         />
       ) : (
         <input
-          type={date ? "date" : "text"}
+          type={type}
           placeholder={placeholder}
           name={name}
           value={value}
