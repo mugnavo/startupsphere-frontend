@@ -73,7 +73,7 @@ export default function Bookmarks() {
             <div
               key={id}
               className="mb-2 flex cursor-pointer items-center justify-between rounded-md p-2 shadow-none hover:bg-gray-100"
-              onClick={() => router.push(`/details/${startup.id}`)}
+              onClick={() => router.push(`/startup/${startup.id}`)}
             >
               <div className="flex w-full items-center">
                 <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">

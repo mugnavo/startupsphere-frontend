@@ -1,5 +1,5 @@
 "use client";
-import { ArrowLeft, Cog, Filter, HandCoins, Search, X } from "lucide-react";
+import { ArrowLeft, Cog, Filter, HandCoins, Search, SquareMousePointer, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import router from "next/router";
 import { useEffect, useState } from "react";
@@ -7,7 +7,7 @@ import { startupControllerGetAll } from "~/lib/api";
 import { Startup } from "~/lib/schemas";
 import { Investor } from "~/lib/schemas/investor";
 import { investorTypes, sectors } from "~/lib/utils";
-
+import { motion } from "framer-motion";
 export default function SearchContent() {
   const router = useRouter();
   const [startups, setStartups] = useState<Startup[]>([]);
@@ -15,6 +15,7 @@ export default function SearchContent() {
   const [loading, setLoading] = useState(true);
   const [searchFocus, setSearchFocus] = useState<string>("");
   const [showFilters, setShowFilters] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const searchFocusType = [
     { name: "Startups", icon: <Cog size={24} /> },
     { name: "Investors", icon: <HandCoins size={24} /> },
@@ -87,7 +88,30 @@ export default function SearchContent() {
     <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col gap-1 bg-[#fefefe] p-5 pb-3 shadow-sm shadow-slate-400">
       {/* the gradient div */}
       <div className="absolute inset-0 z-[-10] h-[8rem] bg-gradient-to-b from-yellow-600 to-transparent opacity-80" />
-
+      <motion.div
+        onHoverStart={() => setIsHovered(true)}
+        onHoverEnd={() => setIsHovered(false)}
+        className="absolute bottom-8 right-8 z-50" // Ensure relative positioning of the container
+      >
+        {/* Conditionally render based on hover state */}
+        {isHovered ? (
+          // Generate Reports Button
+          <motion.button
+            initial={{ opacity: 0, y: 10 }} // Set initial opacity and position
+            animate={{ opacity: 1, y: 0 }} // Animate to full opacity and neutral position
+            exit={{ opacity: 0, y: -10 }} // Exit with fade-out and position change
+            className="absolute bottom-8 right-8 z-50 rounded-full bg-red-900 px-6 py-2 text-white shadow-lg transition duration-300 ease-in-out hover:shadow-2xl"
+            style={{ whiteSpace: "nowrap" }}
+          >
+            Generate Reports
+          </motion.button>
+        ) : (
+          // SquareMousePointer Icon
+          <div className="absolute bottom-8 right-8 z-50 rounded-full bg-white p-2 shadow-lg transition duration-300 ease-in-out">
+            <SquareMousePointer />
+          </div>
+        )}
+      </motion.div>
       <div className="flex items-center justify-between">
         <span className="text-yellow-800">{searchFocus ? searchFocus : "Search"}</span>
         <X size={20} onClick={() => router.replace("/")} className="cursor-pointer" />
@@ -189,7 +213,7 @@ function Items({ list }: { list: Startup[] | Investor[] | (Startup | Investor)[]
           <div
             key={item.id}
             className="mb-1 flex cursor-pointer items-center justify-between rounded-md bg-white p-2 shadow-none hover:bg-gray-100"
-            onClick={() => router.push(`/details/${item.id}`)}
+            onClick={() => router.push(`/startup/${item.id}`)}
           >
             <div className="flex w-full items-center">
               <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-white">
