@@ -5,12 +5,14 @@
  * API documentation for StartupSphere, the 3D mapping platform for startup ecosystems.
  * OpenAPI spec version: 1.0
  */
+import type { Investor } from "./investor";
 import type { Startup } from "./startup";
 import type { User } from "./user";
 
 export interface Bookmark {
   id: number;
-  startup: Startup;
+  investor?: Investor;
+  startup?: Startup;
   timestamp: string;
   user: User;
 }

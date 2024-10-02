@@ -32,7 +32,7 @@ export default function StartupDetailsModal({
   const [error, setError] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
-
+  const [users, setUsers] = useState([]);
   const [startupLogoUrl, setStartupLogoUrl] = useState<string | undefined>();
   const [startupName, setStartupName] = useState<string | undefined>();
   const [startupLocationData, setStartupLocationData] = useState<LocationData | undefined>();
@@ -343,6 +343,16 @@ export default function StartupDetailsModal({
             defaultValue={startup?.fundingStage ?? "Series A"}
             disabled={!editable || loading}
           />
+          <label className="form-control w-full max-w-xs">
+            <div className="label">
+              <span className="label-text">Select Manager</span>
+            </div>
+            <select className="select select-bordered select-sm">
+              <option disabled selected>
+                Pick one
+              </option>
+            </select>
+          </label>
 
           {editable && (
             <div className="modal-action col-span-full flex items-center justify-end gap-2">

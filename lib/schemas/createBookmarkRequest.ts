@@ -7,6 +7,7 @@
  */
 
 export interface CreateBookmarkRequest {
-  startupId: number;
+  investorId?: number;
+  startupId?: number;
   userId: number;
 }

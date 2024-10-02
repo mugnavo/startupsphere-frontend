@@ -7,7 +7,8 @@
  */
 
 export interface CreateViewRequest {
-  startupId: number;
+  investorId?: number;
+  startupId?: number;
   /** @nullable */
   userId: number | null;
 }

@@ -3,12 +3,20 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Cog, Filter, HandCoins, Search, SquareMousePointer, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { investorControllerGetAll, startupControllerGetAll } from "~/lib/api";
-import { Startup } from "~/lib/schemas";
+import { uploadFiles } from "~/components/uploadthing";
+import { useSession } from "~/context/hooks";
+import {
+  investorControllerGetAll,
+  reportControllerCreate,
+  startupControllerGetAll,
+} from "~/lib/api";
+import { ReportRequest, Startup } from "~/lib/schemas";
 import { Investor } from "~/lib/schemas/investor";
-import { investorTypes, sectors } from "~/lib/utils";
+import { investorTypes, sectors, withAuth } from "~/lib/utils";
+
 export default function SearchContent() {
   const router = useRouter();
+  const { user } = useSession();
   const [startups, setStartups] = useState<Startup[]>([]);
   const [investors, setInvestors] = useState<Investor[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -92,6 +100,55 @@ export default function SearchContent() {
     setCategories(updatedItems);
   }
 
+  const generateCSV = () => {
+    const headers = ["Name", "Location", "Categories"];
+    const rows = filteredStartups.map((startup) => [
+      startup.name,
+      startup.locationName,
+      startup.categories.join(", "),
+    ]);
+
+    const csvContent = [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
+
+    return new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  };
+
+  const handleGenerateReports = async () => {
+    setLoading(true);
+    try {
+      const csvBlob = generateCSV();
+      const file = new File([csvBlob], "startups.csv", { type: "text/csv" });
+
+      //download chuchu
+      const url = URL.createObjectURL(file);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "startups.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      // post to reports
+      const result = await uploadFiles("reportUploader", {
+        files: [file],
+      });
+
+      const reportRequest: ReportRequest = {
+        file_type: result[0].type,
+        generated_by: user?.id as number,
+        name: result[0].name,
+        url: result[0].url,
+      };
+
+      await reportControllerCreate(reportRequest, withAuth);
+    } catch (error) {
+      console.error("Error generating reports:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col gap-1 bg-[#fefefe] p-5 pb-3 shadow-sm shadow-slate-400">
       {/* the gradient div */}
@@ -110,6 +167,7 @@ export default function SearchContent() {
             exit={{ opacity: 0, y: -10 }} // Exit with fade-out and position change
             className="absolute bottom-0 right-0 z-50 rounded-full bg-red-900 px-6 py-2 text-white shadow-lg transition duration-300 ease-in-out hover:shadow-2xl"
             style={{ whiteSpace: "nowrap" }} // Prevent text wrapping inside the button
+            onClick={handleGenerateReports}
           >
             Generate Reports
           </motion.button>
