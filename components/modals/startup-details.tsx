@@ -1,15 +1,23 @@
 "use client";
 
+import {
+  Combobox,
+  ComboboxButton,
+  ComboboxInput,
+  ComboboxOption,
+  ComboboxOptions,
+  Label,
+} from "@headlessui/react";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useInteractiveMap } from "~/context/hooks";
-import { startupControllerCreate, startupControllerUpdate } from "~/lib/api";
-import { Startup, StartupRequest } from "~/lib/schemas";
+import { startupControllerCreate, startupControllerUpdate, userControllerGetAll } from "~/lib/api";
+import { Startup, StartupRequest, User } from "~/lib/schemas";
 import { LocationData } from "~/lib/types";
 import { capitalize, placeholderImageUrl, sectors, withAuth } from "~/lib/utils";
 import { UploadDropzone } from "../uploadthing";
-
 export default function StartupDetailsModal({
   editable = false,
   startup,
@@ -32,16 +40,21 @@ export default function StartupDetailsModal({
   const [error, setError] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [startupLogoUrl, setStartupLogoUrl] = useState<string | undefined>();
   const [startupName, setStartupName] = useState<string | undefined>();
   const [startupLocationData, setStartupLocationData] = useState<LocationData | undefined>();
   const [startupCategories, setStartupCategories] = useState<string[]>([]);
   const [customLocationName, setCustomLocationName] = useState<string | undefined>();
+  const [query, setQuery] = useState("");
+  const [selectedPerson, setSelectedPerson] = useState<User | null>(null);
+  const [managerId, setManagerId] = useState<User | undefined>();
 
   useEffect(() => {
+    fetchUsers();
     setStartupName(startup?.name ?? undefined);
     setStartupLogoUrl(startup?.logoUrl ?? undefined);
+    setManagerId((startup?.managerId as unknown as User) ?? undefined);
     setStartupLocationData(
       startup
         ? {
@@ -83,6 +96,11 @@ export default function StartupDetailsModal({
     modal.close();
   }
 
+  async function fetchUsers() {
+    const { data } = await userControllerGetAll(withAuth);
+    setUsers(data);
+  }
+
   async function submitForm(formData: FormData) {
     if (!editable) {
       setLoading(false);
@@ -116,6 +134,7 @@ export default function StartupDetailsModal({
       teamSize: parseInt(formData.get("startup_teamsize") as string),
       capital: parseInt(formData.get("startup_capital") as string),
       fundingStage: formData.get("startup_fundingstage") as string,
+      managerId: selectedPerson?.id,
     } satisfies StartupRequest;
 
     if (mode === "create") {
@@ -131,6 +150,13 @@ export default function StartupDetailsModal({
 
     // TODO: loading/submitting state
   }
+
+  const filteredPeople =
+    query === ""
+      ? users
+      : users.filter((person) => {
+          return person.firstName.toLowerCase().includes(query.toLowerCase());
+        });
 
   return (
     <dialog id="startup_details_modal" className="modal">
@@ -344,14 +370,51 @@ export default function StartupDetailsModal({
             disabled={!editable || loading}
           />
           <label className="form-control w-full max-w-xs">
-            <div className="label">
-              <span className="label-text">Select Manager</span>
-            </div>
-            <select className="select select-bordered select-sm">
-              <option disabled selected>
-                Pick one
-              </option>
-            </select>
+            <Combobox
+              disabled={!editable || loading}
+              as="div"
+              value={managerId}
+              onChange={(person: User) => {
+                setQuery("");
+                setSelectedPerson(person);
+              }}
+            >
+              <Label className="block text-sm font-medium leading-6 text-gray-900">
+                Select Manager
+              </Label>
+              <div className="relative mt-2">
+                <ComboboxInput
+                  className="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  onChange={(event) => setQuery(event.target.value)}
+                  onBlur={() => setQuery("")}
+                  displayValue={(person: User) => person?.firstName}
+                  placeholder="Select a manager"
+                />
+                <ComboboxButton className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                  <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                </ComboboxButton>
+
+                {filteredPeople.length > 0 && (
+                  <ComboboxOptions className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                    {filteredPeople.map((person) => (
+                      <ComboboxOption
+                        key={person.id}
+                        value={person}
+                        className="group relative cursor-default select-none py-2 pl-8 pr-4 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
+                      >
+                        <span className="block truncate group-data-[selected]:font-semibold">
+                          {person.firstName}
+                        </span>
+
+                        <span className="absolute inset-y-0 left-0 hidden items-center pl-1.5 text-indigo-600 group-data-[selected]:flex group-data-[focus]:text-white">
+                          <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                        </span>
+                      </ComboboxOption>
+                    ))}
+                  </ComboboxOptions>
+                )}
+              </div>
+            </Combobox>
           </label>
 
           {editable && (
