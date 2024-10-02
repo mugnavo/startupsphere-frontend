@@ -19,7 +19,7 @@ export default function Recents() {
 
     // Remove duplicate startups
     const uniqueData = data.filter(
-      (value, index, self) => self.findIndex((t) => t.startup.id === value.startup.id) === index
+      (value, index, self) => self.findIndex((t) => t.startup?.id === value.startup?.id) === index
     );
     setRecentViews(uniqueData);
   }
@@ -47,22 +47,22 @@ export default function Recents() {
               <div
                 key={view.id}
                 className="mb-1 flex cursor-pointer items-center justify-between rounded-md p-2 shadow-none hover:bg-gray-100"
-                onClick={() => router.push(`/startup/${view.startup.id}`)}
+                onClick={() => router.push(`/startup/${view.startup?.id}`)}
               >
                 <div className="flex w-full items-center">
                   <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">
                     <img
-                      src={view.startup.logoUrl}
-                      alt={view.startup.name}
+                      src={view.startup?.logoUrl}
+                      alt={view.startup?.name}
                       className="h-full w-full object-cover"
                     />
                   </div>
                   <div className="flex-1">
                     <div className="flex flex-col">
-                      <div className="text-sm font-semibold">{view.startup.name}</div>
-                      <div className="text-xs text-gray-500">{view.startup.locationName}</div>
+                      <div className="text-sm font-semibold">{view.startup?.name}</div>
+                      <div className="text-xs text-gray-500">{view.startup?.locationName}</div>
                       <div className="mt-1 flex flex-wrap">
-                        {view.startup.categories.slice(0, 3).map((category, index) => (
+                        {view.startup?.categories.slice(0, 3).map((category, index) => (
                           <span
                             key={index}
                             className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs"
@@ -70,7 +70,7 @@ export default function Recents() {
                             {category}
                           </span>
                         ))}
-                        {view.startup.categories.length > 3 && (
+                        {view.startup?.categories.length && view.startup.categories.length > 3 && (
                           <span className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs text-gray-500">
                             ...
                           </span>
