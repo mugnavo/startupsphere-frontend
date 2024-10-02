@@ -5,8 +5,8 @@
  * API documentation for StartupSphere, the 3D mapping platform for startup ecosystems.
  * OpenAPI spec version: 1.0
  */
-import axios from "axios";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios from "axios";
 import type {
   AuthResponse,
   Bookmark,
@@ -58,6 +58,13 @@ export const startupControllerCreate = <TData = AxiosResponse<Startup>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.post(`http://localhost:3001/startups`, startupRequest, options);
+};
+
+export const startupControllerFindAllByManagerId = <TData = AxiosResponse<Startup[]>>(
+  managerId: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.get(`http://localhost:3001/startups/manager/${managerId}`, options);
 };
 
 export const startupControllerGetOneById = <TData = AxiosResponse<Startup>>(
@@ -318,11 +325,18 @@ export const reportControllerGetAllByUserId = <TData = AxiosResponse<Report[]>>(
   return axios.get(`http://localhost:3001/reports/user/${userId}`, options);
 };
 
+export const userControllerGetAll = <TData = AxiosResponse<User[]>>(
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.get(`http://localhost:3001/users`, options);
+};
+
 export type AuthControllerRegisterResult = AxiosResponse<AuthResponse>;
 export type AuthControllerLoginResult = AxiosResponse<AuthResponse>;
 export type AuthControllerMeResult = AxiosResponse<User>;
 export type StartupControllerGetAllResult = AxiosResponse<Startup[]>;
 export type StartupControllerCreateResult = AxiosResponse<Startup>;
+export type StartupControllerFindAllByManagerIdResult = AxiosResponse<Startup[]>;
 export type StartupControllerGetOneByIdResult = AxiosResponse<Startup>;
 export type StartupControllerUpdateResult = AxiosResponse<Startup>;
 export type StartupControllerDeleteResult = AxiosResponse<unknown>;
@@ -359,3 +373,4 @@ export type ReportControllerGetOneByIdResult = AxiosResponse<Report>;
 export type ReportControllerUpdateResult = AxiosResponse<Report>;
 export type ReportControllerDeleteResult = AxiosResponse<unknown>;
 export type ReportControllerGetAllByUserIdResult = AxiosResponse<Report[]>;
+export type UserControllerGetAllResult = AxiosResponse<User[]>;

@@ -104,8 +104,8 @@ export default function SearchContent() {
     const headers = ["Name", "Location", "Categories"];
     const rows = filteredStartups.map((startup) => [
       startup.name,
-      startup.locationName,
-      startup.categories.join(", "),
+      `"${startup.locationName}"`,
+      `"${startup.categories.join(", ")}"`,
     ]);
 
     const csvContent = [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
@@ -116,14 +116,29 @@ export default function SearchContent() {
   const handleGenerateReports = async () => {
     setLoading(true);
     try {
+      const now = new Date();
+
+      // Extract date components
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+      const day = String(now.getDate()).padStart(2, "0");
+
+      // Extract time components
+      const hours = String(now.getHours()).padStart(2, "0");
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      const seconds = String(now.getSeconds()).padStart(2, "0");
+
+      // Construct the filename
+      const filename = `${year}${month}${day}-Startups-${hours}${minutes}${seconds}.csv`;
+
       const csvBlob = generateCSV();
-      const file = new File([csvBlob], "startups.csv", { type: "text/csv" });
+      const file = new File([csvBlob], filename, { type: "text/csv" });
 
       //download chuchu
       const url = URL.createObjectURL(file);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "startups.csv";
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

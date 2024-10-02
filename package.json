@@ -17,6 +17,8 @@
     "gen": "orval --config ./orval.config.ts"
   },
   "dependencies": {
+    "@headlessui/react": "^2.1.8",
+    "@heroicons/react": "^2.1.5",
     "@mapbox/mapbox-gl-geocoder": "^5.0.3",
     "@mapbox/search-js-core": "1.0.0-beta.22",
     "@uploadthing/react": "^7.0.2",

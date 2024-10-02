@@ -1,11 +1,24 @@
 "use client";
 
+import {
+  Combobox,
+  ComboboxButton,
+  ComboboxInput,
+  ComboboxOption,
+  ComboboxOptions,
+  Label,
+} from "@headlessui/react";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useInteractiveMap } from "~/context/hooks";
-import { investorControllerCreate, investorControllerUpdate } from "~/lib/api";
-import { Investor, InvestorRequest } from "~/lib/schemas";
+import {
+  investorControllerCreate,
+  investorControllerUpdate,
+  userControllerGetAll,
+} from "~/lib/api";
+import { Investor, InvestorRequest, User } from "~/lib/schemas";
 import { LocationData } from "~/lib/types";
 import { capitalize, placeholderImageUrl, withAuth } from "~/lib/utils";
 import { UploadDropzone } from "../uploadthing";
@@ -28,7 +41,7 @@ export default function InvestorDetailsModal({
   const { dashboardSelection, setDashboardSelection, selectedLocation, setSelectedLocation } =
     useInteractiveMap();
   const [previewingMap, setPreviewingMap] = useState(false);
-
+  const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -38,10 +51,15 @@ export default function InvestorDetailsModal({
   const [investorLocationData, setInvestorLocationData] = useState<LocationData | undefined>();
   //   const [investorCategories, setInvestorCategories] = useState<string[]>([]);
   const [customLocationName, setCustomLocationName] = useState<string | undefined>();
+  const [query, setQuery] = useState("");
+  const [selectedPerson, setSelectedPerson] = useState<User | null>(null);
+  const [managerId, setManagerId] = useState<User | undefined>();
 
   useEffect(() => {
+    fetchUsers();
     setInvestorName(investor?.name ?? undefined);
     setInvestorLogoUrl(investor?.logoUrl ?? undefined);
+    setManagerId((investor?.managerId as unknown as User) ?? undefined);
     setInvestorLocationData(
       investor
         ? {
@@ -83,6 +101,18 @@ export default function InvestorDetailsModal({
     modal.close();
   }
 
+  async function fetchUsers() {
+    const { data } = await userControllerGetAll(withAuth);
+    setUsers(data);
+  }
+
+  const filteredPeople =
+    query === ""
+      ? users
+      : users.filter((person) => {
+          return person.firstName.toLowerCase().includes(query.toLowerCase());
+        });
+
   async function submitForm(formData: FormData) {
     if (!editable) {
       setLoading(false);
@@ -115,6 +145,7 @@ export default function InvestorDetailsModal({
       type: formData.get("investor_type") as string,
       investment_focus: formData.get("investor_investment_focus") as string,
       total_funds: parseInt(formData.get("investor_total_funds") as string),
+      managerId: selectedPerson?.id,
       //   foundedDate: new Date(formData.get("investor_founded") as string).toISOString(),
     } satisfies InvestorRequest;
 
@@ -322,6 +353,54 @@ export default function InvestorDetailsModal({
             defaultValue={investor?.total_funds.toString() ?? undefined}
             disabled={!editable || loading}
           />
+
+          <label className="form-control w-full max-w-xs">
+            <Combobox
+              disabled={!editable || loading}
+              as="div"
+              value={managerId}
+              onChange={(person: User) => {
+                setQuery("");
+                setSelectedPerson(person);
+              }}
+            >
+              <Label className="block text-sm font-medium leading-6 text-gray-900">
+                Select Manager
+              </Label>
+              <div className="relative mt-2">
+                <ComboboxInput
+                  className="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  onChange={(event) => setQuery(event.target.value)}
+                  onBlur={() => setQuery("")}
+                  displayValue={(person: User) => person?.firstName}
+                  placeholder="Select a manager"
+                />
+                <ComboboxButton className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                  <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                </ComboboxButton>
+
+                {filteredPeople.length > 0 && (
+                  <ComboboxOptions className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                    {filteredPeople.map((person) => (
+                      <ComboboxOption
+                        key={person.id}
+                        value={person}
+                        className="group relative cursor-default select-none py-2 pl-8 pr-4 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
+                      >
+                        <span className="block truncate group-data-[selected]:font-semibold">
+                          {person.firstName}
+                        </span>
+
+                        <span className="absolute inset-y-0 left-0 hidden items-center pl-1.5 text-indigo-600 group-data-[selected]:flex group-data-[focus]:text-white">
+                          <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                        </span>
+                      </ComboboxOption>
+                    ))}
+                  </ComboboxOptions>
+                )}
+              </div>
+            </Combobox>
+          </label>
 
           {editable && (
             <div className="modal-action col-span-full flex items-center justify-end gap-2">
