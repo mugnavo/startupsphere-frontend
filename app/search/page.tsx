@@ -97,27 +97,32 @@ export default function SearchContent() {
       {/* the gradient div */}
       <div className="absolute inset-0 z-[-10] h-[8rem] bg-gradient-to-b from-yellow-600 to-transparent opacity-80" />
       <motion.div
-        onHoverStart={() => setIsHovered(true)}
-        onHoverEnd={() => setIsHovered(false)}
-        className="absolute bottom-8 right-8 z-50" // Ensure relative positioning of the container
+        onHoverStart={() => setIsHovered(true)} // Set hover state to true when mouse enters the area
+        onHoverEnd={() => setIsHovered(false)} // Set hover state to false when mouse leaves the area
+        className="absolute bottom-8 right-8 z-50" // Ensure absolute positioning at bottom-right
       >
         {/* Conditionally render based on hover state */}
         {isHovered ? (
           // Generate Reports Button
           <motion.button
-            initial={{ opacity: 0, y: 10 }} // Set initial opacity and position
+            initial={{ opacity: 0, y: 10 }} // Set initial opacity and position for animation
             animate={{ opacity: 1, y: 0 }} // Animate to full opacity and neutral position
             exit={{ opacity: 0, y: -10 }} // Exit with fade-out and position change
-            className="absolute bottom-8 right-8 z-50 rounded-full bg-red-900 px-6 py-2 text-white shadow-lg transition duration-300 ease-in-out hover:shadow-2xl"
-            style={{ whiteSpace: "nowrap" }}
+            className="absolute bottom-0 right-0 z-50 rounded-full bg-red-900 px-6 py-2 text-white shadow-lg transition duration-300 ease-in-out hover:shadow-2xl"
+            style={{ whiteSpace: "nowrap" }} // Prevent text wrapping inside the button
           >
             Generate Reports
           </motion.button>
         ) : (
           // SquareMousePointer Icon
-          <div className="absolute bottom-8 right-8 z-50 rounded-full bg-white p-2 shadow-lg transition duration-300 ease-in-out">
+          <motion.div
+            initial={{ opacity: 0, scale: 1.2 }} // Set initial opacity and scale for animation
+            animate={{ opacity: 1, scale: 1 }} // Animate to full opacity and normal scale
+            exit={{ opacity: 0, scale: 1 }} // Exit with fade-out and scale-down animation
+            className="absolute bottom-0 right-0 z-50 rounded-full bg-white p-2 shadow-lg transition duration-300 ease-in-out"
+          >
             <SquareMousePointer />
-          </div>
+          </motion.div>
         )}
       </motion.div>
       <div className="flex items-center justify-between">
