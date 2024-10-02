@@ -241,7 +241,35 @@ export default function StartupDetails() {
               {startupDetails?.contactInfo}
             </a>
           </div>
+
           <hr className="mb-2 border-gray-200" />
+          
+          <div className="text-gray-600">
+            <div className="mb-4 flex">
+              <p className="mr-2 font-bold">Capital:</p>
+              <span>
+                {startupDetails?.capital
+                  ? new Intl.NumberFormat("en-PH", {
+                      style: "currency",
+                      currency: "PHP",
+                    }).format(startupDetails.capital)
+                  : "Not specified"}
+              </span>
+            </div>
+
+            <div className="mb-4 flex">
+              <p className="mr-2 font-bold">Funding Stage:</p>
+              <span>{startupDetails?.fundingStage || "Not specified"}</span>
+            </div>
+
+            <div className="mb-4 flex">
+              <p className="mr-2 font-bold">Team Size:</p>
+              <span>{startupDetails?.teamSize || "Not specified"}</span>
+            </div>
+          </div>
+
+          <hr className="mb-2 border-gray-200" />
+
           <div className="flex justify-center py-4">
             <div className="flex flex-col items-center">
               <span className="text-lg font-semibold text-blue-500">{startupDetails?.likes}</span>
@@ -252,6 +280,10 @@ export default function StartupDetails() {
                 {startupDetails?.bookmarks}
               </span>
               <span className="text-sm">Bookmarks</span>
+            </div>
+            <div className="ml-6 flex flex-col items-center">
+              <span className="text-lg font-semibold text-blue-500">{startupDetails?.views}</span>
+              <span className="text-sm">Views</span>
             </div>
           </div>
         </div>
