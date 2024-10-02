@@ -8,10 +8,10 @@ import { useSession } from "~/context/hooks";
 import {
   bookmarkControllerCreate,
   bookmarkControllerFindOneByUserIdAndStartupId,
-  bookmarkControllerRemove,
+  bookmarkControllerStartupRemove,
   likeControllerCreate,
   likeControllerFindOneByUserIdAndStartupId,
-  likeControllerRemove,
+  likeControllerStartupRemove,
   startupControllerGetOneById,
   viewControllerCreate,
 } from "~/lib/api";
@@ -112,7 +112,7 @@ export default function StartupDetails() {
         await bookmarkControllerCreate({ userId: userId, startupId: Number(startupId) }, withAuth);
         console.log("Bookmarked!");
       } else {
-        await bookmarkControllerRemove(userId, Number(startupId), withAuth);
+        await bookmarkControllerStartupRemove(userId, Number(startupId), withAuth);
         console.log("Bookmark removed!");
       }
     } catch (error) {
@@ -133,7 +133,7 @@ export default function StartupDetails() {
         await likeControllerCreate({ userId: userId, startupId: Number(startupId) }, withAuth);
         console.log("Liked!");
       } else {
-        await likeControllerRemove(userId, Number(startupId), withAuth);
+        await likeControllerStartupRemove(userId, Number(startupId), withAuth);
         console.log("Disliked!");
       }
     } catch (error) {
@@ -243,7 +243,7 @@ export default function StartupDetails() {
           </div>
 
           <hr className="mb-2 border-gray-200" />
-          
+
           <div className="text-gray-600">
             <div className="mb-4 flex">
               <p className="mr-2 font-bold">Capital:</p>

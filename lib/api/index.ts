@@ -95,22 +95,6 @@ export const bookmarkControllerCreate = <TData = AxiosResponse<void>>(
   return axios.post(`http://localhost:3001/bookmarks`, createBookmarkRequest, options);
 };
 
-export const bookmarkControllerFindOneByUserIdAndStartupId = <TData = AxiosResponse<Bookmark>>(
-  userId: number,
-  startupId: number,
-  options?: AxiosRequestConfig
-): Promise<TData> => {
-  return axios.get(`http://localhost:3001/bookmarks/${userId}/${startupId}`, options);
-};
-
-export const bookmarkControllerRemove = <TData = AxiosResponse<void>>(
-  userId: number,
-  startupId: number,
-  options?: AxiosRequestConfig
-): Promise<TData> => {
-  return axios.delete(`http://localhost:3001/bookmarks/${userId}/${startupId}`, options);
-};
-
 export const bookmarkControllerFindAllByUserId = <TData = AxiosResponse<Bookmark[]>>(
   userId: number,
   options?: AxiosRequestConfig
@@ -118,11 +102,50 @@ export const bookmarkControllerFindAllByUserId = <TData = AxiosResponse<Bookmark
   return axios.get(`http://localhost:3001/bookmarks/${userId}`, options);
 };
 
+export const bookmarkControllerStartupRemove = <TData = AxiosResponse<void>>(
+  userId: number,
+  startupId: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.delete(`http://localhost:3001/bookmarks/${userId}/startup/${startupId}`, options);
+};
+
+export const bookmarkControllerFindOneByUserIdAndStartupId = <TData = AxiosResponse<Bookmark>>(
+  userId: number,
+  startupId: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.get(`http://localhost:3001/bookmarks/${userId}/startup/${startupId}`, options);
+};
+
+export const bookmarkControllerInvestorRemove = <TData = AxiosResponse<void>>(
+  userId: number,
+  investorId: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.delete(`http://localhost:3001/bookmarks/${userId}/investor/${investorId}`, options);
+};
+
+export const bookmarkControllerFindOneByUserIdAndInvestorId = <TData = AxiosResponse<Bookmark>>(
+  userId: number,
+  investorId: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.get(`http://localhost:3001/bookmarks/${userId}/investor/${investorId}`, options);
+};
+
 export const bookmarkControllerFindAllByStartupId = <TData = AxiosResponse<Bookmark[]>>(
   startupId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.get(`http://localhost:3001/bookmarks/${startupId}`, options);
+};
+
+export const bookmarkControllerFindAllByInvestorId = <TData = AxiosResponse<Bookmark[]>>(
+  investorId: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.get(`http://localhost:3001/bookmarks/${investorId}`, options);
 };
 
 export const likeControllerGetAll = <TData = AxiosResponse<Like[]>>(
@@ -138,12 +161,12 @@ export const likeControllerCreate = <TData = AxiosResponse<void>>(
   return axios.post(`http://localhost:3001/likes`, createLikeRequest, options);
 };
 
-export const likeControllerRemove = <TData = AxiosResponse<void>>(
+export const likeControllerStartupRemove = <TData = AxiosResponse<void>>(
   userId: number,
   startupId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.delete(`http://localhost:3001/likes/${userId}/${startupId}`, options);
+  return axios.delete(`http://localhost:3001/likes/${userId}/startup/${startupId}`, options);
 };
 
 export const likeControllerFindOneByUserIdAndStartupId = <TData = AxiosResponse<Like>>(
@@ -151,7 +174,23 @@ export const likeControllerFindOneByUserIdAndStartupId = <TData = AxiosResponse<
   startupId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`http://localhost:3001/likes/${userId}/${startupId}`, options);
+  return axios.get(`http://localhost:3001/likes/${userId}/startup/${startupId}`, options);
+};
+
+export const likeControllerInvestorRemove = <TData = AxiosResponse<void>>(
+  userId: number,
+  investorId: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.delete(`http://localhost:3001/likes/${userId}/investor/${investorId}`, options);
+};
+
+export const likeControllerFindOneByUserIdAndInvestorId = <TData = AxiosResponse<Like>>(
+  userId: number,
+  investorId: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.get(`http://localhost:3001/likes/${userId}/investor/${investorId}`, options);
 };
 
 export const likeControllerFindAllByStartupId = <TData = AxiosResponse<Like[]>>(
@@ -159,6 +198,13 @@ export const likeControllerFindAllByStartupId = <TData = AxiosResponse<Like[]>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.get(`http://localhost:3001/likes/${startupId}`, options);
+};
+
+export const likeControllerFindAllByInvestorId = <TData = AxiosResponse<Like[]>>(
+  investorId: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.get(`http://localhost:3001/likes/${investorId}`, options);
 };
 
 export const viewControllerCreate = <TData = AxiosResponse<void>>(
@@ -185,7 +231,14 @@ export const viewControllerFindAllByStartupId = <TData = AxiosResponse<View[]>>(
   startupId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`http://localhost:3001/views/${startupId}`, options);
+  return axios.get(`http://localhost:3001/views/startup/${startupId}`, options);
+};
+
+export const viewControllerFindAllByInvestorId = <TData = AxiosResponse<View[]>>(
+  investorId: number,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.get(`http://localhost:3001/views/investor/${investorId}`, options);
 };
 
 export const investorControllerGetAll = <TData = AxiosResponse<Investor[]>>(
@@ -275,19 +328,26 @@ export type StartupControllerUpdateResult = AxiosResponse<Startup>;
 export type StartupControllerDeleteResult = AxiosResponse<unknown>;
 export type BookmarkControllerGetAllResult = AxiosResponse<Bookmark[]>;
 export type BookmarkControllerCreateResult = AxiosResponse<void>;
-export type BookmarkControllerFindOneByUserIdAndStartupIdResult = AxiosResponse<Bookmark>;
-export type BookmarkControllerRemoveResult = AxiosResponse<void>;
 export type BookmarkControllerFindAllByUserIdResult = AxiosResponse<Bookmark[]>;
+export type BookmarkControllerStartupRemoveResult = AxiosResponse<void>;
+export type BookmarkControllerFindOneByUserIdAndStartupIdResult = AxiosResponse<Bookmark>;
+export type BookmarkControllerInvestorRemoveResult = AxiosResponse<void>;
+export type BookmarkControllerFindOneByUserIdAndInvestorIdResult = AxiosResponse<Bookmark>;
 export type BookmarkControllerFindAllByStartupIdResult = AxiosResponse<Bookmark[]>;
+export type BookmarkControllerFindAllByInvestorIdResult = AxiosResponse<Bookmark[]>;
 export type LikeControllerGetAllResult = AxiosResponse<Like[]>;
 export type LikeControllerCreateResult = AxiosResponse<void>;
-export type LikeControllerRemoveResult = AxiosResponse<void>;
+export type LikeControllerStartupRemoveResult = AxiosResponse<void>;
 export type LikeControllerFindOneByUserIdAndStartupIdResult = AxiosResponse<Like>;
+export type LikeControllerInvestorRemoveResult = AxiosResponse<void>;
+export type LikeControllerFindOneByUserIdAndInvestorIdResult = AxiosResponse<Like>;
 export type LikeControllerFindAllByStartupIdResult = AxiosResponse<Like[]>;
+export type LikeControllerFindAllByInvestorIdResult = AxiosResponse<Like[]>;
 export type ViewControllerCreateResult = AxiosResponse<void>;
 export type ViewControllerGetAllResult = AxiosResponse<View[]>;
 export type ViewControllerFindRecentsByUserIdResult = AxiosResponse<View[]>;
 export type ViewControllerFindAllByStartupIdResult = AxiosResponse<View[]>;
+export type ViewControllerFindAllByInvestorIdResult = AxiosResponse<View[]>;
 export type InvestorControllerGetAllResult = AxiosResponse<Investor[]>;
 export type InvestorControllerCreateResult = AxiosResponse<Investor>;
 export type InvestorControllerGetOneByIdResult = AxiosResponse<Investor>;
