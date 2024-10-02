@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, Trash2, MoveLeft, MoveRight } from "lucide-react";
+import { Download, Trash2, MoveLeft, MoveRight, SquareChartGantt } from "lucide-react";
 import { useEffect, useState } from "react";
 import { reportControllerDelete, reportControllerGetAllByUserId } from "~/lib/api"; // Update the import for user-specific API
 import { Report } from "~/lib/schemas"; // Report schema
@@ -65,10 +65,16 @@ export default function ReportsPage() {
 
   return (
     <div className="mx-auto flex h-full w-[70%] flex-col py-8">
-      <div className="mb-4 text-3xl">Reports</div>
+      <div className="mb-4 flex flex-col items-start">
+        <h1 className="flex items-center text-2xl font-bold">
+          <SquareChartGantt className="mr-2 h-6 w-6 text-gray-700" />
+          Reports
+        </h1>
+        <span className="text-sm text-gray-500">Total of {reports.length} reports</span>
+      </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
+      <div className="flex flex-col items-start justify-center bg-white shadow-custom">
         <table className="table table-sm w-full">
           {/* Head */}
           <thead className="bg-warning">
@@ -135,27 +141,28 @@ export default function ReportsPage() {
             )}
           </tbody>
         </table>
-        <div className="m-auto mt-3 flex w-full justify-between">
-          <div className="ml-3 flex items-center gap-6 italic">
-            {reports.length ? (
-              <>
-                {currentPage > 1 && (
-                  <button onClick={() => setCurrentPage(currentPage - 1)}>
-                    <MoveLeft />
-                  </button>
-                )}
-                {currentPage} / {pageSize}
-                {currentPage < pageSize && (
-                  <button onClick={() => setCurrentPage(currentPage + 1)}>
-                    <MoveRight />
-                  </button>
-                )}
-              </>
-            ) : (
-              <>{""}</>
-            )}
-            &nbsp; - &nbsp; {reports.length} total
-          </div>
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="m-auto mt-3 flex w-full justify-between">
+        <div className="ml-3 flex items-center gap-6 italic">
+          {reports.length ? (
+            <>
+              {currentPage > 1 && (
+                <button onClick={() => setCurrentPage(currentPage - 1)}>
+                  <MoveLeft />
+                </button>
+              )}
+              {currentPage} / {pageSize}
+              {currentPage < pageSize && (
+                <button onClick={() => setCurrentPage(currentPage + 1)}>
+                  <MoveRight />
+                </button>
+              )}
+            </>
+          ) : (
+            <>{""}</>
+          )}
         </div>
       </div>
 

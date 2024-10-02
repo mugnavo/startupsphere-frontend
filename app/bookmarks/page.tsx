@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, X } from "lucide-react";
+import { ArrowLeft, Search, X, Filter, Cog, HandCoins } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSession } from "~/context/hooks";
@@ -14,10 +14,16 @@ export default function Bookmarks() {
   const userId = user ? user.id : null;
   const [bookmarkStartups, setBookmarkStartups] = useState<Bookmark[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchFocus, setSearchFocus] = useState<string | null>(null);
+  const [showFilters, setShowFilters] = useState(false);
+
+   const searchFocusType = [
+    { name: "Startups", icon: <Cog size={24} /> },
+    { name: "Investors", icon: <HandCoins size={24} /> },
+  ];
 
   async function fetchBookmarkStartups() {
     try {
-      // Check if user is authenticated
       if (!userId) {
         console.error("User not authenticated.");
         return;
@@ -42,28 +48,52 @@ export default function Bookmarks() {
 
   return (
     <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col bg-white p-6">
-      {/* the gradient div */}
+      {/* Gradient background */}
       <div className="absolute inset-0 z-[-10] h-[8rem] bg-gradient-to-b from-yellow-600 to-transparent opacity-80" />
 
-      <div className="mb-4 flex items-center justify-between">
-        <span className="text-lg font-semibold">Bookmarks</span>
+      <div className="flex items-center justify-between">
+        <span className="text-yellow-800">{searchFocus ? searchFocus : "Bookmarks"}</span>
         <X size={20} onClick={() => router.replace("/")} className="cursor-pointer" />
       </div>
-      <div className="relative mb-4">
+
+      {/* Search bar */}
+      <div className="relative flex items-center gap-2 py-1">
+        <div
+          onClick={() => {
+            setSearchFocus("");
+            setShowFilters(false);
+          }}
+          className="absolute inset-0 flex w-fit cursor-pointer items-center pl-2 text-gray-500"
+        >
+          {searchFocus ? <ArrowLeft size={15} /> : <Search size={15} />}
+        </div>
         <input
           type="search"
           name="search-bookmarks"
           id="search-bookmarks"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="block w-full rounded-md border-0 py-1.5 pl-10 pr-4 text-sm text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
-          placeholder="Search Bookmarks"
+          className="block w-full rounded-[16px] border-0 py-1.5 pl-7 pr-3 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+          placeholder={`Search ${searchFocus ? searchFocus : "Bookmarks"}...`}
         />
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-          <Search size={15} className="text-gray-500" />
-        </div>
       </div>
-      <div className="flex-1 overflow-y-auto">
+
+      {/* Filter buttons */}
+      <div className={` ${!searchFocus ? "flex" : "hidden"}`}>
+        {searchFocusType.map((item, index) => (
+          <button
+            key={item.name}
+            onClick={() => setSearchFocus(item.name)}
+            type="button"
+            className={`flex w-full items-center gap-3 bg-white px-3 py-2 text-gray-400 ring-1 ring-gray-300 hover:bg-gradient-to-r hover:font-bold hover:text-white ${index === 0 ? "rounded-l-full hover:from-[#FFC312] hover:via-[#EE5A24] hover:to-[#EA2027]" : "rounded-r-full hover:from-[#68d8d6] hover:via-[#00a6fb] hover:to-[#00509d]"}`}
+          >
+            {item.icon} {item.name}
+          </button>
+        ))}
+      </div>
+
+      {/* Bookmarks list */}
+      <div className="mt-4 flex-1 overflow-y-auto">
         {filteredBookmarks.length === 0 ? (
           <div className="mt-5 flex flex-col items-center">
             <p className="text-gray-500">No bookmarks found</p>
