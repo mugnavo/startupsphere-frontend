@@ -8,7 +8,7 @@ import { startupControllerFindAllByManagerId } from "~/lib/api";
 import { Startup } from "~/lib/schemas";
 import { withAuth } from "~/lib/utils";
 
-export default function ownedStartups() {
+export default function OwnedStartups() {
   const router = useRouter();
   const [startups, setStartups] = useState<Startup[]>([]);
   const { user } = useSession();
