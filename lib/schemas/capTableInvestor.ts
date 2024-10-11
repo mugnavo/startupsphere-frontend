@@ -5,14 +5,20 @@
  * API documentation for StartupVest, FinEase, and StartupSphere
  * OpenAPI spec version: 1.0
  */
+import type { FundingRound } from "./fundingRound";
 import type { Investor } from "./investor";
-import type { Startup } from "./startup";
 import type { User } from "./user";
 
-export interface Bookmark {
+export interface CapTableInvestor {
+  capTable: FundingRound;
+  createdAt: string;
   id: number;
-  investor?: Investor;
-  startup?: Startup;
-  timestamp: string;
+  investor: Investor;
+  investorRemoved: boolean;
+  isDeleted: boolean;
+  shares: number;
+  status: string;
+  title: string;
+  totalInvestment: number;
   user: User;
 }

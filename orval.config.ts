@@ -10,11 +10,11 @@ export default defineConfig({
       mock: false,
       prettier: true,
       clean: true,
-      baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001",
+      baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000",
       headers: true,
     },
     input: {
-      target: `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/docs/spec.yaml`,
+      target: `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000"}/docs/spec.yaml`,
     },
   },
 });
