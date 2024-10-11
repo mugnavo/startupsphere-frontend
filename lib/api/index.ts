@@ -439,9 +439,10 @@ export const capTableInvestorControllerGetInvestorInformation = <
 export const capTableInvestorControllerGetTopInvestorByCapTable = <
   TData = AxiosResponse<CapTableInvestorControllerGetTopInvestorByCapTable200>,
 >(
+  userId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`http://localhost:3000/cap-table-investor/top`, options);
+  return axios.get(`http://localhost:3000/cap-table-investor/${userId}/top`, options);
 };
 
 export const capTableInvestorControllerRemoveInvestor = <TData = AxiosResponse<void>>(
