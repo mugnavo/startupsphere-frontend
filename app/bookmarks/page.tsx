@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Search, X, Filter, Cog, HandCoins } from "lucide-react";
+import { ArrowLeft, Cog, HandCoins, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSession } from "~/context/hooks";
@@ -17,7 +17,7 @@ export default function Bookmarks() {
   const [searchFocus, setSearchFocus] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
-   const searchFocusType = [
+  const searchFocusType = [
     { name: "Startups", icon: <Cog size={24} /> },
     { name: "Investors", icon: <HandCoins size={24} /> },
   ];
@@ -43,7 +43,7 @@ export default function Bookmarks() {
   }, [userId]);
 
   const filteredBookmarks = bookmarkStartups.filter((bookmark) =>
-    bookmark.startup?.name.toLowerCase().includes(searchQuery.toLowerCase())
+    bookmark.startup?.companyName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -108,29 +108,19 @@ export default function Bookmarks() {
               <div className="flex w-full items-center">
                 <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">
                   <img
-                    src={startup?.logoUrl}
-                    alt={startup?.name}
+                    src={URL.createObjectURL(startup?.profilePicture.data as unknown as Blob)}
+                    alt={startup?.companyName}
                     className="h-full w-full object-cover"
                   />
                 </div>
                 <div className="flex-1">
                   <div className="flex flex-col">
-                    <div className="text-sm font-semibold">{startup?.name}</div>
+                    <div className="text-sm font-semibold">{startup?.companyName}</div>
                     <div className="text-xs text-gray-500">{startup?.locationName}</div>
                     <div className="mt-1 flex flex-wrap">
-                      {startup?.categories.slice(0, 3).map((category, index) => (
-                        <span
-                          key={index}
-                          className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs"
-                        >
-                          {category}
-                        </span>
-                      ))}
-                      {startup?.categories.length && startup.categories.length > 3 && (
-                        <span className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs text-gray-500">
-                          ...
-                        </span>
-                      )}
+                      <span className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs">
+                        {startup?.industry}
+                      </span>
                     </div>
                   </div>
                 </div>

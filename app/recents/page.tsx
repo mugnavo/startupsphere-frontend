@@ -1,6 +1,6 @@
 "use client";
 
-import { X, Cog, HandCoins } from "lucide-react";
+import { Cog, HandCoins, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSession } from "~/context/hooks";
@@ -84,29 +84,21 @@ export default function Recents() {
                 <div className="flex w-full items-center">
                   <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">
                     <img
-                      src={view.startup?.logoUrl}
-                      alt={view.startup?.name}
+                      src={URL.createObjectURL(
+                        view.startup?.profilePicture.data as unknown as Blob
+                      )}
+                      alt={view.startup?.companyName}
                       className="h-full w-full object-cover"
                     />
                   </div>
                   <div className="flex-1">
                     <div className="flex flex-col">
-                      <div className="text-sm font-semibold">{view.startup?.name}</div>
+                      <div className="text-sm font-semibold">{view.startup?.companyName}</div>
                       <div className="text-xs text-gray-500">{view.startup?.locationName}</div>
                       <div className="mt-1 flex flex-wrap">
-                        {view.startup?.categories.slice(0, 3).map((category, index) => (
-                          <span
-                            key={index}
-                            className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs"
-                          >
-                            {category}
-                          </span>
-                        ))}
-                        {view.startup?.categories.length && view.startup.categories.length > 3 && (
-                          <span className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs text-gray-500">
-                            ...
-                          </span>
-                        )}
+                        <span className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs">
+                          {view.startup?.industry}
+                        </span>
                       </div>
                     </div>
                   </div>
