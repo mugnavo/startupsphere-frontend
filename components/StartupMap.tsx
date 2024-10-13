@@ -9,7 +9,7 @@ import type { MapLayerMouseEvent } from "react-map-gl";
 import Map, { Marker, useMap } from "react-map-gl";
 
 import { useInteractiveMap } from "~/context/hooks";
-import { investorControllerGetAll, startupControllerGetAll } from "~/lib/api";
+import { investorsControllerFindAllInvestors, startupsControllerFindAllStartups } from "~/lib/api";
 import type { Investor, Startup } from "~/lib/schemas";
 import CustomPin from "./map/CustomPin";
 import Geocoder from "./map/Geocoder";
@@ -30,14 +30,14 @@ export default function StartupMap() {
   });
 
   async function fetchStartups() {
-    const { data } = await startupControllerGetAll();
+    const { data } = await startupsControllerFindAllStartups();
     if (data) {
       setStartups(data);
     }
   }
 
   async function fetchInvestors() {
-    const { data } = await investorControllerGetAll();
+    const { data } = await investorsControllerFindAllInvestors();
     if (data) {
       setInvestors(data);
     }
@@ -200,12 +200,12 @@ export default function StartupMap() {
             >
               <CustomPin
                 className="h-8 w-8"
-                startupimage={startup.logoUrl}
-                categories={startup.categories}
-                startupname={startup.name}
+                // startupimage={startup.logoUrl}
+                categories={[startup.industry]}
+                startupname={startup.companyName}
               />
               <div className="absolute -bottom-6 text-center text-sm font-semibold">
-                {startup.name}
+                {startup.companyName}
               </div>
             </div>
           </Marker>
@@ -227,12 +227,12 @@ export default function StartupMap() {
             >
               <CustomPin
                 className="h-8 w-8"
-                startupimage={investor.logoUrl}
-                categories={[investor.type]}
-                startupname={investor.name}
+                // startupimage={investor.logoUrl}
+                categories={["Investor"]}
+                startupname={`${investor.firstName} ${investor.lastName}`}
               />
               <div className="absolute -bottom-6 text-center text-sm font-semibold">
-                {investor.name}
+                {investor.firstName} {investor.lastName}
               </div>
             </div>
           </Marker>
