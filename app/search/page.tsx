@@ -6,11 +6,11 @@ import { useEffect, useState } from "react";
 import { uploadFiles } from "~/components/uploadthing";
 import { useSession } from "~/context/hooks";
 import {
-  investorControllerGetAll,
+  investorsControllerFindAllInvestors,
   reportControllerCreate,
-  startupControllerGetAll,
+  startupsControllerFindAllStartups,
 } from "~/lib/api";
-import { ReportRequest, Startup } from "~/lib/schemas";
+import { Startup } from "~/lib/schemas";
 import { Investor } from "~/lib/schemas/investor";
 import { investorTypes, sectors, withAuth } from "~/lib/utils";
 
@@ -38,14 +38,14 @@ export default function SearchContent() {
   );
 
   async function fetchInvestors() {
-    const { data } = await investorControllerGetAll();
+    const { data } = await investorsControllerFindAllInvestors();
     if (data) {
       setInvestors(data);
     }
   }
 
   async function fetchStartups() {
-    const { data } = await startupControllerGetAll();
+    const { data } = await startupsControllerFindAllStartups();
     if (data) {
       setStartups(data);
     }
@@ -60,24 +60,19 @@ export default function SearchContent() {
 
   const filteredStartups = startups.filter(
     (startup) =>
-      (searchQuery === "" || startup.name.toLowerCase().includes(searchQuery.toLowerCase())) && // check if searchquery is empty to show startups
+      (searchQuery === "" ||
+        startup.companyName.toLowerCase().includes(searchQuery.toLowerCase())) && // check if searchquery is empty to show startups
       (categories.every((category) => !category.isActive) || // check if no category is selected to show all startups
-        startup.categories.some((startupCategory) =>
-          categories
-            .filter((category) => category.isActive)
-            .some((activeCategory) => startupCategory === activeCategory.name)
-        ))
+        categories
+          .filter((category) => category.isActive)
+          .some((activeCategory) => startup?.industry === activeCategory.name))
   );
 
   const filteredInvestors = investors.filter(
     (investor) =>
-      (searchQuery === "" || investor.name.toLowerCase().includes(searchQuery.toLowerCase())) && // check if searchquery is empty to show startups
-      (categories.every((category) => !category.isActive) || // check if no category is selected to show all startups
-        [investor.type].some((investorType) =>
-          categories
-            .filter((category) => category.isActive)
-            .some((activeCategory) => investorType === activeCategory.name)
-        ))
+      searchQuery === "" ||
+      investor.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      investor.lastName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   function filterSelected(index: number) {
@@ -103,9 +98,9 @@ export default function SearchContent() {
   const generateCSV = () => {
     const headers = ["Name", "Location", "Categories"];
     const rows = filteredStartups.map((startup) => [
-      startup.name,
+      startup.companyName,
       `"${startup.locationName}"`,
-      `"${startup.categories.join(", ")}"`,
+      `"${startup.industry}"`,
     ]);
 
     const csvContent = [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
@@ -149,14 +144,14 @@ export default function SearchContent() {
         files: [file],
       });
 
-      const reportRequest: ReportRequest = {
+      const reportRequest = {
         file_type: result[0].type,
         generated_by: user?.id as number,
         name: result[0].name,
         url: result[0].url,
       };
 
-      await reportControllerCreate(reportRequest, withAuth);
+      await reportControllerCreate({ ...withAuth, data: reportRequest });
     } catch (error) {
       console.error("Error generating reports:", error);
     } finally {
@@ -297,7 +292,7 @@ function Items({ list }: { list: Startup[] | Investor[] }) {
   return (
     <>
       {list.map((item) => {
-        const isStartup = item.hasOwnProperty("founderName");
+        const isStartup = item.hasOwnProperty("companyName");
         return (
           <div
             key={item.id}
@@ -306,31 +301,31 @@ function Items({ list }: { list: Startup[] | Investor[] }) {
           >
             <div className="flex w-full items-center">
               <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-white">
-                <img src={item.logoUrl} alt={item.name} className="h-full w-full object-cover" />
+                <img
+                  src={URL.createObjectURL(item?.profilePicture.data as unknown as Blob)}
+                  alt={
+                    isStartup
+                      ? (item as Startup).companyName
+                      : `${(item as Investor).firstName} ${(item as Investor).lastName}`
+                  }
+                  className="h-full w-full object-cover"
+                />
               </div>
               <div className="flex-1">
                 <div className="relative">
-                  <div className="text-sm font-semibold">{item.name}</div>
+                  <div className="text-sm font-semibold">
+                    {isStartup
+                      ? (item as Startup).companyName
+                      : `${(item as Investor).firstName} ${(item as Investor).lastName}`}
+                  </div>
                   <div className="max-w-[200px] truncate text-xs text-gray-500">
                     {item.locationName}
                   </div>{" "}
                   {/* Set max width */}
                   <div className="mt-1 flex overflow-hidden whitespace-nowrap">
-                    {(isStartup ? (item as Startup).categories : [(item as Investor).type])
-                      .slice(0, 1)
-                      .map((category: string, index: number) => (
-                        <span
-                          key={index}
-                          className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs"
-                        >
-                          {category}
-                        </span>
-                      ))}
-                    {isStartup && (item as Startup).categories.length > 1 && (
-                      <span className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs text-gray-500">
-                        ...
-                      </span>
-                    )}
+                    <span className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs">
+                      {isStartup ? (item as Startup).industry : "Investor"}
+                    </span>
                   </div>
                 </div>
               </div>
