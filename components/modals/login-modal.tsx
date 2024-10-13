@@ -4,7 +4,7 @@ import { jwtDecode } from "jwt-decode";
 import { CircleUserRound, KeyRound, Mail, UserRoundPen } from "lucide-react";
 import { useState } from "react";
 import { useSession } from "~/context/hooks";
-import { authControllerLogin, authControllerRegister } from "~/lib/api";
+import { usersControllerCreate, usersControllerLogin } from "~/lib/api";
 import { User } from "~/lib/schemas";
 
 export default function LoginModal() {
@@ -14,18 +14,20 @@ export default function LoginModal() {
   const [errorMessage, setErrorMessage] = useState("");
 
   async function login(formData: FormData) {
-    const { data } = await authControllerLogin({
-      email: formData.get("email") as string,
-      password: formData.get("password") as string,
+    const { data } = await usersControllerLogin({
+      data: {
+        email: formData.get("email") as string,
+        password: formData.get("password") as string,
+      },
     });
-    if (data.access_token) {
-      localStorage.setItem("jwt", data.access_token);
-      const user = jwtDecode(data.access_token) as User;
+    if (typeof data.jwt === "string") {
+      localStorage.setItem("jwt", data.jwt);
+      const user = jwtDecode(data.jwt) as User;
       if (user?.email) {
         setUser(user);
       }
-    } else if (data.error) {
-      setErrorMessage(data.error);
+    } else {
+      setErrorMessage(String(data.message) || "An error occurred");
     }
     setIsLoading(false);
   }
@@ -142,22 +144,23 @@ function RegisterModal() {
   const [mismatch, setMismatch] = useState(false);
 
   async function register(formData: FormData) {
-    const { data } = await authControllerRegister({
+    const { data } = await usersControllerCreate({
       email: formData.get("email") as string,
       firstName: formData.get("firstName") as string,
       lastName: formData.get("lastName") as string,
       password: formData.get("password") as string,
       role: formData.get("role") as string,
-    });
-    if (data.access_token) {
-      localStorage.setItem("jwt", data.access_token);
-      const user = jwtDecode(data.access_token) as User;
-      if (user?.email) {
-        setUser(user);
-      }
-    } else if (data.error) {
-      alert(data.error);
-    }
+    } as User);
+    // if (data.access_token) {
+    //   localStorage.setItem("jwt", data.access_token);
+    //   const user = jwtDecode(data.access_token) as User;
+    //   if (user?.email) {
+    //     setUser(user);
+    //   }
+    // } else if (data.error) {
+    //   alert(data.error);
+    // }
+    // their register controller doesnt return anything
     setIsLoading(false);
   }
 
