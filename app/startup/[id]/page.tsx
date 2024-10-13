@@ -1,18 +1,18 @@
 "use client";
 
-import { Bookmark, ChevronLeft, Globe, Image, MapPin, ThumbsUp } from "lucide-react";
+import { Bookmark, ChevronLeft, Globe, MapPin, ThumbsUp } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useMap } from "react-map-gl";
 import { useSession } from "~/context/hooks";
 import {
   bookmarkControllerCreate,
-  bookmarkControllerFindOneByUserIdAndStartupId,
+  bookmarkControllerFindOneByUserIdandStartupId,
   bookmarkControllerStartupRemove,
   likeControllerCreate,
-  likeControllerFindOneByUserIdAndStartupId,
+  likeControllerFindOneByUserIdandStartupId,
   likeControllerStartupRemove,
-  startupControllerGetOneById,
+  startupsControllerFindAll,
   viewControllerCreate,
 } from "~/lib/api";
 import { Startup } from "~/lib/schemas";
@@ -34,14 +34,19 @@ export default function StartupDetails() {
     setViewed(true);
 
     viewControllerCreate({
-      userId,
-      startupId: parseInt(startupId as string),
+      ...withAuth,
+      data: {
+        userId,
+        startupId: parseInt(startupId as string),
+      },
     });
   }
 
   async function fetchStartupbyID() {
     try {
-      const { data } = await startupControllerGetOneById(Number(startupId));
+      const allStartups = await startupsControllerFindAll();
+
+      const data = allStartups.data.find((startup) => startup.id === Number(startupId));
       if (data) {
         mainMap?.flyTo({ center: { lat: data.locationLat, lng: data.locationLng } });
         setStartupDetails(data);
@@ -53,7 +58,7 @@ export default function StartupDetails() {
 
   async function fetchLikeStatus() {
     try {
-      const { data } = await likeControllerFindOneByUserIdAndStartupId(
+      const { data } = await likeControllerFindOneByUserIdandStartupId(
         userId ?? 0,
         Number(startupId),
         withAuth
@@ -70,7 +75,7 @@ export default function StartupDetails() {
 
   async function fetchBookmarkStatus() {
     try {
-      const { data } = await bookmarkControllerFindOneByUserIdAndStartupId(
+      const { data } = await bookmarkControllerFindOneByUserIdandStartupId(
         userId ?? 0,
         Number(startupId),
         withAuth
@@ -109,7 +114,10 @@ export default function StartupDetails() {
     setBookmarked(!bookmarked);
     try {
       if (!bookmarked) {
-        await bookmarkControllerCreate({ userId: userId, startupId: Number(startupId) }, withAuth);
+        await bookmarkControllerCreate({
+          ...withAuth,
+          data: { userId: userId, startupId: Number(startupId) },
+        });
         console.log("Bookmarked!");
       } else {
         await bookmarkControllerStartupRemove(userId, Number(startupId), withAuth);
@@ -130,7 +138,10 @@ export default function StartupDetails() {
     setLiked(!liked);
     try {
       if (!liked) {
-        await likeControllerCreate({ userId: userId, startupId: Number(startupId) }, withAuth);
+        await likeControllerCreate({
+          ...withAuth,
+          data: { userId: userId, startupId: Number(startupId) },
+        });
         console.log("Liked!");
       } else {
         await likeControllerStartupRemove(userId, Number(startupId), withAuth);
@@ -158,7 +169,7 @@ export default function StartupDetails() {
           <ChevronLeft size={24} className="cursor-pointer" onClick={() => router.back()} />
         </div>
         <div className="flex h-64 w-full items-center justify-center bg-gray-200">
-          {startupDetails?.logoUrl ? (
+          {/* {startupDetails?.logoUrl ? (
             <img
               src={startupDetails.logoUrl}
               alt={startupDetails.name}
@@ -166,12 +177,12 @@ export default function StartupDetails() {
             />
           ) : (
             <Image size={128} color="#6B7280" />
-          )}
+          )} */}
         </div>
       </div>
       <div className="border-t border-gray-200 py-4">
         <div className="flex items-center justify-between px-6">
-          <span className="text-lg font-bold">{startupDetails?.name}</span>
+          <span className="text-lg font-bold">{startupDetails?.companyName}</span>
           {userId && (
             <ThumbsUp
               size={24}
@@ -188,12 +199,12 @@ export default function StartupDetails() {
         <div className="flex items-center px-6 py-2">
           <Globe size={16} />
           <a
-            href={startupDetails?.websiteUrl}
+            href={startupDetails?.website}
             target="_blank"
             rel="noopener noreferrer"
             className="ml-2 text-sm text-blue-500 underline hover:text-blue-700"
           >
-            {startupDetails?.websiteUrl}
+            {startupDetails?.website}
           </a>
         </div>
         {userId && (
@@ -213,39 +224,39 @@ export default function StartupDetails() {
         <hr className="border-gray-200" />
       </div>
       <div className="flex-grow overflow-y-auto px-6 py-2">
-        <div className="mb-1 font-bold">{startupDetails?.founderName}</div>
+        <div className="mb-1 font-bold">
+          {startupDetails?.user.firstName} {startupDetails?.user.lastName}
+        </div>
         <div className="mb-4 text-sm text-gray-300">Founder</div>
         <div className="mb-1 font-bold">{formattedDate}</div>
         <div className="mb-4 text-sm text-gray-300">Established</div>
-        <div className="mb-4 text-gray-600">{startupDetails?.description}</div>
+        <div className="mb-4 text-gray-600">{startupDetails?.companyDescription}</div>
         <hr className="mb-4 border-gray-200" />
         <div className="text-gray-600">
           <div className="mb-2">
             <p className="font-bold">Categories:</p>
             <div className="flex flex-row flex-wrap">
-              {startupDetails?.categories.map((category, index) => (
-                <span key={index} className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-sm">
-                  {category}
-                </span>
-              ))}
+              <span className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-sm">
+                {startupDetails?.industry}
+              </span>
             </div>
           </div>
           <div className="mb-4">
             <p className="font-bold">Contact Info:</p>
             <a
-              href={`mailto:${startupDetails?.contactInfo}`}
+              href={`mailto:${startupDetails?.contactEmail}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-m text-blue-500 underline hover:text-blue-700"
             >
-              {startupDetails?.contactInfo}
+              {startupDetails?.contactEmail}
             </a>
           </div>
 
           <hr className="mb-2 border-gray-200" />
 
           <div className="text-gray-600">
-            <div className="mb-4 flex">
+            {/* <div className="mb-4 flex">
               <p className="mr-2 font-bold">Capital:</p>
               <span>
                 {startupDetails?.capital
@@ -260,11 +271,11 @@ export default function StartupDetails() {
             <div className="mb-4 flex">
               <p className="mr-2 font-bold">Funding Stage:</p>
               <span>{startupDetails?.fundingStage || "Not specified"}</span>
-            </div>
+            </div> */}
 
             <div className="mb-4 flex">
               <p className="mr-2 font-bold">Team Size:</p>
-              <span>{startupDetails?.teamSize || "Not specified"}</span>
+              <span>{startupDetails?.numberOfEmployees || "Not specified"}</span>
             </div>
           </div>
 

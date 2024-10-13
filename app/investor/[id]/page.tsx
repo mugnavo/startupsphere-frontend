@@ -1,11 +1,11 @@
 "use client";
 
-import { ChevronLeft, Globe, Image, MapPin } from "lucide-react";
+import { ChevronLeft, Globe, MapPin } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useMap } from "react-map-gl";
 import { useSession } from "~/context/hooks";
-import { investorControllerGetOneById } from "~/lib/api";
+import { investorsControllerFindOne } from "~/lib/api";
 import { Investor } from "~/lib/schemas";
 
 export default function InvestorDetails() {
@@ -19,7 +19,7 @@ export default function InvestorDetails() {
 
   async function fetchInvestorbyID() {
     try {
-      const { data } = await investorControllerGetOneById(Number(investorId));
+      const { data } = await investorsControllerFindOne(String(investorId));
       if (data) {
         mainMap?.flyTo({ center: { lat: data.locationLat, lng: data.locationLng } });
         setInvestorDetails(data);
@@ -42,7 +42,7 @@ export default function InvestorDetails() {
         <div className="absolute left-0 top-0 p-2">
           <ChevronLeft size={24} className="cursor-pointer" onClick={() => router.back()} />
         </div>
-        <div className="flex h-64 w-full items-center justify-center bg-gray-200">
+        {/* <div className="flex h-64 w-full items-center justify-center bg-gray-200">
           {investorDetails?.logoUrl ? (
             <img
               src={investorDetails.logoUrl}
@@ -52,11 +52,13 @@ export default function InvestorDetails() {
           ) : (
             <Image size={128} color="#6B7280" />
           )}
-        </div>
+        </div> */}
       </div>
       <div className="border-t border-gray-200 py-4">
         <div className="flex items-center justify-between px-6">
-          <span className="text-lg font-bold">{investorDetails?.name}</span>
+          <span className="text-lg font-bold">
+            {investorDetails?.firstName} {investorDetails?.lastName}
+          </span>
         </div>
         <div className="flex items-center px-6 py-1">
           <MapPin size={24} />
@@ -65,37 +67,35 @@ export default function InvestorDetails() {
         <div className="flex items-center px-6 py-2">
           <Globe size={16} />
           <a
-            href={investorDetails?.websiteUrl}
+            href={investorDetails?.website}
             target="_blank"
             rel="noopener noreferrer"
             className="ml-2 text-sm text-blue-500 underline hover:text-blue-700"
           >
-            {investorDetails?.websiteUrl}
+            {investorDetails?.website}
           </a>
         </div>
         <hr className="border-gray-200" />
       </div>
       <div className="flex-grow overflow-y-auto px-6 py-2">
-        <div className="mb-4 text-gray-600">{investorDetails?.description}</div>
+        <div className="mb-4 text-gray-600">{investorDetails?.biography}</div>
         <hr className="mb-4 border-gray-200" />
         <div className="text-gray-600">
           <div className="mb-2">
             <p className="font-bold">Categories:</p>
             <div className="flex flex-row flex-wrap">
-              <span className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-sm">
-                {investorDetails?.type}
-              </span>
+              <span className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-sm">Investor</span>
             </div>
           </div>
           <div className="mb-4">
             <p className="font-bold">Contact Info:</p>
             <a
-              href={`mailto:${investorDetails?.contactInfo}`}
+              href={`mailto:${investorDetails?.contactInformation}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-m text-blue-500 underline hover:text-blue-700"
             >
-              {investorDetails?.contactInfo}
+              {investorDetails?.contactInformation}
             </a>
           </div>
         </div>
