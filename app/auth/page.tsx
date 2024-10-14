@@ -1,0 +1,30 @@
+"use client";
+
+import { jwtDecode } from "jwt-decode";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { useSession } from "~/context/hooks";
+import { User } from "~/lib/schemas";
+
+export default function AutoAuthFlow() {
+  const searchParams = useSearchParams();
+  const { user, setUser } = useSession();
+
+  const token = searchParams.get("token");
+
+  useEffect(() => {
+    if (!token) return;
+    try {
+      const user = jwtDecode(token) as User;
+      if (user?.email) {
+        setUser(user);
+      }
+      localStorage.setItem("jwt", token);
+    } catch {
+      console.error("Invalid token");
+    } finally {
+      window.close();
+    }
+  }, [token, setUser]);
+  return <div>page</div>;
+}
