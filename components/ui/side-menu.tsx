@@ -24,7 +24,11 @@ export default function SideMenu() {
       <div className="flex flex-col items-center gap-8">
         <Logo />
 
-        {SIDEBAR_LINKS.map((item, index) => (
+        {SIDEBAR_LINKS.filter((item) =>
+          ["/recents", "/bookmarks", "/reports", "/ownedStartups"].includes(item.href)
+            ? !!user
+            : true
+        ).map((item, index) => (
           <Fragment key={item.href}>
             {index === 3 && <div className="m-2 w-3 rounded-lg border border-gray-300" />}
             <SidebarLink item={item} />
