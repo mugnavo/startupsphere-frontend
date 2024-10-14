@@ -6,7 +6,7 @@ import { Suspense, useEffect } from "react";
 import { useSession } from "~/context/hooks";
 import { User } from "~/lib/schemas";
 
-export function AutoAuthFlow() {
+function AutoAuthFlow() {
   const searchParams = useSearchParams();
   const { user, setUser } = useSession();
 
