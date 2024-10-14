@@ -116,9 +116,10 @@ export const profilePictureControllerUpdateInvestorProfilePicture = <TData = Axi
 };
 
 export const usersControllerRegister = <TData = AxiosResponse<void>>(
+  data?: any,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`http://localhost:3000/users/register`, undefined, options);
+  return axios.post(`http://localhost:3000/users/register`, data, options);
 };
 
 export const usersControllerFindAll = <TData = AxiosResponse<string>>(
@@ -128,9 +129,10 @@ export const usersControllerFindAll = <TData = AxiosResponse<string>>(
 };
 
 export const usersControllerLogin = <TData = AxiosResponse<UsersControllerLogin201>>(
+  data?: any,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`http://localhost:3000/users/login`, undefined, options);
+  return axios.post(`http://localhost:3000/users/login`, data, options);
 };
 
 export const usersControllerVerifyPostEmail = <TData = AxiosResponse<string>>(
@@ -526,9 +528,10 @@ export const bookmarkControllerGetAll = <TData = AxiosResponse<Bookmark[]>>(
 };
 
 export const bookmarkControllerCreate = <TData = AxiosResponse<void>>(
+  data?: any,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`http://localhost:3000/bookmarks`, undefined, options);
+  return axios.post(`http://localhost:3000/bookmarks`, data, options);
 };
 
 export const bookmarkControllerFindAllByUserId = <TData = AxiosResponse<Bookmark[]>>(
@@ -591,9 +594,10 @@ export const likeControllerGetAll = <TData = AxiosResponse<Like[]>>(
 };
 
 export const likeControllerCreate = <TData = AxiosResponse<void>>(
+  data?: any,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`http://localhost:3000/likes`, undefined, options);
+  return axios.post(`http://localhost:3000/likes`, data, options);
 };
 
 export const likeControllerStartupRemove = <TData = AxiosResponse<void>>(
@@ -683,9 +687,10 @@ export const reportControllerGetAllByUserId = <TData = AxiosResponse<Report[]>>(
 };
 
 export const viewControllerCreate = <TData = AxiosResponse<void>>(
+  data?: any,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`http://localhost:3000/views`, undefined, options);
+  return axios.post(`http://localhost:3000/views`, data, options);
 };
 
 export const viewControllerGetAll = <TData = AxiosResponse<View[]>>(

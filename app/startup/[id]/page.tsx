@@ -33,13 +33,13 @@ export default function StartupDetails() {
   function createView() {
     setViewed(true);
 
-    viewControllerCreate({
-      ...withAuth,
-      data: {
+    viewControllerCreate(
+      {
         userId,
         startupId: parseInt(startupId as string),
       },
-    });
+      withAuth
+    );
   }
 
   async function fetchStartupbyID() {
@@ -112,10 +112,7 @@ export default function StartupDetails() {
     setBookmarked(!bookmarked);
     try {
       if (!bookmarked) {
-        await bookmarkControllerCreate({
-          ...withAuth,
-          data: { userId: userId, startupId: Number(startupId) },
-        });
+        await bookmarkControllerCreate({ userId: userId, startupId: Number(startupId) }, withAuth);
         console.log("Bookmarked!");
       } else {
         await bookmarkControllerStartupRemove(userId, Number(startupId), withAuth);
@@ -136,10 +133,7 @@ export default function StartupDetails() {
     setLiked(!liked);
     try {
       if (!liked) {
-        await likeControllerCreate({
-          ...withAuth,
-          data: { userId: userId, startupId: Number(startupId) },
-        });
+        await likeControllerCreate({ userId: userId, startupId: Number(startupId) }, withAuth);
         console.log("Liked!");
       } else {
         await likeControllerStartupRemove(userId, Number(startupId), withAuth);

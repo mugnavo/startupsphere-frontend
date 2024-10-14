@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "dev": "next dev",
-    "turbo": "next dev --turbo",
+    "dev": "next dev --port 3001",
+    "turbo": "next dev --turbo --port 3001",
     "build": "pnpm gen && next build",
     "start": "next start",
     "lint": "next lint",
@@ -13,8 +13,7 @@
     "dz": "drizzle-kit",
     "studio": "drizzle-kit studio",
     "dz:push": "drizzle-kit push:pg",
-    "clean": "rimraf .next node_modules",
-    "gen": "orval --config ./orval.config.ts"
+    "clean": "rimraf .next node_modules"
   },
   "dependencies": {
     "@heroicons/react": "^2.1.5",
