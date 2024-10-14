@@ -1,6 +1,7 @@
 "use client";
 
-import { Bookmark, ChevronLeft, Globe, MapPin, ThumbsUp } from "lucide-react";
+import axios from "axios";
+import { Bookmark, ChevronLeft, Globe, Image, MapPin, ThumbsUp } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useMap } from "react-map-gl";
@@ -30,17 +31,35 @@ export default function StartupDetails() {
   const router = useRouter();
   const { mainMap } = useMap();
 
+  const [pfp, setPfp] = useState<any>(null);
+
   function createView() {
     setViewed(true);
 
     viewControllerCreate(
       {
-        userId,
-        startupId: parseInt(startupId as string),
+        user_id: userId,
+        startup: { id: parseInt(startupId as string) },
       },
       withAuth
     );
   }
+
+  async function fetchPfp() {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/startup/${startupDetails?.id}`,
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        responseType: "blob",
+      }
+    );
+    setPfp(URL.createObjectURL(response.data));
+  }
+  useEffect(() => {
+    if (startupDetails) {
+      fetchPfp();
+    }
+  }, [startupDetails]);
 
   async function fetchStartupbyID() {
     try {
@@ -112,7 +131,10 @@ export default function StartupDetails() {
     setBookmarked(!bookmarked);
     try {
       if (!bookmarked) {
-        await bookmarkControllerCreate({ userId: userId, startupId: Number(startupId) }, withAuth);
+        await bookmarkControllerCreate(
+          { user: { id: userId }, startup: { id: Number(startupId) } },
+          withAuth
+        );
         console.log("Bookmarked!");
       } else {
         await bookmarkControllerStartupRemove(userId, Number(startupId), withAuth);
@@ -133,7 +155,10 @@ export default function StartupDetails() {
     setLiked(!liked);
     try {
       if (!liked) {
-        await likeControllerCreate({ userId: userId, startupId: Number(startupId) }, withAuth);
+        await likeControllerCreate(
+          { user: { id: userId }, startup: { id: Number(startupId) } },
+          withAuth
+        );
         console.log("Liked!");
       } else {
         await likeControllerStartupRemove(userId, Number(startupId), withAuth);
@@ -161,15 +186,15 @@ export default function StartupDetails() {
           <ChevronLeft size={24} className="cursor-pointer" onClick={() => router.back()} />
         </div>
         <div className="flex h-64 w-full items-center justify-center bg-gray-200">
-          {/* {startupDetails?.logoUrl ? (
+          {pfp ? (
             <img
-              src={startupDetails.logoUrl}
-              alt={startupDetails.name}
+              src={pfp}
+              alt={startupDetails?.companyName}
               className="h-full max-h-64 w-auto max-w-full object-contain"
             />
           ) : (
             <Image size={128} color="#6B7280" />
-          )} */}
+          )}
         </div>
       </div>
       <div className="border-t border-gray-200 py-4">
@@ -217,7 +242,7 @@ export default function StartupDetails() {
       </div>
       <div className="flex-grow overflow-y-auto px-6 py-2">
         <div className="mb-1 font-bold">
-          {startupDetails?.user.firstName} {startupDetails?.user.lastName}
+          {startupDetails?.user?.firstName} {startupDetails?.user?.lastName}
         </div>
         <div className="mb-4 text-sm text-gray-300">Founder</div>
         <div className="mb-1 font-bold">{formattedDate}</div>
