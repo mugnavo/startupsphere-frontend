@@ -21,9 +21,12 @@ export interface User {
   gender: string;
   id: number;
   investor: Investor;
+  isVerified: boolean;
   lastName: string;
   password?: string;
   profilePicture: ProfilePicture;
+  resetPasswordExpires?: string;
+  resetPasswordToken?: string;
   role: string;
   startupCode?: string;
   startups: Startup[];

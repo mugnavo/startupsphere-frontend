@@ -32,4 +32,5 @@ export * from "./user";
 export * from "./usersControllerGetUserRegistrationsByMonth200";
 export * from "./usersControllerGetUserRegistrationsByMonthParams";
 export * from "./usersControllerLogin201";
+export * from "./usersControllerVerifyPostEmailParams";
 export * from "./view";

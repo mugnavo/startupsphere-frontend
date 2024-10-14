@@ -32,6 +32,7 @@ import type {
   UsersControllerGetUserRegistrationsByMonth200,
   UsersControllerGetUserRegistrationsByMonthParams,
   UsersControllerLogin201,
+  UsersControllerVerifyPostEmailParams,
   View,
 } from "../schemas";
 
@@ -114,11 +115,10 @@ export const profilePictureControllerUpdateInvestorProfilePicture = <TData = Axi
   );
 };
 
-export const usersControllerCreate = <TData = AxiosResponse<void>>(
-  user: User,
+export const usersControllerRegister = <TData = AxiosResponse<void>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`http://localhost:3000/users/register`, user, options);
+  return axios.post(`http://localhost:3000/users/register`, undefined, options);
 };
 
 export const usersControllerFindAll = <TData = AxiosResponse<string>>(
@@ -131,6 +131,23 @@ export const usersControllerLogin = <TData = AxiosResponse<UsersControllerLogin2
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.post(`http://localhost:3000/users/login`, undefined, options);
+};
+
+export const usersControllerVerifyPostEmail = <TData = AxiosResponse<string>>(
+  params: UsersControllerVerifyPostEmailParams,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.get(`http://localhost:3000/users/verify-email`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
+};
+
+export const usersControllerVerifyEmail = <TData = AxiosResponse<string>>(
+  token: string,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.get(`http://localhost:3000/users/verify/${token}`, options);
 };
 
 export const usersControllerCheckEmail = <TData = AxiosResponse<void>>(
@@ -177,6 +194,24 @@ export const usersControllerGetUserRegistrationsByMonth = <
   });
 };
 
+export const usersControllerForgotPassword = <TData = AxiosResponse<string>>(
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.post(`http://localhost:3000/users/forgot-password`, undefined, options);
+};
+
+export const usersControllerVerifyOtp = <TData = AxiosResponse<string>>(
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.post(`http://localhost:3000/users/verify-otp`, undefined, options);
+};
+
+export const usersControllerResetPassword = <TData = AxiosResponse<string>>(
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.post(`http://localhost:3000/users/reset-password`, undefined, options);
+};
+
 export const startupsControllerCreate = <TData = AxiosResponse<StartupsControllerCreate201>>(
   startup: Startup,
   options?: AxiosRequestConfig
@@ -194,6 +229,13 @@ export const startupsControllerFindAllStartups = <TData = AxiosResponse<Startup[
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.get(`http://localhost:3000/startups/all`, options);
+};
+
+export const startupsControllerFindOne = <TData = AxiosResponse<Startup>>(
+  id: string,
+  options?: AxiosRequestConfig
+): Promise<TData> => {
+  return axios.get(`http://localhost:3000/startups/${id}`, options);
 };
 
 export const startupsControllerUpdate = <TData = AxiosResponse<Startup>>(
@@ -682,9 +724,11 @@ export type ProfilePictureControllerGetStartupProfilePictureResult = AxiosRespon
 export type ProfilePictureControllerGetInvestorProfilePictureResult = AxiosResponse<void>;
 export type ProfilePictureControllerUpdateStartupProfilePictureResult = AxiosResponse<void>;
 export type ProfilePictureControllerUpdateInvestorProfilePictureResult = AxiosResponse<void>;
-export type UsersControllerCreateResult = AxiosResponse<void>;
+export type UsersControllerRegisterResult = AxiosResponse<void>;
 export type UsersControllerFindAllResult = AxiosResponse<string>;
 export type UsersControllerLoginResult = AxiosResponse<UsersControllerLogin201>;
+export type UsersControllerVerifyPostEmailResult = AxiosResponse<string>;
+export type UsersControllerVerifyEmailResult = AxiosResponse<string>;
 export type UsersControllerCheckEmailResult = AxiosResponse<void>;
 export type UsersControllerGetProfileResult = AxiosResponse<User>;
 export type UsersControllerUpdateResult = AxiosResponse<User>;
@@ -692,9 +736,13 @@ export type UsersControllerGetCurrentUserResult = AxiosResponse<User>;
 export type UsersControllerFindAllUsersResult = AxiosResponse<User[]>;
 export type UsersControllerGetUserRegistrationsByMonthResult =
   AxiosResponse<UsersControllerGetUserRegistrationsByMonth200>;
+export type UsersControllerForgotPasswordResult = AxiosResponse<string>;
+export type UsersControllerVerifyOtpResult = AxiosResponse<string>;
+export type UsersControllerResetPasswordResult = AxiosResponse<string>;
 export type StartupsControllerCreateResult = AxiosResponse<StartupsControllerCreate201>;
 export type StartupsControllerFindAllResult = AxiosResponse<Startup[]>;
 export type StartupsControllerFindAllStartupsResult = AxiosResponse<Startup[]>;
+export type StartupsControllerFindOneResult = AxiosResponse<Startup>;
 export type StartupsControllerUpdateResult = AxiosResponse<Startup>;
 export type StartupsControllerSoftDeleteResult = AxiosResponse<void>;
 export type InvestorsControllerCreateResult = AxiosResponse<InvestorsControllerCreate201>;

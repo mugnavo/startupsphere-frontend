@@ -12,7 +12,7 @@ import {
   likeControllerCreate,
   likeControllerFindOneByUserIdandStartupId,
   likeControllerStartupRemove,
-  startupsControllerFindAll,
+  startupsControllerFindOne,
   viewControllerCreate,
 } from "~/lib/api";
 import { Startup } from "~/lib/schemas";
@@ -44,9 +44,7 @@ export default function StartupDetails() {
 
   async function fetchStartupbyID() {
     try {
-      const allStartups = await startupsControllerFindAll();
-
-      const data = allStartups.data.find((startup) => startup.id === Number(startupId));
+      const { data } = await startupsControllerFindOne(String(startupId), withAuth);
       if (data) {
         mainMap?.flyTo({ center: { lat: data.locationLat, lng: data.locationLng } });
         setStartupDetails(data);
