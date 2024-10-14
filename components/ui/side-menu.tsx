@@ -13,7 +13,7 @@ const SIDEBAR_LINKS: SidebarLinkProps[] = [
   { href: "/recents", name: "Recent", icon: <History size={size} /> },
   { href: "/bookmarks", name: "Bookmarks", icon: <Bookmark size={size} /> },
   { href: "/reports", name: "Reports", icon: <ClipboardPenLine size={size} /> },
-  { href: "/my-profiles", name: "Owned Startups", icon: <Cog size={size} /> },
+  { href: "/my-profiles", name: "My Entities", icon: <Cog size={size} /> },
 ];
 
 export default function SideMenu() {
