@@ -151,7 +151,7 @@ export default function SearchContent() {
         url: result[0].url,
       };
 
-      await reportControllerCreate({ ...withAuth, data: reportRequest });
+      await reportControllerCreate(reportRequest, withAuth);
     } catch (error) {
       console.error("Error generating reports:", error);
     } finally {

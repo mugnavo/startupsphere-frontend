@@ -748,9 +748,10 @@ export const reportControllerGetAll = <TData = AxiosResponse<Report[]>>(
 };
 
 export const reportControllerCreate = <TData = AxiosResponse<Report>>(
+  data?: any,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/reports`, undefined, options);
+  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/reports`, data, options);
 };
 
 export const reportControllerGetOneById = <TData = AxiosResponse<Report>>(
