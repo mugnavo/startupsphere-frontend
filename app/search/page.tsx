@@ -1,4 +1,5 @@
 "use client";
+import axios from "axios";
 import { motion } from "framer-motion";
 import { ArrowLeft, Cog, Filter, HandCoins, Search, SquareMousePointer, X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -51,6 +52,64 @@ export default function SearchContent() {
     }
     setLoading(false);
   }
+
+  const [profilePictures, setProfilePictures] = useState<any>({});
+
+  async function fetchStartupProfilePictures() {
+    const pictures = {} as any;
+
+    await Promise.all([
+      ...startups.map(async (startup) => {
+        try {
+          const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/startup/${startup.id}`,
+            {
+              headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+              responseType: "blob",
+            }
+          );
+          pictures[`startup_${startup.id}`] = URL.createObjectURL(response.data);
+        } catch (error) {
+          console.error(`Failed to fetch profile picture for startup ID ${startup.id}:`, error);
+        }
+      }),
+    ]);
+    setProfilePictures({ ...profilePictures, ...pictures });
+  }
+
+  async function fetchInvestorProfilePictures() {
+    const pictures = {} as any;
+
+    await Promise.all([
+      ...investors.map(async (investor) => {
+        try {
+          const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/investor/${investor.id}`,
+            {
+              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+              responseType: "blob",
+            }
+          );
+          pictures[`investor_${investor.id}`] = URL.createObjectURL(response.data);
+        } catch (error) {
+          console.error(`Failed to fetch profile picture for investor ID ${investor.id}:`, error);
+        }
+      }),
+    ]);
+    setProfilePictures({ ...profilePictures, ...pictures });
+  }
+
+  useEffect(() => {
+    if (startups.length > 0) {
+      fetchStartupProfilePictures();
+    }
+  }, [startups]);
+
+  useEffect(() => {
+    if (investors.length > 0) {
+      fetchInvestorProfilePictures();
+    }
+  }, [investors]);
 
   useEffect(() => {
     setLoading(true);
@@ -274,11 +333,14 @@ export default function SearchContent() {
                   ))}
               </div>
             ) : searchFocus ? (
-              <Items list={searchFocus == "Startups" ? filteredStartups : filteredInvestors} />
+              <Items
+                list={searchFocus == "Startups" ? filteredStartups : filteredInvestors}
+                profilePictures={profilePictures}
+              />
             ) : (
               <>
-                <Items list={filteredStartups} />
-                <Items list={filteredInvestors} />
+                <Items list={filteredStartups} profilePictures={profilePictures} />
+                <Items list={filteredInvestors} profilePictures={profilePictures} />
               </>
             )}
           </div>
@@ -288,7 +350,7 @@ export default function SearchContent() {
   );
 }
 
-function Items({ list }: { list: Startup[] | Investor[] }) {
+function Items({ list, profilePictures }: { list: Startup[] | Investor[]; profilePictures: any }) {
   const router = useRouter();
   return (
     <>
@@ -303,7 +365,7 @@ function Items({ list }: { list: Startup[] | Investor[] }) {
             <div className="flex w-full items-center">
               <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-white">
                 <img
-                  src={""}
+                  src={profilePictures[`${isStartup ? "startup" : "investor"}_${item.id}`]}
                   alt={
                     isStartup
                       ? (item as Startup).companyName

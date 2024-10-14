@@ -13,7 +13,7 @@ const SIDEBAR_LINKS: SidebarLinkProps[] = [
   { href: "/recents", name: "Recent", icon: <History size={size} /> },
   { href: "/bookmarks", name: "Bookmarks", icon: <Bookmark size={size} /> },
   { href: "/reports", name: "Reports", icon: <ClipboardPenLine size={size} /> },
-  { href: "/ownedStartups", name: "Owned Startups", icon: <Cog size={size} /> },
+  { href: "/my-profiles", name: "My Entities", icon: <Cog size={size} /> },
 ];
 
 export default function SideMenu() {
@@ -25,9 +25,7 @@ export default function SideMenu() {
         <Logo />
 
         {SIDEBAR_LINKS.filter((item) =>
-          ["/recents", "/bookmarks", "/reports", "/ownedStartups"].includes(item.href)
-            ? !!user
-            : true
+          ["/recents", "/bookmarks", "/reports", "/my-profiles"].includes(item.href) ? !!user : true
         ).map((item, index) => (
           <Fragment key={item.href}>
             {index === 3 && <div className="m-2 w-3 rounded-lg border border-gray-300" />}

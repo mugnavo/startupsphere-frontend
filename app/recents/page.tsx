@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { Cog, HandCoins, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -18,6 +19,47 @@ export default function Recents() {
     { name: "Startups", icon: <Cog size={24} /> },
     { name: "Investors", icon: <HandCoins size={24} /> },
   ];
+
+  const [profilePictures, setProfilePictures] = useState<any>({});
+
+  async function fetchProfilePictures() {
+    const pictures = {} as any;
+
+    await Promise.all([
+      ...recentViews.map(async (view) => {
+        try {
+          if (view.startup) {
+            const response = await axios.get(
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/startup/${view.startup?.id}`,
+              {
+                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                responseType: "blob",
+              }
+            );
+            pictures[`startup_${view.id}`] = URL.createObjectURL(response.data);
+          } else {
+            const response = await axios.get(
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/investor/${view.investor?.id}`,
+              {
+                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                responseType: "blob",
+              }
+            );
+            pictures[`investor_${view.id}`] = URL.createObjectURL(response.data);
+          }
+        } catch (error) {
+          console.error(`Failed to fetch profile picture for view ID ${view.id}:`, error);
+        }
+      }),
+    ]);
+    setProfilePictures({ ...profilePictures, ...pictures });
+  }
+
+  useEffect(() => {
+    if (recentViews.length > 0) {
+      fetchProfilePictures();
+    }
+  }, [recentViews]);
 
   async function fetchRecentStartups() {
     if (!user) return;
@@ -84,7 +126,7 @@ export default function Recents() {
                 <div className="flex w-full items-center">
                   <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">
                     <img
-                      src={""}
+                      src={profilePictures[`${view.startup ? "startup" : "investor"}_${view.id}`]}
                       alt={view.startup?.companyName}
                       className="h-full w-full object-cover"
                     />
