@@ -35,17 +35,17 @@ export default function Recents() {
   }, [user]);
 
   return (
-    <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col bg-white p-6">
+    <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col bg-[#fefefe] p-6 pb-3 shadow-sm shadow-slate-400">
       {/* the gradient div */}
-      <div className="absolute inset-0 z-[-10] h-[8rem] bg-gradient-to-b from-yellow-600 to-transparent opacity-80" />
+      <div className="absolute inset-0 z-[-10] h-[9.5rem] bg-gradient-to-b from-yellow-600 to-transparent opacity-80" />
 
-      <div className="flex items-center justify-between">
-        <span className="text-yellow-800"> Recents </span>
+      <div className="mb-4 flex items-center justify-between">
+        <span className="px-1 text-lg font-semibold">Recents</span>
         <X size={20} onClick={() => router.replace("/")} className="cursor-pointer" />
       </div>
 
       {/* Filter buttons */}
-      <div className="flex py-3">
+      <div className="flex py-5 pt-0">
         {searchFocusType.map((item, index) => (
           <button
             key={item.name}
@@ -54,7 +54,7 @@ export default function Recents() {
               setActiveIndex(index); // Set the active index when clicked
             }}
             type="button"
-            className={`flex w-full items-center gap-3 px-3 py-2 text-gray-400 ring-1 ring-gray-300 ${
+            className={`flex w-full items-center gap-3 px-3 py-1 text-gray-400 ring-1 ring-gray-300 ${
               activeIndex === index
                 ? index === 0
                   ? "bg-gradient-to-r from-[#FFC312] via-[#EE5A24] to-[#EA2027] font-bold text-white"
