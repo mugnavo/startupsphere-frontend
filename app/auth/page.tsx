@@ -23,6 +23,8 @@ function AutoAuthFlow() {
     } catch {
       console.error("Invalid token");
     } finally {
+      window.opener = null;
+      window.open("about:blank", "_self");
       window.close();
     }
   }, [token, setUser]);
