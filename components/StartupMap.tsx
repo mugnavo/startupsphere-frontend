@@ -185,58 +185,62 @@ export default function StartupMap() {
             offset={[0, -20]}
           ></Marker>
         )}
-        {startups.map((startup) => (
-          <Marker
-            key={startup.id}
-            longitude={startup.locationLng ?? 0}
-            latitude={startup.locationLat ?? 0}
-            offset={[0, -20]}
-          >
-            <div
-              className="group relative flex w-32 justify-center text-lg text-red-600"
-              onClick={() => {
-                router.replace(`/startup/${startup.id}`);
-              }}
+        {startups
+          .filter((s) => s.locationLat && s.locationLng)
+          .map((startup) => (
+            <Marker
+              key={startup.id}
+              longitude={startup.locationLng ?? 0}
+              latitude={startup.locationLat ?? 0}
+              offset={[0, -20]}
             >
-              <CustomPin
-                className="h-8 w-8"
-                // startupimage={startup.logoUrl}
-                categories={[startup.industry]}
-                startupname={startup.companyName}
-              />
-              <div className="absolute -bottom-6 text-center text-sm font-semibold">
-                {startup.companyName}
+              <div
+                className="group relative flex w-32 justify-center text-lg text-red-600"
+                onClick={() => {
+                  router.replace(`/startup/${startup.id}`);
+                }}
+              >
+                <CustomPin
+                  className="h-8 w-8"
+                  // startupimage={startup.logoUrl}
+                  categories={[startup.industry]}
+                  startupname={startup.companyName}
+                />
+                <div className="absolute -bottom-6 text-center text-sm font-semibold">
+                  {startup.companyName}
+                </div>
               </div>
-            </div>
-          </Marker>
-        ))}
+            </Marker>
+          ))}
 
         {/* change to investors */}
-        {investors.map((investor) => (
-          <Marker
-            key={investor.id}
-            longitude={investor.locationLng ?? 0}
-            latitude={investor.locationLat ?? 0}
-            offset={[0, -20]}
-          >
-            <div
-              className="group relative flex w-32 justify-center text-lg text-sky-600"
-              onClick={() => {
-                router.replace(`/investor/${investor.id}`);
-              }}
+        {investors
+          .filter((inv) => inv.locationLat && inv.locationLng)
+          .map((investor) => (
+            <Marker
+              key={investor.id}
+              longitude={investor.locationLng ?? 0}
+              latitude={investor.locationLat ?? 0}
+              offset={[0, -20]}
             >
-              <CustomPin
-                className="h-8 w-8"
-                // startupimage={investor.logoUrl}
-                categories={["Investor"]}
-                startupname={`${investor.firstName} ${investor.lastName}`}
-              />
-              <div className="absolute -bottom-6 text-center text-sm font-semibold">
-                {investor.firstName} {investor.lastName}
+              <div
+                className="group relative flex w-32 justify-center text-lg text-sky-600"
+                onClick={() => {
+                  router.replace(`/investor/${investor.id}`);
+                }}
+              >
+                <CustomPin
+                  className="h-8 w-8"
+                  // startupimage={investor.logoUrl}
+                  categories={["Investor"]}
+                  startupname={`${investor.firstName} ${investor.lastName}`}
+                />
+                <div className="absolute -bottom-6 text-center text-sm font-semibold">
+                  {investor.firstName} {investor.lastName}
+                </div>
               </div>
-            </div>
-          </Marker>
-        ))}
+            </Marker>
+          ))}
       </Map>
     </div>
   );
