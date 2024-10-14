@@ -302,7 +302,7 @@ function Items({ list }: { list: Startup[] | Investor[] }) {
             <div className="flex w-full items-center">
               <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-white">
                 <img
-                  src={URL.createObjectURL(item?.profilePicture.data as unknown as Blob)}
+                  src={""}
                   alt={
                     isStartup
                       ? (item as Startup).companyName

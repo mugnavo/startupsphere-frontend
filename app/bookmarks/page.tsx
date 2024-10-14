@@ -107,11 +107,7 @@ export default function Bookmarks() {
             >
               <div className="flex w-full items-center">
                 <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">
-                  <img
-                    src={URL.createObjectURL(startup?.profilePicture.data as unknown as Blob)}
-                    alt={startup?.companyName}
-                    className="h-full w-full object-cover"
-                  />
+                  <img src={""} alt={startup?.companyName} className="h-full w-full object-cover" />
                 </div>
                 <div className="flex-1">
                   <div className="flex flex-col">

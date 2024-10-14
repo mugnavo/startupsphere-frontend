@@ -84,9 +84,7 @@ export default function Recents() {
                 <div className="flex w-full items-center">
                   <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">
                     <img
-                      src={URL.createObjectURL(
-                        view.startup?.profilePicture.data as unknown as Blob
-                      )}
+                      src={""}
                       alt={view.startup?.companyName}
                       className="h-full w-full object-cover"
                     />

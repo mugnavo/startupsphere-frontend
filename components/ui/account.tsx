@@ -35,10 +35,7 @@ export default function Account() {
         className="absolute right-3 top-3 z-50 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 border-yellow-400 bg-yellow-600 text-xl font-normal text-white"
       >
         {user?.profilePicture ? (
-          <img
-            src={URL.createObjectURL(user?.profilePicture.data as unknown as Blob)}
-            className="h-full w-full rounded-full object-cover"
-          />
+          <img src={""} className="h-full w-full rounded-full object-cover" />
         ) : (
           user?.firstName[0] || "G"
         )}
