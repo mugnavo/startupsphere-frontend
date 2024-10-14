@@ -41,7 +41,7 @@ export const profilePictureControllerUploadProfilePicture = <TData = AxiosRespon
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.post(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/profile-picture/${userId}/upload`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/${userId}/upload`,
     undefined,
     options
   );
@@ -51,7 +51,7 @@ export const profilePictureControllerGetProfilePicture = <TData = AxiosResponse<
   userId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/profile-picture/${userId}`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/${userId}`, options);
 };
 
 export const profilePictureControllerUpdateProfilePicture = <TData = AxiosResponse<void>>(
@@ -59,7 +59,7 @@ export const profilePictureControllerUpdateProfilePicture = <TData = AxiosRespon
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.put(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/profile-picture/${userId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/${userId}`,
     undefined,
     options
   );
@@ -70,7 +70,7 @@ export const profilePictureControllerUploadStartupProfilePicture = <TData = Axio
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.post(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/profile-picture/startup/${startupId}/upload`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/startup/${startupId}/upload`,
     undefined,
     options
   );
@@ -81,7 +81,7 @@ export const profilePictureControllerUploadInvestorProfilePicture = <TData = Axi
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.post(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/profile-picture/investor/${investorId}/upload`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/investor/${investorId}/upload`,
     undefined,
     options
   );
@@ -92,7 +92,7 @@ export const profilePictureControllerGetStartupProfilePicture = <TData = AxiosRe
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/profile-picture/startup/${startupId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/startup/${startupId}`,
     options
   );
 };
@@ -102,7 +102,7 @@ export const profilePictureControllerGetInvestorProfilePicture = <TData = AxiosR
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/profile-picture/investor/${investorId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/investor/${investorId}`,
     options
   );
 };
@@ -112,7 +112,7 @@ export const profilePictureControllerUpdateStartupProfilePicture = <TData = Axio
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.put(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/profile-picture/startup/${startupId}/update`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/startup/${startupId}/update`,
     undefined,
     options
   );
@@ -123,7 +123,7 @@ export const profilePictureControllerUpdateInvestorProfilePicture = <TData = Axi
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.put(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/profile-picture/investor/${investorId}/update`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/investor/${investorId}/update`,
     undefined,
     options
   );
@@ -133,27 +133,27 @@ export const usersControllerRegister = <TData = AxiosResponse<void>>(
   data?: any,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/users/register`, data, options);
+  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/register`, data, options);
 };
 
 export const usersControllerFindAll = <TData = AxiosResponse<string>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/users`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, options);
 };
 
 export const usersControllerLogin = <TData = AxiosResponse<UsersControllerLogin201>>(
   data?: any,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/users/login`, data, options);
+  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/login`, data, options);
 };
 
 export const usersControllerVerifyPostEmail = <TData = AxiosResponse<string>>(
   params: UsersControllerVerifyPostEmailParams,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/users/verify-email`, {
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/verify-email`, {
     ...options,
     params: { ...params, ...options?.params },
   });
@@ -163,23 +163,19 @@ export const usersControllerVerifyEmail = <TData = AxiosResponse<string>>(
   token: string,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/users/verify/${token}`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/verify/${token}`, options);
 };
 
 export const usersControllerCheckEmail = <TData = AxiosResponse<void>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/users/check-email`,
-    undefined,
-    options
-  );
+  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/check-email`, undefined, options);
 };
 
 export const usersControllerGetProfile = <TData = AxiosResponse<User>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/users/profile`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/profile`, options);
 };
 
 export const usersControllerUpdate = <TData = AxiosResponse<User>>(
@@ -187,19 +183,19 @@ export const usersControllerUpdate = <TData = AxiosResponse<User>>(
   user: User,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/users/${id}`, user, options);
+  return axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${id}`, user, options);
 };
 
 export const usersControllerGetCurrentUser = <TData = AxiosResponse<User>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/users/current`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/current`, options);
 };
 
 export const usersControllerFindAllUsers = <TData = AxiosResponse<User[]>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/users/all`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/all`, options);
 };
 
 export const usersControllerGetUserRegistrationsByMonth = <
@@ -208,7 +204,7 @@ export const usersControllerGetUserRegistrationsByMonth = <
   params: UsersControllerGetUserRegistrationsByMonthParams,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/users/registrations-by-month`, {
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/registrations-by-month`, {
     ...options,
     params: { ...params, ...options?.params },
   });
@@ -218,7 +214,7 @@ export const usersControllerForgotPassword = <TData = AxiosResponse<string>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.post(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/users/forgot-password`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/forgot-password`,
     undefined,
     options
   );
@@ -227,14 +223,14 @@ export const usersControllerForgotPassword = <TData = AxiosResponse<string>>(
 export const usersControllerVerifyOtp = <TData = AxiosResponse<string>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/users/verify-otp`, undefined, options);
+  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/verify-otp`, undefined, options);
 };
 
 export const usersControllerResetPassword = <TData = AxiosResponse<string>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.post(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/users/reset-password`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/reset-password`,
     undefined,
     options
   );
@@ -244,26 +240,26 @@ export const startupsControllerCreate = <TData = AxiosResponse<StartupsControlle
   startup: Startup,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/startups/create`, startup, options);
+  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/startups/create`, startup, options);
 };
 
 export const startupsControllerFindAll = <TData = AxiosResponse<Startup[]>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/startups`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/startups`, options);
 };
 
 export const startupsControllerFindAllStartups = <TData = AxiosResponse<Startup[]>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/startups/all`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/startups/all`, options);
 };
 
 export const startupsControllerFindOne = <TData = AxiosResponse<Startup>>(
   id: string,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/startups/${id}`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/startups/${id}`, options);
 };
 
 export const startupsControllerUpdate = <TData = AxiosResponse<Startup>>(
@@ -271,7 +267,7 @@ export const startupsControllerUpdate = <TData = AxiosResponse<Startup>>(
   startup: Startup,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/startups/${id}`, startup, options);
+  return axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/startups/${id}`, startup, options);
 };
 
 export const startupsControllerSoftDelete = <TData = AxiosResponse<void>>(
@@ -279,7 +275,7 @@ export const startupsControllerSoftDelete = <TData = AxiosResponse<void>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.put(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/startups/${id}/delete`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/startups/${id}/delete`,
     undefined,
     options
   );
@@ -289,33 +285,33 @@ export const investorsControllerCreate = <TData = AxiosResponse<InvestorsControl
   investor: Investor,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/investors/create`, investor, options);
+  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/investors/create`, investor, options);
 };
 
 export const investorsControllerFindAllCreatedUser = <TData = AxiosResponse<Investor[]>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/investors`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/investors`, options);
 };
 
 export const investorsControllerFindAllInvestors = <TData = AxiosResponse<Investor[]>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/investors/all`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/investors/all`, options);
 };
 
 export const investorsControllerGetInvestorIds = <TData = AxiosResponse<number[]>>(
   userId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/investors/${userId}/ids`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/investors/${userId}/ids`, options);
 };
 
 export const investorsControllerGetInvestorsByIds = <TData = AxiosResponse<Investor[]>>(
   params: InvestorsControllerGetInvestorsByIdsParams,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/investors/by-ids`, {
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/investors/by-ids`, {
     ...options,
     params: { ...params, ...options?.params },
   });
@@ -325,14 +321,14 @@ export const investorsControllerFindByIds = <TData = AxiosResponse<Investor[]>>(
   ids: string[],
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/investors/${ids}`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/investors/${ids}`, options);
 };
 
 export const investorsControllerFindOne = <TData = AxiosResponse<Investor>>(
   id: string,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/investors/${id}`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/investors/${id}`, options);
 };
 
 export const investorsControllerUpdate = <TData = AxiosResponse<Investor>>(
@@ -340,7 +336,7 @@ export const investorsControllerUpdate = <TData = AxiosResponse<Investor>>(
   investor: Investor,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/investors/${id}`, investor, options);
+  return axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/investors/${id}`, investor, options);
 };
 
 export const investorsControllerSoftDelete = <TData = AxiosResponse<void>>(
@@ -348,7 +344,7 @@ export const investorsControllerSoftDelete = <TData = AxiosResponse<void>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.put(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/investors/${id}/delete`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/investors/${id}/delete`,
     undefined,
     options
   );
@@ -358,7 +354,7 @@ export const fundingRoundControllerGetInvestorsByIds = <TData = AxiosResponse<In
   params: FundingRoundControllerGetInvestorsByIdsParams,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/funding-rounds/by-ids`, {
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/funding-rounds/by-ids`, {
     ...options,
     params: { ...params, ...options?.params },
   });
@@ -368,7 +364,7 @@ export const fundingRoundControllerCreateFundingRound = <TData = AxiosResponse<F
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.post(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/funding-rounds/createfund`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/funding-rounds/createfund`,
     undefined,
     options
   );
@@ -377,14 +373,14 @@ export const fundingRoundControllerCreateFundingRound = <TData = AxiosResponse<F
 export const fundingRoundControllerFindAll = <TData = AxiosResponse<FundingRound[]>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/funding-rounds/all`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/funding-rounds/all`, options);
 };
 
 export const fundingRoundControllerFindById = <TData = AxiosResponse<FundingRound>>(
   id: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/funding-rounds/${id}`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/funding-rounds/${id}`, options);
 };
 
 export const fundingRoundControllerUpdateFundingRound = <TData = AxiosResponse<FundingRound>>(
@@ -392,7 +388,7 @@ export const fundingRoundControllerUpdateFundingRound = <TData = AxiosResponse<F
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.put(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/funding-rounds/${id}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/funding-rounds/${id}`,
     undefined,
     options
   );
@@ -403,7 +399,7 @@ export const fundingRoundControllerSoftDeleteFundingRound = <TData = AxiosRespon
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.put(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/funding-rounds/${id}/delete`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/funding-rounds/${id}/delete`,
     undefined,
     options
   );
@@ -414,7 +410,7 @@ export const fundingRoundControllerGetTotalMoneyRaisedForStartup = <TData = Axio
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/funding-rounds/${id}/total-money-raised`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/funding-rounds/${id}/total-money-raised`,
     options
   );
 };
@@ -425,7 +421,7 @@ export const fundingRoundControllerGetTotalSharesForInvestor = <TData = AxiosRes
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/funding-rounds/${investorId}/company/${companyId}/total-shares`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/funding-rounds/${investorId}/company/${companyId}/total-shares`,
     options
   );
 };
@@ -437,7 +433,7 @@ export const fundingRoundControllerGetAllInvestorsDataOfAllTheCompany = <
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/funding-rounds/${companyId}/investors/all`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/funding-rounds/${companyId}/investors/all`,
     options
   );
 };
@@ -449,7 +445,7 @@ export const fundingRoundControllerGetAllInvestorDataByEachCompany = <
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/funding-rounds/investors/company/${companyId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/funding-rounds/investors/company/${companyId}`,
     options
   );
 };
@@ -462,7 +458,7 @@ export const fundingRoundControllerGetMonthlyFunding = <
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/funding-rounds/monthly-funding/${userId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/funding-rounds/monthly-funding/${userId}`,
     {
       ...options,
       params: { ...params, ...options?.params },
@@ -478,7 +474,7 @@ export const fundingRoundControllerGetCompanyMonthlyFunding = <
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/funding-rounds/company-monthly-funding/${companyId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/funding-rounds/company-monthly-funding/${companyId}`,
     {
       ...options,
       params: { ...params, ...options?.params },
@@ -491,7 +487,7 @@ export const fundingRoundControllerInvest = <TData = AxiosResponse<void>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.put(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/funding-rounds/${id}/investment`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/funding-rounds/${id}/investment`,
     undefined,
     options
   );
@@ -504,7 +500,7 @@ export const fundingRoundControllerUpdateInvestmentStatus = <
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.put(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/funding-rounds/${id}/status`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/funding-rounds/${id}/status`,
     undefined,
     options
   );
@@ -513,7 +509,7 @@ export const fundingRoundControllerUpdateInvestmentStatus = <
 export const capTableInvestorControllerFindAll = <TData = AxiosResponse<CapTableInvestor[]>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/cap-table-investor`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/cap-table-investor`, options);
 };
 
 export const capTableInvestorControllerFindAllInvestors = <
@@ -522,7 +518,7 @@ export const capTableInvestorControllerFindAllInvestors = <
   params: CapTableInvestorControllerFindAllInvestorsParams,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/cap-table-investor/all`, {
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/cap-table-investor/all`, {
     ...options,
     params: { ...params, ...options?.params },
   });
@@ -535,7 +531,7 @@ export const capTableInvestorControllerGetInvestorRequests = <
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/cap-table-investor/investor-requests/${investorId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/cap-table-investor/investor-requests/${investorId}`,
     options
   );
 };
@@ -547,7 +543,7 @@ export const capTableInvestorControllerGetInvestorInformation = <
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/cap-table-investor/${capTableId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/cap-table-investor/${capTableId}`,
     options
   );
 };
@@ -559,7 +555,7 @@ export const capTableInvestorControllerGetTopInvestorByCapTable = <
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/cap-table-investor/${userId}/top`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/cap-table-investor/${userId}/top`,
     options
   );
 };
@@ -570,7 +566,7 @@ export const capTableInvestorControllerRemoveInvestor = <TData = AxiosResponse<v
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.put(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/cap-table-investor/${investorId}/${capTableId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/cap-table-investor/${investorId}/${capTableId}`,
     undefined,
     options
   );
@@ -580,40 +576,40 @@ export const activityControllerCreateActivity = <TData = AxiosResponse<Activity>
   activity: Activity,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/activities`, activity, options);
+  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/activities`, activity, options);
 };
 
 export const activityControllerFindAll = <TData = AxiosResponse<Activity[]>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/activities`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/activities`, options);
 };
 
 export const activityControllerFindOne = <TData = AxiosResponse<Activity>>(
   id: string,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/activities/${id}`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/activities/${id}`, options);
 };
 
 export const bookmarkControllerGetAll = <TData = AxiosResponse<Bookmark[]>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/bookmarks`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/bookmarks`, options);
 };
 
 export const bookmarkControllerCreate = <TData = AxiosResponse<void>>(
   data?: any,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/bookmarks`, data, options);
+  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/bookmarks`, data, options);
 };
 
 export const bookmarkControllerFindAllByUserId = <TData = AxiosResponse<Bookmark[]>>(
   userId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/bookmarks/${userId}`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/bookmarks/${userId}`, options);
 };
 
 export const bookmarkControllerStartupRemove = <TData = AxiosResponse<void>>(
@@ -622,7 +618,7 @@ export const bookmarkControllerStartupRemove = <TData = AxiosResponse<void>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.delete(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/bookmarks/${userId}/startup/${startupId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/bookmarks/${userId}/startup/${startupId}`,
     options
   );
 };
@@ -633,7 +629,7 @@ export const bookmarkControllerFindOneByUserIdandStartupId = <TData = AxiosRespo
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/bookmarks/${userId}/startup/${startupId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/bookmarks/${userId}/startup/${startupId}`,
     options
   );
 };
@@ -644,7 +640,7 @@ export const bookmarkControllerInvestorRemove = <TData = AxiosResponse<void>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.delete(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/bookmarks/${userId}/investor/${investorId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/bookmarks/${userId}/investor/${investorId}`,
     options
   );
 };
@@ -655,7 +651,7 @@ export const bookmarkControllerFindOneByUserIdandInvestorId = <TData = AxiosResp
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/bookmarks/${userId}/investor/${investorId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/bookmarks/${userId}/investor/${investorId}`,
     options
   );
 };
@@ -664,27 +660,27 @@ export const bookmarkControllerFindallByStartupId = <TData = AxiosResponse<Bookm
   startupId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/bookmarks/${startupId}`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/bookmarks/${startupId}`, options);
 };
 
 export const bookmarkControllerFindAllByInvestorId = <TData = AxiosResponse<Bookmark[]>>(
   investorId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/bookmarks/${investorId}`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/bookmarks/${investorId}`, options);
 };
 
 export const likeControllerGetAll = <TData = AxiosResponse<Like[]>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/likes`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/likes`, options);
 };
 
 export const likeControllerCreate = <TData = AxiosResponse<void>>(
   data?: any,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/likes`, data, options);
+  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/likes`, data, options);
 };
 
 export const likeControllerStartupRemove = <TData = AxiosResponse<void>>(
@@ -693,7 +689,7 @@ export const likeControllerStartupRemove = <TData = AxiosResponse<void>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.delete(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/likes/${userId}/startup/${startupId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/likes/${userId}/startup/${startupId}`,
     options
   );
 };
@@ -704,7 +700,7 @@ export const likeControllerFindOneByUserIdandStartupId = <TData = AxiosResponse<
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/likes/${userId}/startup/${startupId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/likes/${userId}/startup/${startupId}`,
     options
   );
 };
@@ -715,7 +711,7 @@ export const likeControllerInvestorRemove = <TData = AxiosResponse<void>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.delete(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/likes/${userId}/investor/${investorId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/likes/${userId}/investor/${investorId}`,
     options
   );
 };
@@ -726,7 +722,7 @@ export const likeControllerFindOneByUserIdandInvestorId = <TData = AxiosResponse
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/likes/${userId}/investor/${investorId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/likes/${userId}/investor/${investorId}`,
     options
   );
 };
@@ -735,33 +731,33 @@ export const likeControllerFindallByStartupId = <TData = AxiosResponse<Like[]>>(
   startupId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/likes/${startupId}`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/likes/${startupId}`, options);
 };
 
 export const likeControllerFindAllByInvestorId = <TData = AxiosResponse<Like[]>>(
   investorId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/likes/${investorId}`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/likes/${investorId}`, options);
 };
 
 export const reportControllerGetAll = <TData = AxiosResponse<Report[]>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/reports`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/reports`, options);
 };
 
 export const reportControllerCreate = <TData = AxiosResponse<Report>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/reports`, undefined, options);
+  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/reports`, undefined, options);
 };
 
 export const reportControllerGetOneById = <TData = AxiosResponse<Report>>(
   reportId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/reports/${reportId}`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/reports/${reportId}`, options);
 };
 
 export const reportControllerUpdate = <TData = AxiosResponse<Report>>(
@@ -769,7 +765,7 @@ export const reportControllerUpdate = <TData = AxiosResponse<Report>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.put(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}0/reports/${reportId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/reports/${reportId}`,
     undefined,
     options
   );
@@ -779,48 +775,48 @@ export const reportControllerDelete = <TData = AxiosResponse<unknown>>(
   reportId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/reports/${reportId}`, options);
+  return axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/reports/${reportId}`, options);
 };
 
 export const reportControllerGetAllByUserId = <TData = AxiosResponse<Report[]>>(
   userId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/reports/user/${userId}`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/reports/user/${userId}`, options);
 };
 
 export const viewControllerCreate = <TData = AxiosResponse<void>>(
   data?: any,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/views`, data, options);
+  return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/views`, data, options);
 };
 
 export const viewControllerGetAll = <TData = AxiosResponse<View[]>>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/views`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/views`, options);
 };
 
 export const viewControllerFindRecentsByUserId = <TData = AxiosResponse<View[]>>(
   userId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/views/${userId}`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/views/${userId}`, options);
 };
 
 export const viewControllerFindAllByStartupId = <TData = AxiosResponse<View[]>>(
   startupId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/views/startup/${startupId}`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/views/startup/${startupId}`, options);
 };
 
 export const viewControllerFindAllByInvestorId = <TData = AxiosResponse<View[]>>(
   investorId: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}0/views/investor/${investorId}`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/views/investor/${investorId}`, options);
 };
 
 export type ProfilePictureControllerUploadProfilePictureResult = AxiosResponse<void>;
