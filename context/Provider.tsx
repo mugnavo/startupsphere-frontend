@@ -25,14 +25,10 @@ export function ContextProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       return;
     }
-    const user = jwtDecode(jwt) as User;
-    if (user?.email) {
-      setUser(user);
-
-      if (user?.id) {
-        const updatedUser = await usersControllerGetProfile(withAuth);
-        if (updatedUser && updatedUser.data) setUser(updatedUser.data);
-      }
+    const data = jwtDecode(jwt) as any;
+    if (data?.userId) {
+      const updatedUser = await usersControllerGetProfile(withAuth);
+      if (updatedUser && updatedUser.data) setUser(updatedUser.data);
     }
   }
 

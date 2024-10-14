@@ -1,11 +1,11 @@
 "use client";
 
 import { jwtDecode } from "jwt-decode";
-import { CircleUserRound, KeyRound, Mail, UserRoundPen } from "lucide-react";
+import { KeyRound, Mail } from "lucide-react";
 import { useState } from "react";
 import { useSession } from "~/context/hooks";
-import { usersControllerLogin, usersControllerRegister } from "~/lib/api";
-import { User } from "~/lib/schemas";
+import { usersControllerGetProfile, usersControllerLogin } from "~/lib/api";
+import { withAuth } from "~/lib/utils";
 
 export default function LoginModal() {
   const { setUser } = useSession();
@@ -20,9 +20,10 @@ export default function LoginModal() {
     });
     if (typeof data.jwt === "string") {
       localStorage.setItem("jwt", data.jwt);
-      const user = jwtDecode(data.jwt) as User;
-      if (user?.email) {
-        setUser(user);
+      const jwtData = jwtDecode(data.jwt) as any;
+      if (jwtData?.userId) {
+        const updatedUser = await usersControllerGetProfile(withAuth);
+        if (updatedUser && updatedUser.data) setUser(updatedUser.data);
       }
     } else {
       setErrorMessage(String(data.message) || "An error occurred");

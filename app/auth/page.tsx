@@ -13,8 +13,11 @@ function AutoAuthFlow() {
   useEffect(() => {
     if (!token) return;
     try {
-      jwtDecode(token) as User;
-      localStorage.setItem("jwt", token);
+      const data = jwtDecode(token) as any;
+      console.log(data);
+      if (data?.userId) {
+        localStorage.setItem("jwt", token);
+      }
     } catch {
       console.error("Invalid token");
     } finally {
