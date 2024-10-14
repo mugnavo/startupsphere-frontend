@@ -2,11 +2,11 @@
 
 import { jwtDecode } from "jwt-decode";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useSession } from "~/context/hooks";
 import { User } from "~/lib/schemas";
 
-export default function AutoAuthFlow() {
+export function AutoAuthFlow() {
   const searchParams = useSearchParams();
   const { user, setUser } = useSession();
 
@@ -26,5 +26,14 @@ export default function AutoAuthFlow() {
       window.close();
     }
   }, [token, setUser]);
+
   return <div>page</div>;
+}
+
+export default function Page() {
+  return (
+    <Suspense>
+      <AutoAuthFlow />
+    </Suspense>
+  );
 }
