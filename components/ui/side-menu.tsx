@@ -12,7 +12,6 @@ const SIDEBAR_LINKS: SidebarLinkProps[] = [
   { href: "/search", name: "Search", icon: <Search size={size} /> },
   { href: "/recents", name: "Recent", icon: <History size={size} /> },
   { href: "/bookmarks", name: "Bookmarks", icon: <Bookmark size={size} /> },
-  { href: "/dashboard", name: "Dashboard", icon: <LayoutDashboard size={size} /> },
   { href: "/reports", name: "Reports", icon: <ClipboardPenLine size={size} /> },
   { href: "/ownedStartups", name: "Owned Startups", icon: <Cog size={size} /> },
 ];
@@ -25,13 +24,7 @@ export default function SideMenu() {
       <div className="flex flex-col items-center gap-8">
         <Logo />
 
-        {SIDEBAR_LINKS.filter((item) =>
-          item.href === "/dashboard"
-            ? user?.moderator
-            : ["/recents", "/bookmarks", "/reports", "/ownedStartups"].includes(item.href)
-              ? !!user
-              : true
-        ).map((item, index) => (
+        {SIDEBAR_LINKS.map((item, index) => (
           <Fragment key={item.href}>
             {index === 3 && <div className="m-2 w-3 rounded-lg border border-gray-300" />}
             <SidebarLink item={item} />

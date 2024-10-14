@@ -6,7 +6,7 @@
     "preinstall": "npx only-allow pnpm",
     "dev": "next dev --port 3001",
     "turbo": "next dev --turbo --port 3001",
-    "build": "pnpm gen && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write . \"!pnpm-lock.yaml\" \"!pull_request_template.md\" --ignore-path .gitignore",
