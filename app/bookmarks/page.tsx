@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { ArrowLeft, Cog, HandCoins, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -21,6 +22,64 @@ export default function Bookmarks() {
     { name: "Startups", icon: <Cog size={24} /> },
     { name: "Investors", icon: <HandCoins size={24} /> },
   ];
+
+  const [profilePictures, setProfilePictures] = useState<any>({});
+
+  async function fetchStartupProfilePictures() {
+    const pictures = {} as any;
+
+    await Promise.all([
+      ...bookmarkStartups.map(async (startup) => {
+        try {
+          const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/startup/${startup.id}`,
+            {
+              headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+              responseType: "blob",
+            }
+          );
+          pictures[`startup_${startup.id}`] = URL.createObjectURL(response.data);
+        } catch (error) {
+          console.error(`Failed to fetch profile picture for startup ID ${startup.id}:`, error);
+        }
+      }),
+    ]);
+    setProfilePictures({ ...profilePictures, ...pictures });
+  }
+
+  // async function fetchInvestorProfilePictures() {
+  //   const pictures = {} as any;
+
+  //   await Promise.all([
+  //     ...bookmarkInvestors.map(async (investor) => {
+  //       try {
+  //         const response = await axios.get(
+  //           `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/investor/${investor.id}`,
+  //           {
+  //             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  //             responseType: "blob",
+  //           }
+  //         );
+  //         pictures[`investor_${investor.id}`] = URL.createObjectURL(response.data);
+  //       } catch (error) {
+  //         console.error(`Failed to fetch profile picture for investor ID ${investor.id}:`, error);
+  //       }
+  //     }),
+  //   ]);
+  //   setProfilePictures({ ...profilePictures, ...pictures });
+  // }
+
+  useEffect(() => {
+    if (bookmarkStartups.length > 0) {
+      fetchStartupProfilePictures();
+    }
+  }, [bookmarkStartups]);
+
+  // useEffect(() => {
+  //   if (bookmarkInvestors.length > 0) {
+  //     fetchInvestorProfilePictures();
+  //   }
+  // }, [bookmarkInvestors]);
 
   async function fetchBookmarkStartups() {
     try {
@@ -107,7 +166,11 @@ export default function Bookmarks() {
             >
               <div className="flex w-full items-center">
                 <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">
-                  <img src={""} alt={startup?.companyName} className="h-full w-full object-cover" />
+                  <img
+                    src={profilePictures[`startup_${startup?.id}`]}
+                    alt={startup?.companyName}
+                    className="h-full w-full object-cover"
+                  />
                 </div>
                 <div className="flex-1">
                   <div className="flex flex-col">
