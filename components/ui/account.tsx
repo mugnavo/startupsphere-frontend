@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, UserRound } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSession } from "~/context/hooks";
 
@@ -45,40 +45,32 @@ export default function Account() {
       {isShowMenu && (
         <div
           ref={modalRef}
-          className="absolute right-3 top-14 z-50 flex h-auto w-48 flex-col gap-1 rounded bg-white p-2 text-sm"
+          className="absolute right-3 top-14 z-50 flex h-auto w-48 flex-col gap-1 rounded bg-white p-2 text-sm shadow-custom"
         >
-          <span className="m-2">{user ? `${user?.firstName} ${user?.lastName} ` : "Guest"}</span>
+          <div className="txt-lg relative mb-2 flex py-4">
+            {user ? `${user?.firstName} ${user?.lastName} ` : "Guest"}
+            <span className="absolute bottom-0 left-0 text-xs text-gray-400">{user?.email}</span>
+          </div>
 
-          {/* guest dont need button for their account */}
-          {Array.from({ length: 2 }, (_, index) => (
-            <div
-              key={index}
-              className={`flex ${user || index === 1 ? "cursor-pointer hover:bg-gray-100" : ""} items-center gap-2 rounded p-3`}
-              onClick={async () => {
-                if (index === 1) {
-                  if (user) {
-                    localStorage.removeItem("jwt");
-                    setUser(null);
-                  } else {
-                    const loginModal = document.getElementById("login_modal");
-                    if (loginModal instanceof HTMLDialogElement) {
-                      loginModal.showModal();
-                    }
-                  }
+          <div
+            className={`flex cursor-pointer items-center gap-2 rounded p-3 hover:bg-gray-100`}
+            onClick={async () => {
+              if (user) {
+                localStorage.removeItem("jwt");
+                setUser(null);
+              } else {
+                const loginModal = document.getElementById("login_modal");
+                if (loginModal instanceof HTMLDialogElement) {
+                  loginModal.showModal();
                 }
-              }}
-            >
-              {index === 0 ? (
-                <>
-                  <UserRound size={15} /> {user ? user.email : "Guest"}
-                </>
-              ) : (
-                <>
-                  <LogOut size={15} /> {user ? "Logout" : "Login"}
-                </>
-              )}
-            </div>
-          ))}
+              }
+            }}
+          >
+            <>
+              <LogOut size={15} /> {user ? "Logout" : "Login"}
+            </>
+          </div>
+
           <div className="m-auto mt-1 block w-3 rounded-lg border border-gray-300" />
         </div>
       )}
