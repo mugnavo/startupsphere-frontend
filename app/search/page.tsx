@@ -360,7 +360,7 @@ function Items({ list, profilePictures }: { list: Startup[] | Investor[]; profil
           <div
             key={item.id}
             className="mb-1 flex cursor-pointer items-center justify-between rounded-md bg-white p-2 shadow-none hover:bg-gray-100"
-            onClick={() => router.push(`/startup/${item.id}`)}
+            onClick={() => router.push(`/${isStartup ? "startup" : "investor"}/${item.id}`)}
           >
             <div className="flex w-full items-center">
               <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-white">
