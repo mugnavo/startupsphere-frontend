@@ -31,14 +31,18 @@ export default function Account() {
   }, [isShowMenu]);
 
   async function fetchPfp() {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/${user?.id}`,
-      {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        responseType: "blob",
-      }
-    );
-    setPfp(URL.createObjectURL(response.data));
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/${user?.id}`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          responseType: "blob",
+        }
+      );
+      setPfp(URL.createObjectURL(response.data));
+    } catch (e) {
+      console.log("Error while fetching user pfp: ", e);
+    }
   }
   useEffect(() => {
     if (user) {

@@ -1,11 +1,11 @@
 "use client";
 
+import { AxiosError } from "axios";
 import { jwtDecode } from "jwt-decode";
 import { KeyRound, Mail } from "lucide-react";
 import { useState } from "react";
 import { useSession } from "~/context/hooks";
 import { usersControllerGetProfile, usersControllerLogin } from "~/lib/api";
-import { withAuth } from "~/lib/utils";
 
 export default function LoginModal() {
   const { setUser } = useSession();
@@ -14,21 +14,32 @@ export default function LoginModal() {
   const [errorMessage, setErrorMessage] = useState("");
 
   async function login(formData: FormData) {
-    const { data } = await usersControllerLogin({
-      email: formData.get("email") as string,
-      password: formData.get("password") as string,
-    });
-    if (typeof data.jwt === "string") {
-      localStorage.setItem("jwt", data.jwt);
-      const jwtData = jwtDecode(data.jwt) as any;
-      if (jwtData?.userId) {
-        const updatedUser = await usersControllerGetProfile(withAuth);
-        if (updatedUser && updatedUser.data) setUser(updatedUser.data);
+    try {
+      const { data } = await usersControllerLogin({
+        email: formData.get("email") as string,
+        password: formData.get("password") as string,
+      });
+      if (typeof data.jwt === "string") {
+        localStorage.setItem("jwt", data.jwt);
+        const jwtData = jwtDecode(data.jwt) as any;
+        if (jwtData?.userId) {
+          const updatedUser = await usersControllerGetProfile({
+            headers: { Authorization: `Bearer ${data.jwt}` },
+          });
+          if (updatedUser && updatedUser.data) setUser(updatedUser.data);
+        }
+      } else {
+        setErrorMessage(String(data.message) || "An error occurred");
       }
-    } else {
-      setErrorMessage(String(data.message) || "An error occurred");
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        setErrorMessage(e.response?.data?.message || e.message);
+      } else {
+        setErrorMessage("An error occurred");
+      }
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }
 
   return (
