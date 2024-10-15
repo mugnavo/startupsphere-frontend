@@ -21,7 +21,10 @@ export default function InvestorDetails() {
     try {
       const { data } = await investorsControllerFindOne(String(investorId));
       if (data) {
-        mainMap?.flyTo({ center: { lat: data.locationLat, lng: data.locationLng } });
+        if (data.locationLat && data.locationLng) {
+          mainMap?.flyTo({ center: { lat: data.locationLat, lng: data.locationLng } });
+        }
+
         setInvestorDetails(data);
       }
     } catch (error) {
