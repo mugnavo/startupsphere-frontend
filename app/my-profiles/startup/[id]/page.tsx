@@ -84,6 +84,7 @@ export default function StartupDetails() {
         if (data.locationLat && data.locationLng) {
           mainMap?.flyTo({ center: { lat: data.locationLat, lng: data.locationLng } });
         }
+        console.log(data);
         setStartupDetails(data);
         setStartupLocationData({
           latitude: data.locationLat,

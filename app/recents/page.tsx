@@ -52,7 +52,7 @@ export default function Recents() {
         }
       }),
     ]);
-    setProfilePictures({ ...profilePictures, ...pictures });
+    setProfilePictures((oldPfps: any) => ({ ...oldPfps, ...pictures }));
   }
 
   useEffect(() => {

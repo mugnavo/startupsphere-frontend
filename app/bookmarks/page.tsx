@@ -44,7 +44,7 @@ export default function Bookmarks() {
         }
       }),
     ]);
-    setProfilePictures({ ...profilePictures, ...pictures });
+    setProfilePictures((oldPfps: any) => ({ ...oldPfps, ...pictures }));
   }
 
   // async function fetchInvestorProfilePictures() {
@@ -66,7 +66,7 @@ export default function Bookmarks() {
   //       }
   //     }),
   //   ]);
-  //   setProfilePictures({ ...profilePictures, ...pictures });
+  //   setProfilePictures((oldPfps: any) => ({ ...oldPfps, ...pictures }));
   // }
 
   useEffect(() => {
