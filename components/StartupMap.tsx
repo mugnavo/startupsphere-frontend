@@ -13,6 +13,7 @@ import { investorsControllerFindAllInvestors, startupsControllerFindAllStartups 
 import type { Investor, Startup } from "~/lib/schemas";
 import CustomPin from "./map/CustomPin";
 import Geocoder from "./map/Geocoder";
+import axios from "axios";
 
 const geocode = new GeocodingCore({ accessToken: process.env.NEXT_PUBLIC_MAPBOX_TOKEN! });
 
@@ -28,6 +29,64 @@ export default function StartupMap() {
     pitch: 77.50180300523273,
     bearing: -13.596730550512234,
   });
+
+  const [profilePictures, setProfilePictures] = useState<any>({});
+
+  async function fetchStartupProfilePictures() {
+    const pictures = {} as any;
+
+    await Promise.all([
+      ...startups.map(async (startup) => {
+        try {
+          const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/startup/${startup.id}`,
+            {
+              headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+              responseType: "blob",
+            }
+          );
+          pictures[`startup_${startup.id}`] = URL.createObjectURL(response.data);
+        } catch (error) {
+          console.error(`Failed to fetch profile picture for startup ID ${startup.id}:`, error);
+        }
+      }),
+    ]);
+    setProfilePictures((oldPfps: any) => ({ ...oldPfps, ...pictures }));
+  }
+
+  async function fetchInvestorProfilePictures() {
+    const pictures = {} as any;
+
+    await Promise.all([
+      ...investors.map(async (investor) => {
+        try {
+          const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/investor/${investor.id}`,
+            {
+              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+              responseType: "blob",
+            }
+          );
+          pictures[`investor_${investor.id}`] = URL.createObjectURL(response.data);
+        } catch (error) {
+          console.error(`Failed to fetch profile picture for investor ID ${investor.id}:`, error);
+        }
+      }),
+    ]);
+    setProfilePictures((oldPfps: any) => ({ ...oldPfps, ...pictures }));
+  }
+
+  useEffect(() => {
+    if (startups.length > 0) {
+      fetchStartupProfilePictures();
+    }
+  }, [startups]);
+
+  useEffect(() => {
+    if (investors.length > 0) {
+      fetchInvestorProfilePictures();
+    }
+  }, [investors]);
 
   async function fetchStartups() {
     const { data } = await startupsControllerFindAllStartups();
@@ -202,7 +261,7 @@ export default function StartupMap() {
               >
                 <CustomPin
                   className="h-8 w-8"
-                  // startupimage={startup.logoUrl}
+                  startupimage={profilePictures[`startup_${startup.id}`]}
                   categories={[startup.industry]}
                   startupname={startup.companyName}
                 />
@@ -231,7 +290,7 @@ export default function StartupMap() {
               >
                 <CustomPin
                   className="h-8 w-8"
-                  // startupimage={investor.logoUrl}
+                  startupimage={profilePictures[`investor_${investor.id}`]}
                   categories={["Investor"]}
                   startupname={`${investor.firstName} ${investor.lastName}`}
                 />
