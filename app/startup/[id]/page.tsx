@@ -65,7 +65,9 @@ export default function StartupDetails() {
     try {
       const { data } = await startupsControllerFindOne(String(startupId), withAuth);
       if (data) {
-        mainMap?.flyTo({ center: { lat: data.locationLat, lng: data.locationLng } });
+        if (data.locationLat && data.locationLng) {
+          mainMap?.flyTo({ center: { lat: data.locationLat, lng: data.locationLng } });
+        }
         setStartupDetails(data);
       }
     } catch (error) {
