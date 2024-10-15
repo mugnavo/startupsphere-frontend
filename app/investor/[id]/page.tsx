@@ -262,7 +262,7 @@ export default function InvestorDetails() {
               rel="noopener noreferrer"
               className="text-m text-blue-500 underline hover:text-blue-700"
             >
-              ${investorDetails?.emailAddress || investorDetails?.contactInformation}
+              {investorDetails?.emailAddress || investorDetails?.contactInformation}
             </a>
           </div>
 

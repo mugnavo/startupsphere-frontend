@@ -259,7 +259,7 @@ export const startupsControllerFindOne = <TData = AxiosResponse<Startup>>(
   id: string,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/startups/${id}`, options);
+  return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/startups/${id}/funding-rounds`, options);
 };
 
 export const startupsControllerUpdate = <TData = AxiosResponse<Startup>>(

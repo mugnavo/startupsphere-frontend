@@ -51,6 +51,12 @@ export default function StartupDetails() {
     setOwnedStartups(data);
   }
 
+  const totalMoneyRaised = startupDetails?.fundingRounds
+    .filter((fundingRound) => !fundingRound.isDeleted)
+    .reduce((total, fundingRound) => {
+      return total + (fundingRound.moneyRaised || 0);
+    }, 0);
+
   useEffect(() => {
     if (!dashboardSelection.active && previewingMap) {
       if (selectedLocation) {
@@ -123,6 +129,7 @@ export default function StartupDetails() {
   async function fetchStartupbyID() {
     try {
       const { data } = await startupsControllerFindOne(String(startupId), withAuth);
+      console.log(data);
       if (data) {
         if (data.locationLat && data.locationLng) {
           mainMap?.flyTo({ center: { lat: data.locationLat, lng: data.locationLng } });
@@ -362,31 +369,53 @@ export default function StartupDetails() {
 
           <hr className="mb-2 border-gray-200" />
 
-          <div className="text-gray-600">
-            {/* <div className="mb-4 flex">
-              <p className="mr-2 font-bold">Capital:</p>
-              <span>
-                {startupDetails?.capital
-                  ? new Intl.NumberFormat("en-PH", {
-                      style: "currency",
-                      currency: "PHP",
-                    }).format(startupDetails.capital)
-                  : "Not specified"}
-              </span>
-            </div>
+          {userId ? (
+            <>
+              <div className="text-gray-600">
+                <div className="mb-4 flex">
+                  <p className="mr-2 font-bold">Funds Raised:</p>
+                  {startupDetails?.fundingRounds?.length ? (
+                    <span>
+                      {startupDetails?.fundingRounds[0].moneyRaisedCurrency}{" "}
+                      {totalMoneyRaised?.toLocaleString()}
+                    </span>
+                  ) : (
+                    <span>None</span>
+                  )}
+                </div>
 
-            <div className="mb-4 flex">
-              <p className="mr-2 font-bold">Funding Stage:</p>
-              <span>{startupDetails?.fundingStage || "Not specified"}</span>
-            </div> */}
+                <div className="mb-4 flex">
+                  <p className="mr-2 font-bold">Funding Rounds:</p>
+                  <span>
+                    {startupDetails?.fundingRounds.filter((round) => !round.isDeleted).length}
+                  </span>
+                </div>
 
-            <div className="mb-4 flex">
-              <p className="mr-2 font-bold">Team Size:</p>
-              <span>{startupDetails?.numberOfEmployees || "Not specified"}</span>
-            </div>
-          </div>
+                <div className="mb-4 flex">
+                  <p className="mr-2 font-bold">Total Investors:</p>
+                  <span>
+                    {
+                      startupDetails?.fundingRounds
+                        .flatMap((round) => round.capTableInvestors)
+                        .filter(
+                          (investorDetail) =>
+                            !investorDetail.isDeleted && !investorDetail.investorRemoved
+                        )
+                        .map((investorDetail) => investorDetail.investor.id) // To get unique investor IDs
+                        .filter((value, index, self) => self.indexOf(value) === index).length
+                    }
+                  </span>
+                </div>
 
-          <hr className="mb-2 border-gray-200" />
+                <div className="mb-4 flex">
+                  <p className="mr-2 font-bold">Team Size:</p>
+                  <span>{startupDetails?.numberOfEmployees || "Not specified"}</span>
+                </div>
+              </div>
+
+              <hr className="mb-2 border-gray-200" />
+            </>
+          ) : null}
 
           <div className="flex justify-center py-4">
             <div className="flex flex-col items-center">
