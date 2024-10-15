@@ -5,7 +5,7 @@ import { Bookmark, ChevronLeft, Globe, Image, MapPin, ThumbsUp } from "lucide-re
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useMap } from "react-map-gl";
-import { useSession } from "~/context/hooks";
+import { useInteractiveMap, useSession } from "~/context/hooks";
 import {
   bookmarkControllerCreate,
   bookmarkControllerFindOneByUserIdandStartupId,
@@ -13,10 +13,13 @@ import {
   likeControllerCreate,
   likeControllerFindOneByUserIdandStartupId,
   likeControllerStartupRemove,
+  startupsControllerFindAll,
   startupsControllerFindOne,
+  startupsControllerUpdate,
   viewControllerCreate,
 } from "~/lib/api";
 import { Startup } from "~/lib/schemas";
+import { LocationData } from "~/lib/types";
 import { withAuth } from "~/lib/utils";
 
 export default function StartupDetails() {
@@ -33,6 +36,67 @@ export default function StartupDetails() {
 
   const [pfp, setPfp] = useState<any>(null);
 
+  const [ownedStartups, setOwnedStartups] = useState<Startup[]>([]);
+  const [doesUserOwnStartup, setDoesUserOwnStartup] = useState(false);
+
+  const [startupLocationData, setStartupLocationData] = useState<LocationData | undefined>();
+
+  const { dashboardSelection, setDashboardSelection, selectedLocation, setSelectedLocation } =
+    useInteractiveMap();
+  const [previewingMap, setPreviewingMap] = useState(false);
+
+  async function fetchOwnedStartups() {
+    if (!localStorage.getItem("jwt")) return;
+    const { data } = await startupsControllerFindAll(withAuth);
+    setOwnedStartups(data);
+  }
+
+  useEffect(() => {
+    if (!dashboardSelection.active && previewingMap) {
+      if (selectedLocation) {
+        setStartupLocationData(selectedLocation);
+        setSelectedLocation(undefined);
+
+        // update
+        startupsControllerUpdate(
+          Number(startupDetails?.id),
+          {
+            locationLat: selectedLocation.latitude,
+            locationLng: selectedLocation.longitude,
+            locationName: selectedLocation.name,
+          } as Startup,
+          withAuth
+        ).then(() => window.location.reload());
+      }
+
+      setPreviewingMap(false);
+    }
+  }, [dashboardSelection, previewingMap, selectedLocation, setSelectedLocation]);
+
+  function previewMap(edit = false) {
+    setPreviewingMap(true);
+
+    setDashboardSelection({
+      active: true,
+      entityName: startupDetails?.companyName,
+      edit: edit,
+      previewLocation: edit ? undefined : startupLocationData,
+    });
+  }
+
+  useEffect(() => {
+    console.log(ownedStartups);
+
+    // find if user owns startup
+    if (ownedStartups.length > 0) {
+      const ownedStartup = ownedStartups.some((s) => s.id === Number(startupId));
+      if (ownedStartup) {
+        console.log("trueeee");
+        setDoesUserOwnStartup(true);
+      }
+    }
+  }, [ownedStartups, startupId]);
+
   function createView() {
     setViewed(true);
 
@@ -47,7 +111,7 @@ export default function StartupDetails() {
 
   async function fetchPfp() {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/startup/${startupDetails?.id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/startup/${startupId}`,
       {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         responseType: "blob",
@@ -55,11 +119,6 @@ export default function StartupDetails() {
     );
     setPfp(URL.createObjectURL(response.data));
   }
-  useEffect(() => {
-    if (startupDetails) {
-      fetchPfp();
-    }
-  }, [startupDetails]);
 
   async function fetchStartupbyID() {
     try {
@@ -111,6 +170,8 @@ export default function StartupDetails() {
 
   useEffect(() => {
     fetchStartupbyID();
+    fetchPfp();
+    fetchOwnedStartups();
   }, []);
 
   useEffect(() => {
@@ -245,6 +306,29 @@ export default function StartupDetails() {
             </div>
           </div>
         )}
+
+        {doesUserOwnStartup ? (
+          <div className="mx-4 mb-3 mt-1 flex items-center gap-2">
+            {startupDetails?.locationLat && startupDetails?.locationLng ? (
+              <button
+                className="btn btn-primary btn-sm text-xs"
+                type="button"
+                onClick={() => previewMap()}
+              >
+                Preview
+              </button>
+            ) : null}
+
+            <button
+              className="btn btn-secondary btn-sm text-xs"
+              type="button"
+              onClick={() => previewMap(true)}
+            >
+              Update Location
+            </button>
+          </div>
+        ) : null}
+
         <hr className="border-gray-200" />
       </div>
       <div className="flex-grow overflow-y-auto px-6 py-2">

@@ -569,7 +569,7 @@ export default function OwnedStartups() {
                   <tr
                     key={index}
                     className="cursor-pointer hover:bg-slate-100"
-                    onClick={() => router.push(`/my-profiles/startup/${startup?.id}`)}
+                    onClick={() => router.push(`/startup/${startup?.id}`)}
                   >
                     <td>{startup.companyName}</td>
                     <td>{startup.industry}</td>
