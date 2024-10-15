@@ -63,7 +63,7 @@ export default function InvestorDetails() {
 
   async function fetchInvestorbyID() {
     try {
-      const { data: returnData } = await investorsControllerFindOne(String(investorId));
+      const { data: returnData } = await investorsControllerFindOne(Number(investorId));
       const data = (returnData as unknown as Investor[])[0];
       console.log(data);
       if (data) {
