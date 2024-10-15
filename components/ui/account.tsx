@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { LogOut } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSession } from "~/context/hooks";
@@ -9,6 +10,7 @@ export default function Account() {
   const { setUser } = useSession();
   const [isShowMenu, setIsShowMenu] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
+  const [pfp, setPfp] = useState<string>("");
   //For the account menu modal: Close the modal if clicked outside of it
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -28,14 +30,30 @@ export default function Account() {
     };
   }, [isShowMenu]);
 
+  async function fetchPfp() {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/${user?.id}`,
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        responseType: "blob",
+      }
+    );
+    setPfp(URL.createObjectURL(response.data));
+  }
+  useEffect(() => {
+    if (user) {
+      fetchPfp();
+    }
+  }, [user]);
+
   return (
     <>
       <div
         onClick={() => setIsShowMenu(!isShowMenu)}
         className="absolute right-3 top-3 z-50 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 border-yellow-400 bg-yellow-600 text-xl font-normal text-white"
       >
-        {user?.profilePicture ? (
-          <img src={""} className="h-full w-full rounded-full object-cover" />
+        {pfp ? (
+          <img src={pfp} className="h-full w-full rounded-full object-cover" />
         ) : (
           user?.firstName[0] || "G"
         )}

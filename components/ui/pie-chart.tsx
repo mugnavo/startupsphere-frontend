@@ -179,7 +179,7 @@ export default function PChart({ startups, filters }: { startups: Startup[]; fil
   };
 
   return (
-    <div className="absolute z-50 h-full w-full">
+    <div className="absolute h-full w-full">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart width={100} height={100}>
           <Pie
