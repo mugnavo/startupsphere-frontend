@@ -241,7 +241,10 @@ export default function StartupDetails() {
 
   return (
     <div
-      className="absolute left-20 top-0 z-10 h-screen w-[22rem] overflow-y-auto bg-white p-6"
+      className={
+        "absolute left-20 top-0 z-10 h-screen w-[22rem] overflow-y-auto bg-white p-6" +
+        (dashboardSelection.active ? " hidden" : " block")
+      }
       style={{ padding: 0, margin: 0 }}
     >
       <div className="flex flex-grow items-center justify-center">
