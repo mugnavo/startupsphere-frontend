@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { useState } from "react";
 
 export default function CustomPin({
@@ -13,15 +12,11 @@ export default function CustomPin({
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-items-center">
-      <motion.div
-        onHoverStart={() => setIsHovered(true)}
-        onHoverEnd={() => setIsHovered(false)}
-        whileHover={{
-          scale: 2.5,
-          transformOrigin: "bottom",
-          transition: { type: "spring", stiffness: 100, damping: 15 },
-        }}
-        whileTap={{ scale: 1 }}
+      <div
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className={`transition-transform duration-700 ${isHovered ? 'scale-[2.5]' : ''}`}
+        style={{ transformOrigin: 'bottom' }}
       >
         {isHovered ? (
           <div className="flex h-12 w-[112px] min-w-0 flex-col items-center justify-center rounded-sm bg-white p-3 drop-shadow-lg">
@@ -73,7 +68,7 @@ export default function CustomPin({
             </svg>
           </div>
         )}
-      </motion.div>
+      </div>
     </div>
   );
 }
