@@ -1,6 +1,7 @@
 "use client";
 
-import { ChevronLeft, Globe, MapPin } from "lucide-react";
+import axios from "axios";
+import { ChevronLeft, Globe, Image, MapPin } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useMap } from "react-map-gl";
@@ -17,9 +18,29 @@ export default function InvestorDetails() {
   const router = useRouter();
   const { mainMap } = useMap();
 
+  const [pfp, setPfp] = useState<any>(null);
+
+  async function fetchPfp() {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/investor/${investorDetails?.id}`,
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        responseType: "blob",
+      }
+    );
+    setPfp(URL.createObjectURL(response.data));
+  }
+  useEffect(() => {
+    if (investorDetails) {
+      fetchPfp();
+    }
+  }, [investorDetails]);
+
   async function fetchInvestorbyID() {
     try {
-      const { data } = await investorsControllerFindOne(String(investorId));
+      const { data: returnData } = await investorsControllerFindOne(String(investorId));
+      const data = (returnData as unknown as Investor[])[0];
+      console.log(data);
       if (data) {
         if (data.locationLat && data.locationLng) {
           mainMap?.flyTo({ center: { lat: data.locationLat, lng: data.locationLng } });
@@ -45,17 +66,17 @@ export default function InvestorDetails() {
         <div className="absolute left-0 top-0 p-2">
           <ChevronLeft size={24} className="cursor-pointer" onClick={() => router.back()} />
         </div>
-        {/* <div className="flex h-64 w-full items-center justify-center bg-gray-200">
-          {investorDetails?.logoUrl ? (
+        <div className="flex h-64 w-full items-center justify-center bg-gray-200">
+          {pfp ? (
             <img
-              src={investorDetails.logoUrl}
-              alt={investorDetails.name}
+              src={pfp}
+              alt={investorDetails?.firstName}
               className="h-full max-h-64 w-auto max-w-full object-contain"
             />
           ) : (
             <Image size={128} color="#6B7280" />
           )}
-        </div> */}
+        </div>
       </div>
       <div className="border-t border-gray-200 py-4">
         <div className="flex items-center justify-between px-6">
@@ -93,12 +114,12 @@ export default function InvestorDetails() {
           <div className="mb-4">
             <p className="font-bold">Contact Info:</p>
             <a
-              href={`mailto:${investorDetails?.contactInformation}`}
+              href={`mailto:${investorDetails?.emailAddress || investorDetails?.contactInformation}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-m text-blue-500 underline hover:text-blue-700"
             >
-              {investorDetails?.contactInformation}
+              ${investorDetails?.emailAddress || investorDetails?.contactInformation}
             </a>
           </div>
         </div>
