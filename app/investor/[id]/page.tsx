@@ -1,24 +1,49 @@
 "use client";
 
 import axios from "axios";
-import { ChevronLeft, Globe, Image, MapPin } from "lucide-react";
+import { Bookmark, ChevronLeft, Globe, Image, MapPin, ThumbsUp } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useMap } from "react-map-gl";
 import { useSession } from "~/context/hooks";
-import { investorsControllerFindOne } from "~/lib/api";
+import {
+  bookmarkControllerCreate,
+  bookmarkControllerFindOneByUserIdandInvestorId,
+  bookmarkControllerInvestorRemove,
+  likeControllerCreate,
+  likeControllerFindOneByUserIdandInvestorId,
+  likeControllerInvestorRemove,
+  investorsControllerFindOne,
+  viewControllerCreate,
+} from "~/lib/api";
 import { Investor } from "~/lib/schemas";
+import { withAuth } from "~/lib/utils";
 
 export default function InvestorDetails() {
   const { id: investorId } = useParams();
   const { user } = useSession();
   const userId = user ? user.id : null;
   const [investorDetails, setInvestorDetails] = useState<Investor | null>(null);
+  const [liked, setLiked] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [viewed, setViewed] = useState(false);
   const router = useRouter();
   const { mainMap } = useMap();
 
   const [pfp, setPfp] = useState<any>(null);
+
+  function createView() {
+    setViewed(true);
+
+    viewControllerCreate(
+      {
+        user_id: userId,
+        investor: { id: parseInt(investorId as string) },
+      },
+      withAuth
+    );
+  }
 
   async function fetchPfp() {
     const response = await axios.get(
@@ -45,7 +70,6 @@ export default function InvestorDetails() {
         if (data.locationLat && data.locationLng) {
           mainMap?.flyTo({ center: { lat: data.locationLat, lng: data.locationLng } });
         }
-
         setInvestorDetails(data);
       }
     } catch (error) {
@@ -53,9 +77,101 @@ export default function InvestorDetails() {
     }
   }
 
+  async function fetchLikeStatus() {
+    try {
+      const { data } = await likeControllerFindOneByUserIdandInvestorId(
+        userId ?? 0,
+        Number(investorId),
+        withAuth
+      );
+      if (data) {
+        setLiked(true);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching like status:", error);
+      setLoading(false);
+    }
+  }
+
+  async function fetchBookmarkStatus() {
+    try {
+      const { data } = await bookmarkControllerFindOneByUserIdandInvestorId(
+        userId ?? 0,
+        Number(investorId),
+        withAuth
+      );
+      if (data) {
+        setBookmarked(true);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching bookmark status:", error);
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     fetchInvestorbyID();
   }, []);
+
+  useEffect(() => {
+    if (!viewed && user !== undefined) {
+      createView();
+    }
+    if (userId) {
+      fetchLikeStatus();
+      fetchBookmarkStatus();
+    }
+  }, [userId]);
+
+  async function handleBookmark() {
+    if (!userId) {
+      console.error("User not authenticated.");
+      return;
+    }
+
+    console.log("Bookmarked!");
+    setBookmarked(!bookmarked);
+    try {
+      if (!bookmarked) {
+        await bookmarkControllerCreate(
+          { user: { id: userId }, investor: { id: Number(investorId) } },
+          withAuth
+        );
+        console.log("Bookmarked!");
+      } else {
+        await bookmarkControllerInvestorRemove(userId, Number(investorId), withAuth);
+        console.log("Bookmark removed!");
+      }
+    } catch (error) {
+      console.error("Error toggling bookmark:", error);
+    }
+  }
+
+  async function handleLike() {
+    if (!userId) {
+      console.error("User not authenticated.");
+      return;
+    }
+
+    console.log("Liked!");
+    setLiked(!liked);
+    try {
+      if (!liked) {
+        await likeControllerCreate(
+          { user: { id: userId }, investor: { id: Number(investorId) } },
+          withAuth
+        );
+        console.log("Liked!");
+      } else {
+        await likeControllerInvestorRemove(userId, Number(investorId), withAuth);
+        console.log("Disliked!");
+      }
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
+  }
 
   return (
     <div
@@ -83,22 +199,49 @@ export default function InvestorDetails() {
           <span className="text-lg font-bold">
             {investorDetails?.firstName} {investorDetails?.lastName}
           </span>
+          {userId && (
+            <ThumbsUp
+              size={24}
+              onClick={handleLike}
+              fill={liked ? "gold" : "none"}
+              className={`transform cursor-pointer transition-transform ${liked ? "rotate-12 scale-125" : "rotate-0"}`}
+            />
+          )}
         </div>
-        <div className="flex items-center px-6 py-1">
-          <MapPin size={24} />
-          <span className="ml-2 text-sm">{investorDetails?.locationName}</span>
-        </div>
-        <div className="flex items-center px-6 py-2">
-          <Globe size={16} />
-          <a
-            href={investorDetails?.website}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-2 text-sm text-blue-500 underline hover:text-blue-700"
-          >
-            {investorDetails?.website}
-          </a>
-        </div>
+        {investorDetails?.locationName ? (
+          <div className="flex items-center px-6 py-1">
+            <MapPin size={24} />
+            <span className="ml-2 text-sm">{investorDetails?.locationName}</span>
+          </div>
+        ) : null}
+        {investorDetails?.website ? (
+          <div className="flex items-center px-6 py-2">
+            <Globe size={16} />
+            <a
+              href={investorDetails?.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-2 text-sm text-blue-500 underline hover:text-blue-700"
+            >
+              {investorDetails?.website}
+            </a>
+          </div>
+        ) : null}
+
+        {userId && (
+          <div className="flex justify-center py-1">
+            <div className="flex cursor-pointer justify-center py-2" onClick={handleBookmark}>
+              <Bookmark
+                size={18}
+                fill={bookmarked ? "#FFD700" : "none"}
+                className={`transform cursor-pointer transition-transform ${bookmarked ? "scale-125" : "scale-100"}`}
+              />
+              <span className="ml-1 text-sm underline">
+                {bookmarked ? "Remove Bookmark" : "Add Bookmark"}
+              </span>
+            </div>
+          </div>
+        )}
         <hr className="border-gray-200" />
       </div>
       <div className="flex-grow overflow-y-auto px-6 py-2">
@@ -121,6 +264,51 @@ export default function InvestorDetails() {
             >
               ${investorDetails?.emailAddress || investorDetails?.contactInformation}
             </a>
+          </div>
+
+          <hr className="mb-2 border-gray-200" />
+
+          <div className="text-gray-600">
+            {/* <div className="mb-4 flex">
+              <p className="mr-2 font-bold">Capital:</p>
+              <span>
+                {investorDetails?.capital
+                  ? new Intl.NumberFormat("en-PH", {
+                      style: "currency",
+                      currency: "PHP",
+                    }).format(investorDetails.capital)
+                  : "Not specified"}
+              </span>
+            </div>
+
+            <div className="mb-4 flex">
+              <p className="mr-2 font-bold">Funding Stage:</p>
+              <span>{investorDetails?.fundingStage || "Not specified"}</span>
+            </div> */}
+
+            {/* <div className="mb-4 flex">
+              <p className="mr-2 font-bold">Team Size:</p>
+              <span>{investorDetails?. || "Not specified"}</span>
+            </div> */}
+          </div>
+
+          <hr className="mb-2 border-gray-200" />
+
+          <div className="flex justify-center py-4">
+            <div className="flex flex-col items-center">
+              <span className="text-lg font-semibold text-blue-500">{investorDetails?.likes}</span>
+              <span className="text-sm">Likes</span>
+            </div>
+            <div className="ml-6 flex flex-col items-center">
+              <span className="text-lg font-semibold text-blue-500">
+                {investorDetails?.bookmarks}
+              </span>
+              <span className="text-sm">Bookmarks</span>
+            </div>
+            <div className="ml-6 flex flex-col items-center">
+              <span className="text-lg font-semibold text-blue-500">{investorDetails?.views}</span>
+              <span className="text-sm">Views</span>
+            </div>
           </div>
         </div>
       </div>
