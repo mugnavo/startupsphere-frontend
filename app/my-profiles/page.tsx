@@ -132,11 +132,10 @@
 //   );
 // }
 
-
-
 "use client";
 
 import { Album, ScanEye, Search, ThumbsUp } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import StartupDetailsModal from "~/components/modals/startup-details";
 import LChart from "~/components/ui/line-chart";
@@ -145,7 +144,7 @@ import { useSession } from "~/context/hooks";
 import {
   bookmarkControllerGetAll,
   likeControllerGetAll,
-  startupsControllerFindAllStartups,
+  startupsControllerFindAll,
   viewControllerGetAll,
 } from "~/lib/api";
 import { Bookmark, Like, Startup, View } from "~/lib/schemas";
@@ -157,30 +156,39 @@ type StartupStats = {
   bookmarks: number;
 };
 
+type Filter = {
+  name: string;
+  isActive: boolean;
+};
+
+const filtersPills = [
+  { name: "All", isActive: true },
+  { name: "Likes", isActive: false },
+  { name: "Bookmarks", isActive: false },
+  { name: "Views", isActive: false },
+];
+
+const size = 20;
+const icons = [
+  <ScanEye key="ScanEye" size={size} />,
+  <ThumbsUp key="ThumbsUp" size={size} />,
+  <Album key="Albums" size={size} />,
+];
+
 export default function OwnedStartups() {
+  const router = useRouter();
   const { user } = useSession();
-  const statKeys: (keyof StartupStats)[] = ["views", "likes", "bookmarks"];
   const [loading, setLoading] = useState(true);
   const [startups, setStartups] = useState<Startup[]>([]);
   const [selectedStartup, setSelectedStartup] = useState<Startup>();
   const [relatedStartups, setRelatedStartups] = useState<Startup[]>([]);
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState<string>("");
   const [searchResults, setSearchResults] = useState<Startup[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [stats, setStats] = useState<StartupStats>();
-  const [filters, setFilters] = useState([
-    { name: "All", isActive: true },
-    { name: "Likes", isActive: false },
-    { name: "Bookmarks", isActive: false },
-    { name: "Views", isActive: false },
-  ]);
+  const [filters, setFilters] = useState<Filter[]>(filtersPills);
   const backgroundColors = ["before:bg-[#dc2626]", "before:bg-[#fb923c]", "before:bg-[#fde047]"];
-  const size = 20;
-  const icons = [
-    <ScanEye key="ScanEye" size={size} />,
-    <ThumbsUp key="ThumbsUp" size={size} />,
-    <Album key="Albums" size={size} />,
-  ];
+
   const modalRef = useRef<HTMLDivElement>(null);
   const [isShowStartupDetails, setIsShowStartupDetails] = useState(false);
 
@@ -212,18 +220,25 @@ export default function OwnedStartups() {
     setLoading(false);
   }
 
-  async function fetchStartups() {
-    startupsControllerFindAllStartups()
-      .then((result) => setStartups(result.data))
-      .catch((error) => console.error("Error fetching startups:", error))
-      .finally(() => setLoading(false));
+  async function fetchOwnedStartups() {
+    if (!user) return;
+    const { data } = await startupsControllerFindAll(withAuth);
+    setStartups(data);
   }
 
+  // async function fetchStartups() {
+  //   startupsControllerFindAllStartups()
+  //     .then((result) => setStartups(result.data))
+  //     .catch((error) => console.error("Error fetching startups:", error))
+  //     .finally(() => setLoading(false));
+  // }
+
+  console.log(startups, "lll");
   useEffect(() => {
     setLoading(true);
     fetchChartData();
-    fetchStartups();
-  }, []);
+    fetchOwnedStartups();
+  }, [user]);
 
   useEffect(() => {
     if (startups) handleFilters("bookmarks", "likes", "views");
@@ -401,7 +416,7 @@ export default function OwnedStartups() {
   const allStartupData = ["average views", "average likes", "average bookmarks"];
   const startupData = ["total views", "total likes", "total bookmarks"];
   return (
-    <div className="relative mx-auto flex h-auto w-3/5 flex-col gap-4">
+    <div className="relative z-50 mx-auto flex h-auto w-3/5 flex-col gap-4">
       <StartupDetailsModal editable={false} startup={selectedStartup} />
       <>
         <div className="relative mt-4 flex justify-start gap-3">
@@ -476,32 +491,138 @@ export default function OwnedStartups() {
                 </div>
               ))}
             </div>
+            <PChart
+              // startups.filter((startup) => startup.managerId == user?.id)
+              startups={relatedStartups}
+              filters={filters.filter((filter) => filter.isActive && filter.name != "All")}
+            />
+          </div>
+          <div className="col-span-3 flex flex-col border bg-white p-4 text-xs text-gray-500 shadow-custom">
+            Likes / Views / Bookmarks Analytics
+            <LChart likes={likes} views={views} bookmarks={bookmarks} />
+          </div>
+        </div>
+
+        {/* table */}
+        <div
+          className={`flex flex-col items-start ${loading ? "items-end" : "justify-center"} bg-white shadow-custom`}
+        >
+          {loading ? (
+            <span className="m-1 h-2 w-[25%] animate-pulse rounded-lg bg-base-300" />
           ) : (
-            startups.map((startup) => (
-              <div
-                key={startup.id}
-                className="mb-1 flex cursor-pointer items-center justify-between rounded-md p-2 shadow-none hover:bg-gray-100"
-                onClick={() => router.push(`/my-profiles/startup/${startup?.id}`)}
-              >
-                <div className="flex w-full items-center">
-                  <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">
-                    <img
-                      src={profilePictures[`startup_${startup?.id}`]}
-                      alt={startup?.companyName}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex flex-col">
-                      <div className="text-sm font-semibold">{startup?.companyName}</div>
-                      <div className="text-xs text-gray-500">{startup?.locationName}</div>
-                      <div className="mt-1 flex flex-wrap">
-                        <span className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs">
-                          {startup?.industry}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+            <span className="w-full px-3 text-end text-xs italic text-gray-500">
+              {filters.every((filter) => filter.isActive === false) ? (
+                relatedStartups.length > 0 ? (
+                  "Similar startups"
+                ) : (
+                  <span className="text-red-600">No similar startups found.</span>
+                )
+              ) : (
+                "Top 5 Startups with high ratings"
+              )}
+            </span>
+          )}
+          <div className="w-full overflow-x-auto">
+            <table className="table">
+              {/* head */}
+              <thead className="bg-warning">
+                <tr>
+                  <th className="w-[30%]">Startup Name</th>
+                  <th className="w-[30%]">Industry</th>
+                  <th className="w-auto">Views</th>
+                  <th className="w-auto">Likes</th>
+                  <th className="w-auto">Bookmarks</th>
+                </tr>
+              </thead>
+              <tbody className="font-normal">
+                {loading &&
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i}>
+                      <td>
+                        <div className="flex h-6 w-full items-center">
+                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                        </div>
+                      </td>
+                      <td>
+                        <div className="flex h-6 w-full items-center">
+                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                        </div>
+                      </td>
+                      <td>
+                        <div className="flex h-6 w-full items-center">
+                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                        </div>
+                      </td>
+                      <td>
+                        <div className="flex h-6 w-full items-center">
+                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                        </div>
+                      </td>
+                      <td>
+                        <div className="flex h-6 w-full items-center">
+                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                {relatedStartups.slice(0, 6).map((startup, index) => (
+                  <tr
+                    key={index}
+                    className="cursor-pointer hover:bg-slate-100"
+                    onClick={() => router.push(`/my-profiles/startup/${startup?.id}`)}
+                  >
+                    <td>{startup.companyName}</td>
+                    <td>{startup.industry}</td>
+                    <td>{startup.views}</td>
+                    <td>{startup.likes}</td>
+                    <td>{startup.bookmarks}</td>
+                  </tr>
+                ))}
+
+                {/* to fill empty spaces if table data is short  */}
+                {!loading &&
+                  Array.from({ length: 5 - relatedStartups.length }).map((_, index) => (
+                    <tr key={index}>
+                      <td>
+                        <div className="flex h-6"></div>
+                      </td>
+                      <td>
+                        <div className="flex h-6"></div>
+                      </td>
+                      <td>
+                        <div className="flex h-6"></div>
+                      </td>
+                      <td>
+                        <div className="flex h-6"></div>
+                      </td>
+                      <td>
+                        <div className="flex h-6"></div>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </>
+
+      {/* SEARCH SUGGESTION BOX */}
+      {isSearching && startups && (
+        <div
+          ref={modalRef}
+          className="absolute left-1/2 top-14 z-10 flex h-48 w-full -translate-x-1/2 transform flex-col gap-2 overflow-auto rounded bg-white p-2 shadow"
+        >
+          {searchValue ? (
+            searchResults.length ? (
+              searchResults.map((startup, index) => (
+                <div
+                  key={index}
+                  className="rounded p-2 hover:bg-slate-100"
+                  onClick={() => {
+                    setSelectedStartup(startup);
+                  }}
+                >
+                  {startup.companyName}
                 </div>
               ))
             ) : (
