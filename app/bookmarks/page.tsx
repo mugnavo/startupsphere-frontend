@@ -106,12 +106,12 @@ export default function Bookmarks() {
   );
 
   return (
-    <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col bg-white p-6">
-      {/* Gradient background */}
-      <div className="absolute inset-0 z-[-10] h-[8rem] bg-gradient-to-b from-yellow-600 to-transparent opacity-80" />
+    <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col bg-[#fefefe] p-6 pb-3 shadow-sm shadow-slate-400">
+      {/* the gradient div */}
+      <div className="absolute inset-0 z-[-10] h-[9.5rem] bg-gradient-to-b from-yellow-600 to-transparent opacity-80" />
 
-      <div className="flex items-center justify-between">
-        <span className="text-yellow-800">{searchFocus ? searchFocus : "Bookmarks"}</span>
+      <div className="mb-2 flex items-center justify-between px-1">
+        <span className="text-lg font-semibold">Bookmarks</span>
         <X size={20} onClick={() => router.replace("/")} className="cursor-pointer" />
       </div>
 
@@ -128,12 +128,12 @@ export default function Bookmarks() {
         </div>
         <input
           type="search"
-          name="search-bookmarks"
-          id="search-bookmarks"
+          name="search-bookmark"
+          id="search-bookmark"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="block w-full rounded-[16px] border-0 py-1.5 pl-7 pr-3 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
-          placeholder={`Search ${searchFocus ? searchFocus : "Bookmarks"}...`}
+          className="block w-full rounded-full border-0 py-2 pl-7 pr-3 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+          placeholder={`Search Bookmarks...`}
         />
       </div>
 
@@ -144,7 +144,7 @@ export default function Bookmarks() {
             key={item.name}
             onClick={() => setSearchFocus(item.name)}
             type="button"
-            className={`flex w-full items-center gap-3 bg-white px-3 py-2 text-gray-400 ring-1 ring-gray-300 hover:bg-gradient-to-r hover:font-bold hover:text-white ${index === 0 ? "rounded-l-full hover:from-[#FFC312] hover:via-[#EE5A24] hover:to-[#EA2027]" : "rounded-r-full hover:from-[#68d8d6] hover:via-[#00a6fb] hover:to-[#00509d]"}`}
+            className={`flex w-full items-center gap-3 bg-white px-3 py-1 text-gray-400 ring-1 ring-gray-300 hover:bg-gradient-to-r hover:font-bold hover:text-white ${index === 0 ? "rounded-l-full hover:from-[#FFC312] hover:via-[#EE5A24] hover:to-[#EA2027]" : "rounded-r-full hover:from-[#68d8d6] hover:via-[#00a6fb] hover:to-[#00509d]"}`}
           >
             {item.icon} {item.name}
           </button>

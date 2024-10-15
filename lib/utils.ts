@@ -69,7 +69,6 @@ export const sectors = [
   "Beauty",
   "Design",
 ];
-
 export const investorTypes = [
   "Angel",
   "Corporate",

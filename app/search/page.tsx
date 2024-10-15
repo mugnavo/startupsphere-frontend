@@ -219,9 +219,9 @@ export default function SearchContent() {
   };
 
   return (
-    <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col gap-1 bg-[#fefefe] p-5 pb-3 shadow-sm shadow-slate-400">
+    <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col bg-[#fefefe] p-6 pb-3 shadow-sm shadow-slate-400">
       {/* the gradient div */}
-      <div className="absolute inset-0 z-[-10] h-[8rem] bg-gradient-to-b from-yellow-600 to-transparent opacity-80" />
+      <div className="absolute inset-0 z-[-10] h-[9.5rem] bg-gradient-to-b from-yellow-600 to-transparent opacity-80" />
       <motion.div
         onHoverStart={() => setIsHovered(true)} // Set hover state to true when mouse enters the area
         onHoverEnd={() => setIsHovered(false)} // Set hover state to false when mouse leaves the area
@@ -252,11 +252,11 @@ export default function SearchContent() {
           </motion.div>
         )}
       </motion.div>
-      <div className="flex items-center justify-between">
-        <span className="text-yellow-800">{searchFocus ? searchFocus : "Search"}</span>
+      <div className="mb-2 flex items-center justify-between px-1">
+        <span className="text-lg font-semibold">{searchFocus ? searchFocus : "Search"}</span>
         <X size={20} onClick={() => router.replace("/")} className="cursor-pointer" />
       </div>
-      <div className="relative flex items-center gap-2">
+      <div className="relative flex items-center gap-2 py-1">
         <div
           onClick={() => {
             setSearchFocus("");
@@ -278,19 +278,20 @@ export default function SearchContent() {
           id="search-startup"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="block w-full rounded-[16px] border-0 py-1.5 pl-7 pr-3 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+          className="block w-full rounded-full border-0 py-2 pl-7 pr-3 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
           placeholder={`Search ${searchFocus ? searchFocus : "Startups or Investors"}...`}
         />
-        {searchFocus && <Filter size={20} onClick={() => setShowFilters(!showFilters)} />}
+        {searchFocus == "Startups" && (
+          <Filter size={20} onClick={() => setShowFilters(!showFilters)} />
+        )}
       </div>
-
       <div className={` ${!searchFocus ? "flex" : "hidden"}`}>
         {searchFocusType.map((item, index) => (
           <button
             key={item.name}
             onClick={() => setSearchFocus(item.name)}
             type="button"
-            className={`flex w-full items-center gap-3 bg-white px-3 py-2 text-gray-400 ring-1 ring-gray-300 hover:bg-gradient-to-r hover:font-bold hover:text-white ${index == 0 ? "rounded-l-full hover:from-[#FFC312] hover:via-[#EE5A24] hover:to-[#EA2027]" : "rounded-r-full hover:from-[#68d8d6] hover:via-[#00a6fb] hover:to-[#00509d]"}`}
+            className={`flex w-full items-center gap-3 bg-white px-3 py-1 text-gray-400 ring-1 ring-gray-300 hover:bg-gradient-to-r hover:font-bold hover:text-white ${index == 0 ? "rounded-l-full hover:from-[#FFC312] hover:via-[#EE5A24] hover:to-[#EA2027]" : "rounded-r-full hover:from-[#68d8d6] hover:via-[#00a6fb] hover:to-[#00509d]"}`}
             // className={`flex w-full items-center gap-3 bg-[rgb(192,57,43)] bg-gradient-to-b from-[rgba(234,179,8,0.8)] to-[rgba(202,138,4,0.8)] p-3 text-white hover:bg-gradient-to-r ${index == 0 ? "rounded-l-full hover:from-[#FFC312] hover:via-[#EE5A24] hover:to-[#EA2027]" : "rounded-r-full hover:from-[#68d8d6] hover:via-[#00a6fb] hover:to-[#00509d]"}`}
           >
             {item.icon} {item.name}
