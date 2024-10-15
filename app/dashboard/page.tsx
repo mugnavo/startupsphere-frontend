@@ -134,6 +134,7 @@
 
 "use client";
 
+import axios from "axios";
 import { Album, ScanEye, Search, ThumbsUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -143,11 +144,12 @@ import PChart from "~/components/ui/pie-chart";
 import { useSession } from "~/context/hooks";
 import {
   bookmarkControllerGetAll,
+  investorsControllerFindAllCreatedUser,
   likeControllerGetAll,
   startupsControllerFindAll,
   viewControllerGetAll,
 } from "~/lib/api";
-import { Bookmark, Like, Startup, View } from "~/lib/schemas";
+import { Bookmark, Investor, Like, Startup, View } from "~/lib/schemas";
 import { withAuth } from "~/lib/utils";
 
 type StartupStats = {
@@ -188,9 +190,10 @@ export default function OwnedStartups() {
   const [stats, setStats] = useState<StartupStats>();
   const [filters, setFilters] = useState<Filter[]>(filtersPills);
   const backgroundColors = ["before:bg-[#dc2626]", "before:bg-[#fb923c]", "before:bg-[#fde047]"];
-
+  const [investor, setInvestor] = useState<Investor | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const [isShowStartupDetails, setIsShowStartupDetails] = useState(false);
+  const [pfp, setPfp] = useState<any>(null);
 
   const [likes, setLikes] = useState<Like[]>([]);
   const [views, setViews] = useState<View[]>([]);
@@ -224,6 +227,27 @@ export default function OwnedStartups() {
     if (!user) return;
     const { data } = await startupsControllerFindAll(withAuth);
     setStartups(data);
+    setLoading(false);
+  }
+
+  async function fetchOwnedInvestor() {
+    if (!user) return;
+    const { data } = await investorsControllerFindAllCreatedUser(withAuth);
+    const investor = data[0];
+    setInvestor(investor);
+    setLoading(false);
+  }
+
+  async function fetchPfp() {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/investor/${investor?.id}`,
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        responseType: "blob",
+      }
+    );
+    setPfp(URL.createObjectURL(response.data));
+    setLoading(false);
   }
 
   // async function fetchStartups() {
@@ -233,12 +257,17 @@ export default function OwnedStartups() {
   //     .finally(() => setLoading(false));
   // }
 
-  console.log(startups, "lll");
   useEffect(() => {
-    setLoading(true);
     fetchChartData();
     fetchOwnedStartups();
+    fetchOwnedInvestor();
   }, [user]);
+
+  useEffect(() => {
+    if (investor) {
+      fetchPfp();
+    }
+  }, [investor]);
 
   useEffect(() => {
     if (startups) handleFilters("bookmarks", "likes", "views");
@@ -416,7 +445,7 @@ export default function OwnedStartups() {
   const allStartupData = ["average views", "average likes", "average bookmarks"];
   const startupData = ["total views", "total likes", "total bookmarks"];
   return (
-    <div className="relative z-50 mx-auto flex h-auto w-3/5 flex-col gap-4">
+    <div className="relative z-50 mx-auto flex h-auto w-[70%] flex-col gap-4">
       <StartupDetailsModal editable={false} startup={selectedStartup} />
       <>
         <div className="relative mt-4 flex justify-start gap-3">
@@ -452,9 +481,26 @@ export default function OwnedStartups() {
           </div>
         </div>
 
-        <div className="grid h-[18rem] w-full grid-cols-5 gap-3">
+        <div className="grid h-[18rem] w-full grid-cols-9 gap-3">
           <div className="relative col-span-2 flex flex-col border shadow-custom">
-            <h1 className="p-4 py-2 text-xl font-bold">
+            <div className="flex h-full w-full flex-col items-center justify-center">
+              {loading ? (
+                <span className="loading loading-spinner loading-lg"></span>
+              ) : (
+                <>
+                  <h2 className="p-2 text-xs font-light">Investor Profile</h2>
+                  <div className="flex h-full flex-col items-center justify-center gap-2">
+                    <img src={pfp} className="h-44 w-44 rounded-full" />
+                    <p className="font-mono text-2xl">
+                      {investor?.firstName} {investor?.lastName}
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+          <div className="relative col-span-3 flex flex-col items-center justify-center border shadow-custom">
+            <h1 className="self-start p-4 py-2 text-xl font-bold">
               {loading ? (
                 <div className="flex h-6 w-full items-center">
                   <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
@@ -465,7 +511,7 @@ export default function OwnedStartups() {
                 <>{startups.length} Total Startups</>
               )}
             </h1>
-            <div className="text-md flex h-full justify-center pl-4">
+            <div className="text-md flex h-full w-[80%] justify-center">
               {(
                 (selectedStartup && ["views", "likes", "bookmarks"]) || [views, likes, bookmarks]
               ).map((stat, index) => (
@@ -476,7 +522,7 @@ export default function OwnedStartups() {
                   // before:absolute before:bottom-0 before:left-1/2 before:h-1 before:w-1/2 before:translate-x-[-1/2] before:rounded before:bg-blue-600
                   // className={`relative flex h-[25%] w-[30%] items-center justify-center gap-3 overflow-clip rounded bg-warning px-3 text-center before:absolute before:bottom-0 before:left-0 before:top-0 before:w-1 before:rounded-s before:bg-yellow-600`}
                 >
-                  <span className="text-[9px] leading-[0.7rem] text-gray-400">
+                  <span className="text-[10px] leading-[0.7rem] text-gray-400">
                     {selectedStartup ? startupData[index] : allStartupData[index]}
                   </span>
                   <span className={`flex gap-2 text-3xl`}>
@@ -497,7 +543,7 @@ export default function OwnedStartups() {
               filters={filters.filter((filter) => filter.isActive && filter.name != "All")}
             />
           </div>
-          <div className="col-span-3 flex flex-col border bg-white p-4 text-xs text-gray-500 shadow-custom">
+          <div className="col-span-4 flex flex-col border bg-white p-4 text-xs text-gray-500 shadow-custom">
             Likes / Views / Bookmarks Analytics
             <LChart likes={likes} views={views} bookmarks={bookmarks} />
           </div>
@@ -505,7 +551,7 @@ export default function OwnedStartups() {
 
         {/* table */}
         <div
-          className={`flex flex-col items-start ${loading ? "items-end" : "justify-center"} bg-white shadow-custom`}
+          className={`mt-5 flex flex-col items-start ${loading ? "items-end" : "justify-center"} bg-white shadow-custom`}
         >
           {loading ? (
             <span className="m-1 h-2 w-[25%] animate-pulse rounded-lg bg-base-300" />

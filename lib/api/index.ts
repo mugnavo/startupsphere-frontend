@@ -5,8 +5,8 @@
  * API documentation for StartupVest, FinEase, and StartupSphere
  * OpenAPI spec version: 1.0
  */
-import axios from "axios";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios from "axios";
 import type {
   Activity,
   Bookmark,
@@ -325,7 +325,7 @@ export const investorsControllerFindByIds = <TData = AxiosResponse<Investor[]>>(
 };
 
 export const investorsControllerFindOne = <TData = AxiosResponse<Investor>>(
-  id: string,
+  id: number,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/investors/${id}`, options);
