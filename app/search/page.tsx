@@ -222,36 +222,39 @@ export default function SearchContent() {
     <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col bg-[#fefefe] p-6 pb-3 shadow-sm shadow-slate-200">
       {/* the gradient div */}
       <div className="absolute inset-0 z-[-10] h-[9.5rem] bg-gradient-to-b from-[#004A98] to-transparent opacity-80" />
-      <motion.div
-        onHoverStart={() => setIsHovered(true)} // Set hover state to true when mouse enters the area
-        onHoverEnd={() => setIsHovered(false)} // Set hover state to false when mouse leaves the area
-        className="absolute bottom-8 right-8 z-50" // Ensure absolute positioning at bottom-right
-      >
-        {/* Conditionally render based on hover state */}
-        {isHovered ? (
-          // Generate Reports Button
-          <motion.button
-            initial={{ opacity: 0, y: 10 }} // Set initial opacity and position for animation
-            animate={{ opacity: 1, y: 0 }} // Animate to full opacity and neutral position
-            exit={{ opacity: 0, y: -10 }} // Exit with fade-out and position change
-            className="absolute bottom-0 right-0 z-50 rounded-full bg-[#004A98] px-6 py-2 text-white shadow-lg transition duration-300 ease-in-out hover:shadow-2xl"
-            style={{ whiteSpace: "nowrap" }} // Prevent text wrapping inside the button
-            onClick={handleGenerateReports}
-          >
-            Generate Reports
-          </motion.button>
-        ) : (
-          // SquareMousePointer Icon
-          <motion.div
-            initial={{ opacity: 0, scale: 1.2 }} // Set initial opacity and scale for animation
-            animate={{ opacity: 1, scale: 1 }} // Animate to full opacity and normal scale
-            exit={{ opacity: 0, scale: 1 }} // Exit with fade-out and scale-down animation
-            className="absolute bottom-0 right-0 z-50 rounded-full bg-white p-2 shadow-lg transition duration-300 ease-in-out"
-          >
-            <SquareMousePointer />
-          </motion.div>
-        )}
-      </motion.div>
+      {user ? (
+        <motion.div
+          onHoverStart={() => setIsHovered(true)} // Set hover state to true when mouse enters the area
+          onHoverEnd={() => setIsHovered(false)} // Set hover state to false when mouse leaves the area
+          className="absolute bottom-8 right-8 z-50" // Ensure absolute positioning at bottom-right
+        >
+          {/* Conditionally render based on hover state */}
+          {isHovered ? (
+            // Generate Reports Button
+            <motion.button
+              initial={{ opacity: 0, y: 10 }} // Set initial opacity and position for animation
+              animate={{ opacity: 1, y: 0 }} // Animate to full opacity and neutral position
+              exit={{ opacity: 0, y: -10 }} // Exit with fade-out and position change
+              className="absolute bottom-0 right-0 z-50 rounded-full bg-[#004A98] px-6 py-2 text-white shadow-lg transition duration-300 ease-in-out hover:shadow-2xl"
+              style={{ whiteSpace: "nowrap" }} // Prevent text wrapping inside the button
+              onClick={handleGenerateReports}
+            >
+              Generate Reports
+            </motion.button>
+          ) : (
+            // SquareMousePointer Icon
+            <motion.div
+              initial={{ opacity: 0, scale: 1.2 }} // Set initial opacity and scale for animation
+              animate={{ opacity: 1, scale: 1 }} // Animate to full opacity and normal scale
+              exit={{ opacity: 0, scale: 1 }} // Exit with fade-out and scale-down animation
+              className="absolute bottom-0 right-0 z-50 rounded-full bg-white p-2 shadow-lg transition duration-300 ease-in-out"
+            >
+              <SquareMousePointer />
+            </motion.div>
+          )}
+        </motion.div>
+      ) : null}
+
       <div className="mb-2 flex items-center justify-between px-1">
         <span className="text-lg font-semibold">{searchFocus ? searchFocus : "Search"}</span>
         <X size={20} onClick={() => router.replace("/")} className="cursor-pointer" />
