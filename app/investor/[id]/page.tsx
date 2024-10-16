@@ -10,12 +10,12 @@ import {
   bookmarkControllerCreate,
   bookmarkControllerFindOneByUserIdandInvestorId,
   bookmarkControllerInvestorRemove,
+  investorsControllerFindOne,
+  investorsControllerUpdate,
   likeControllerCreate,
   likeControllerFindOneByUserIdandInvestorId,
   likeControllerInvestorRemove,
-  investorsControllerFindOne,
   viewControllerCreate,
-  investorsControllerUpdate,
 } from "~/lib/api";
 import { Investor } from "~/lib/schemas";
 import { LocationData } from "~/lib/types";
@@ -94,7 +94,9 @@ export default function InvestorDetails() {
         responseType: "blob",
       }
     );
-    setPfp(URL.createObjectURL(response.data));
+    if (response.data?.size) {
+      setPfp(URL.createObjectURL(response.data));
+    }
   }
   useEffect(() => {
     if (investorDetails) {

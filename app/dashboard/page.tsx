@@ -246,7 +246,9 @@ export default function OwnedStartups() {
         responseType: "blob",
       }
     );
-    setPfp(URL.createObjectURL(response.data));
+    if (response.data?.size) {
+      setPfp(URL.createObjectURL(response.data));
+    }
     setLoading(false);
   }
 

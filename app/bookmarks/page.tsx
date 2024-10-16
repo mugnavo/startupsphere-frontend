@@ -40,7 +40,9 @@ export default function Bookmarks() {
                 responseType: "blob",
               }
             );
-            pictures[`${type}_${id}`] = URL.createObjectURL(response.data);
+            if (response.data?.size) {
+              pictures[`${type}_${id}`] = URL.createObjectURL(response.data);
+            }
           } catch (error) {
             console.error(`Failed to fetch profile picture for ${type} ID ${id}:`, error);
           }

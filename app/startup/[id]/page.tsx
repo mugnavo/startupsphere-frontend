@@ -123,7 +123,9 @@ export default function StartupDetails() {
         responseType: "blob",
       }
     );
-    setPfp(URL.createObjectURL(response.data));
+    if (response.data?.size) {
+      setPfp(URL.createObjectURL(response.data));
+    }
   }
 
   async function fetchStartupbyID() {

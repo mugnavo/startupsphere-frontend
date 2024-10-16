@@ -68,7 +68,9 @@ export default function SearchContent() {
               responseType: "blob",
             }
           );
-          pictures[`startup_${startup.id}`] = URL.createObjectURL(response.data);
+          if (response.data?.size) {
+            pictures[`startup_${startup.id}`] = URL.createObjectURL(response.data);
+          }
         } catch (error) {
           console.error(`Failed to fetch profile picture for startup ID ${startup.id}:`, error);
         }
@@ -90,7 +92,9 @@ export default function SearchContent() {
               responseType: "blob",
             }
           );
-          pictures[`investor_${investor.id}`] = URL.createObjectURL(response.data);
+          if (response.data?.size) {
+            pictures[`investor_${investor.id}`] = URL.createObjectURL(response.data);
+          }
         } catch (error) {
           console.error(`Failed to fetch profile picture for investor ID ${investor.id}:`, error);
         }

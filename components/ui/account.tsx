@@ -39,7 +39,9 @@ export default function Account() {
           responseType: "blob",
         }
       );
-      setPfp(URL.createObjectURL(response.data));
+      if (response.data?.size) {
+        setPfp(URL.createObjectURL(response.data));
+      }
     } catch (e) {
       console.log("Error while fetching user pfp: ", e);
     }

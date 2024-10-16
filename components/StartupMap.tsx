@@ -8,12 +8,12 @@ import { useCallback, useEffect, useState } from "react";
 import type { MapLayerMouseEvent } from "react-map-gl";
 import Map, { Marker, useMap } from "react-map-gl";
 
+import axios from "axios";
 import { useInteractiveMap } from "~/context/hooks";
 import { investorsControllerFindAllInvestors, startupsControllerFindAllStartups } from "~/lib/api";
 import type { Investor, Startup } from "~/lib/schemas";
 import CustomPin from "./map/CustomPin";
 import Geocoder from "./map/Geocoder";
-import axios from "axios";
 
 const geocode = new GeocodingCore({ accessToken: process.env.NEXT_PUBLIC_MAPBOX_TOKEN! });
 
@@ -45,7 +45,9 @@ export default function StartupMap() {
               responseType: "blob",
             }
           );
-          pictures[`startup_${startup.id}`] = URL.createObjectURL(response.data);
+          if (response.data?.size) {
+            pictures[`startup_${startup.id}`] = URL.createObjectURL(response.data);
+          }
         } catch (error) {
           console.error(`Failed to fetch profile picture for startup ID ${startup.id}:`, error);
         }
@@ -67,7 +69,9 @@ export default function StartupMap() {
               responseType: "blob",
             }
           );
-          pictures[`investor_${investor.id}`] = URL.createObjectURL(response.data);
+          if (response.data?.size) {
+            pictures[`investor_${investor.id}`] = URL.createObjectURL(response.data);
+          }
         } catch (error) {
           console.error(`Failed to fetch profile picture for investor ID ${investor.id}:`, error);
         }

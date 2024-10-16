@@ -36,7 +36,9 @@ export default function Recents() {
               responseType: "blob",
             }
           );
-          pictures[`${type}_${view.id}`] = URL.createObjectURL(response.data);
+          if (response.data?.size) {
+            pictures[`${type}_${view.id}`] = URL.createObjectURL(response.data);
+          }
         } catch (error) {
           console.error(`Failed to fetch profile picture for view ID ${view.id}:`, error);
         }
