@@ -219,9 +219,9 @@ export default function SearchContent() {
   };
 
   return (
-    <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col bg-[#fefefe] p-6 pb-3 shadow-sm shadow-slate-400">
+    <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col bg-[#fefefe] p-6 pb-3 shadow-sm shadow-slate-200">
       {/* the gradient div */}
-      <div className="absolute inset-0 z-[-10] h-[9.5rem] bg-gradient-to-b from-yellow-600 to-transparent opacity-80" />
+      <div className="absolute inset-0 z-[-10] h-[9.5rem] bg-gradient-to-b from-[#004A98] to-transparent opacity-80" />
       <motion.div
         onHoverStart={() => setIsHovered(true)} // Set hover state to true when mouse enters the area
         onHoverEnd={() => setIsHovered(false)} // Set hover state to false when mouse leaves the area
@@ -234,7 +234,7 @@ export default function SearchContent() {
             initial={{ opacity: 0, y: 10 }} // Set initial opacity and position for animation
             animate={{ opacity: 1, y: 0 }} // Animate to full opacity and neutral position
             exit={{ opacity: 0, y: -10 }} // Exit with fade-out and position change
-            className="absolute bottom-0 right-0 z-50 rounded-full bg-red-900 px-6 py-2 text-white shadow-lg transition duration-300 ease-in-out hover:shadow-2xl"
+            className="absolute bottom-0 right-0 z-50 rounded-full bg-[#004A98] px-6 py-2 text-white shadow-lg transition duration-300 ease-in-out hover:shadow-2xl"
             style={{ whiteSpace: "nowrap" }} // Prevent text wrapping inside the button
             onClick={handleGenerateReports}
           >
@@ -363,7 +363,7 @@ function Items({ list, profilePictures }: { list: Startup[] | Investor[]; profil
             onClick={() => router.push(`/${isStartup ? "startup" : "investor"}/${item.id}`)}
           >
             <div className="flex w-full items-center">
-              <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-white">
+              <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">
                 <img
                   src={profilePictures[`${isStartup ? "startup" : "investor"}_${item.id}`]}
                   alt={
@@ -375,17 +375,15 @@ function Items({ list, profilePictures }: { list: Startup[] | Investor[]; profil
                 />
               </div>
               <div className="flex-1">
-                <div className="relative">
+                <div className="flex flex-col">
                   <div className="text-sm font-semibold">
                     {isStartup
                       ? (item as Startup).companyName
                       : `${(item as Investor).firstName} ${(item as Investor).lastName}`}
                   </div>
-                  <div className="max-w-[200px] truncate text-xs text-gray-500">
-                    {item.locationName}
-                  </div>{" "}
+                  <div className="text-xs text-gray-500">{item.locationName}</div>
                   {/* Set max width */}
-                  <div className="mt-1 flex overflow-hidden whitespace-nowrap">
+                  <div className="mt-1 flex overflow-hidden">
                     <span className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs">
                       {isStartup ? (item as Startup).industry : "Investor"}
                     </span>

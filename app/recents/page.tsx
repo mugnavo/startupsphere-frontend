@@ -71,14 +71,14 @@ export default function Recents() {
   }, [user]);
 
   const filteredViews = recentViews.filter((view) => {
-    if (activeIndex === null) return true; 
-    if (activeIndex === 0) return !!view.startup; 
+    if (activeIndex === null) return true;
+    if (activeIndex === 0) return !!view.startup;
     if (activeIndex === 1) return !!view.investor;
   });
 
   return (
     <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col bg-[#fefefe] p-6 pb-3 shadow-sm shadow-slate-400">
-      <div className="absolute inset-0 z-[-10] h-[9.5rem] bg-gradient-to-b from-yellow-600 to-transparent opacity-80" />
+      <div className="absolute inset-0 z-[-10] h-[9.5rem] bg-gradient-to-b from-[#004A98] to-transparent opacity-80" />
 
       <div className="mb-4 flex items-center justify-between">
         <span className="px-1 text-lg font-semibold">Recents</span>

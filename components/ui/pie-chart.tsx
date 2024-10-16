@@ -10,14 +10,14 @@ const data = [
 ];
 
 const COLORS = [
-  "#CC0000", //darker red
-  "#FF0000", // Bright Red
-  "#FF4500", // Red-Orange
-  "#FF8C00", // Dark Orange
-  "#FFA500", // Orange
-  "#00BFFF", // Deep Sky Blue
-  "#00AFFF", // Light Blue
-  "#1E90FF", // Dodger Blue
+  "#FF6347", // Tomato Red
+  "#32CD32", // Lime Green
+  "#FFD700", // Gold
+  "#00CED1", // Dark Turquoise
+  "#FF69B4", // Hot Pink
+  "#8A2BE2", // Blue Violet
+  "#FF4500", // Orange Red
+  "#20B2AA", // Light Sea Green
 ];
 
 const RADIAN = Math.PI / 180;

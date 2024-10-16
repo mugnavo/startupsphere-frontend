@@ -14,7 +14,7 @@ export default function ReportLayout({ children }: { children: React.ReactNode }
       </div>
       {/* Content of report pages here */}
       {children}
-      <div className="absolute bottom-0 left-0 h-2 w-full bg-yellow-400" />
+      <div className="absolute bottom-0 left-0 h-2 w-full bg-[#004A98]" />
     </div>
   );
 }
