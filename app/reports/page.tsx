@@ -1,12 +1,12 @@
 "use client";
 
-import { Download, Trash2, MoveLeft, MoveRight, SquareChartGantt } from "lucide-react";
+import { Download, MoveLeft, MoveRight, SquareChartGantt, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import DeleteConfirmationModal from "~/components/modals/delete-modal"; // Import the modal component
+import { useSession } from "~/context/hooks"; // Import the session context
 import { reportControllerDelete, reportControllerGetAllByUserId } from "~/lib/api"; // Update the import for user-specific API
 import { Report } from "~/lib/schemas"; // Report schema
 import { withAuth } from "~/lib/utils";
-import { useSession } from "~/context/hooks"; // Import the session context
-import DeleteConfirmationModal from "~/components/modals/delete-modal"; // Import the modal component
 
 export default function ReportsPage() {
   const { user } = useSession(); // Get the current user from session
@@ -67,7 +67,7 @@ export default function ReportsPage() {
     <div className="mx-auto flex h-full w-[70%] flex-col py-8">
       <div className="mb-4 flex flex-col items-start">
         <h1 className="flex items-center text-2xl font-bold">
-          <SquareChartGantt className="mr-2 h-6 w-6 text-gray-700" />
+          <SquareChartGantt className="mr-2 h-6 w-6 text-[#1E1E1E]" />
           Reports
         </h1>
         <span className="text-sm text-gray-500">Total of {reports.length} reports</span>
@@ -77,8 +77,8 @@ export default function ReportsPage() {
       <div className="flex flex-col items-start justify-center bg-white shadow-custom">
         <table className="table table-sm w-full">
           {/* Head */}
-          <thead className="bg-warning">
-            <tr>
+          <thead className="bg-[#004A98]">
+            <tr className="text-white">
               <th className="w-auto">URL</th>
               <th className="w-auto">Date Generated</th>
               <th className="w-20">Actions</th>

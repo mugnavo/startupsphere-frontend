@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Bookmark,
-  ClipboardPenLine,
-  Cog,
-  History,
-  LayoutDashboard,
-  LayoutDashboardIcon,
-  Search,
-} from "lucide-react";
+import { Bookmark, ClipboardPenLine, History, LayoutDashboardIcon, Search } from "lucide-react";
 import { Fragment } from "react";
 
 import { useSession } from "~/context/hooks";
@@ -43,14 +35,14 @@ export default function SideMenu() {
       </div>
       {!user && <LoginModal />}
 
-      <div className="absolute bottom-0 h-2 w-full bg-yellow-400" />
+      <div className="absolute bottom-0 h-2 w-full bg-[#004A98]" />
     </div>
   );
 }
 
 function Logo() {
   return (
-    <div className="absolute left-0 top-0 flex h-12 w-full items-center justify-center bg-yellow-600 shadow-csm">
+    <div className="absolute left-0 top-0 flex h-12 w-full items-center justify-center bg-[#004A98] shadow-csm">
       {/* <img
         src={"logo.png"}
         alt="startupsphere logo"
