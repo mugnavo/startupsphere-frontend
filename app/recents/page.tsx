@@ -11,7 +11,7 @@ import { withAuth } from "~/lib/utils";
 
 export default function Recents() {
   const router = useRouter();
-  const [activeIndex, setActiveIndex] = useState<number | null>(null); // null means no filter (show all)
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [recentViews, setRecentViews] = useState<View[]>([]);
   const { user } = useSession();
   const [profilePictures, setProfilePictures] = useState<any>({});
@@ -56,7 +56,6 @@ export default function Recents() {
     if (!user) return;
     const { data } = await viewControllerFindRecentsByUserId(user.id, withAuth);
 
-    // Remove duplicates (only keep unique startups or investors)
     const uniqueData = data.filter((value, index, self) => {
       return (
         self.findIndex((t) => t.startup?.id === value.startup?.id) === index ||
@@ -71,16 +70,14 @@ export default function Recents() {
     fetchRecentViews();
   }, [user]);
 
-  // Filter recent views based on activeIndex (0: startups, 1: investors, null: both)
   const filteredViews = recentViews.filter((view) => {
-    if (activeIndex === null) return true; // Show both startups and investors
-    if (activeIndex === 0) return !!view.startup; // Show only startups
-    if (activeIndex === 1) return !!view.investor; // Show only investors
+    if (activeIndex === null) return true; 
+    if (activeIndex === 0) return !!view.startup; 
+    if (activeIndex === 1) return !!view.investor;
   });
 
   return (
     <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col bg-[#fefefe] p-6 pb-3 shadow-sm shadow-slate-400">
-      {/* the gradient div */}
       <div className="absolute inset-0 z-[-10] h-[9.5rem] bg-gradient-to-b from-yellow-600 to-transparent opacity-80" />
 
       <div className="mb-4 flex items-center justify-between">
@@ -88,12 +85,11 @@ export default function Recents() {
         <X size={20} onClick={() => router.replace("/")} className="cursor-pointer" />
       </div>
 
-      {/* Filter buttons */}
       <div className="flex py-5 pt-0">
         {searchFocusType.map((item, index) => (
           <button
             key={item.name}
-            onClick={() => setActiveIndex(index === activeIndex ? null : index)} // Toggle off filter
+            onClick={() => setActiveIndex(index === activeIndex ? null : index)}
             type="button"
             className={`flex w-full items-center gap-3 px-3 py-1 text-gray-400 ring-1 ring-gray-300 ${
               activeIndex === index
@@ -112,7 +108,6 @@ export default function Recents() {
         ))}
       </div>
 
-      {/* Recents list */}
       <div className="flex-1 overflow-y-auto">
         <div className="mt-2">
           {filteredViews.length === 0 ? (

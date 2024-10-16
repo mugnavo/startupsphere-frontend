@@ -23,7 +23,6 @@ export default function Bookmarks() {
     { name: "Investors", icon: <HandCoins size={24} /> },
   ];
 
-  // Fetch profile pictures for both startups and investors
   async function fetchProfilePictures() {
     const pictures: { [key: string]: string } = {};
 
@@ -78,7 +77,6 @@ export default function Bookmarks() {
     }
   }, [bookmarks]);
 
-  // Filter bookmarks based on search query and active filter (Startups/Investors)
   const filteredBookmarks = bookmarks.filter((bookmark) => {
     const name = bookmark.startup
       ? bookmark.startup.companyName
@@ -86,10 +84,8 @@ export default function Bookmarks() {
 
     const matchesSearch = name.toLowerCase().includes(searchQuery.toLowerCase());
 
-    // If no filter is applied, show both startups and investors
     if (activeIndex === null) return matchesSearch;
 
-    // Filter by startups (activeIndex === 0) or investors (activeIndex === 1)
     return activeIndex === 0
       ? bookmark.startup && matchesSearch
       : bookmark.investor && matchesSearch;
@@ -97,7 +93,7 @@ export default function Bookmarks() {
 
   return (
     <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col bg-[#fefefe] p-6 pb-3 shadow-sm shadow-slate-400">
-      {/* the gradient div */}
+
       <div className="absolute inset-0 z-[-10] h-[9.5rem] bg-gradient-to-b from-yellow-600 to-transparent opacity-80" />
 
       <div className="mb-2 flex items-center justify-between px-1">
@@ -105,7 +101,6 @@ export default function Bookmarks() {
         <X size={20} onClick={() => router.replace("/")} className="cursor-pointer" />
       </div>
 
-      {/* Search bar */}
       <div className="relative flex items-center gap-2 py-1">
         <div className="absolute inset-0 flex w-fit cursor-pointer items-center pl-2 text-gray-500">
           <Search size={15} />
@@ -120,8 +115,7 @@ export default function Bookmarks() {
           placeholder={`Search Bookmarks...`}
         />
       </div>
-      
-      {/* Filter buttons */}
+
       <div className="flex py-3 pt-0">
         {searchFocusType.map((item, index) => (
           <button
@@ -145,7 +139,6 @@ export default function Bookmarks() {
         ))}
       </div>
 
-      {/* Bookmarks list */}
       <div className="mt-4 flex-1 overflow-y-auto">
         {filteredBookmarks.length === 0 ? (
           <div className="mt-5 flex flex-col items-center">
