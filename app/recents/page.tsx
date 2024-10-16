@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "~/context/hooks";
 import { viewControllerFindRecentsByUserId } from "~/lib/api";
 import { View } from "~/lib/schemas";
-import { withAuth } from "~/lib/utils";
+import { placeholderImageUrl, withAuth } from "~/lib/utils";
 
 export default function Recents() {
   const router = useRouter();
@@ -128,7 +128,10 @@ export default function Recents() {
                 <div className="flex w-full items-center">
                   <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">
                     <img
-                      src={profilePictures[`${view.startup ? "startup" : "investor"}_${view.id}`]}
+                      src={
+                        profilePictures[`${view.startup ? "startup" : "investor"}_${view.id}`] ||
+                        placeholderImageUrl
+                      }
                       alt={
                         view.startup
                           ? view.startup.companyName

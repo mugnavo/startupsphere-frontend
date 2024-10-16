@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { placeholderImageUrl } from "~/lib/utils";
 
 export default function CustomPin({
   startupimage,
@@ -15,13 +16,13 @@ export default function CustomPin({
       <div
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className={`transition-transform duration-700 ${isHovered ? 'scale-[2.5]' : ''}`}
-        style={{ transformOrigin: 'bottom' }}
+        className={`transition-transform duration-700 ${isHovered ? "scale-[2.5]" : ""}`}
+        style={{ transformOrigin: "bottom" }}
       >
         {isHovered ? (
           <div className="flex h-12 w-[112px] min-w-0 flex-col items-center justify-center rounded-sm bg-white p-3 drop-shadow-lg">
             <img
-              src={startupimage}
+              src={startupimage || placeholderImageUrl}
               alt="Custom Pin"
               className="absolute left-1/2 top-[-15px] h-6 w-6 -translate-x-1/2 transform rounded-full"
             />
@@ -61,8 +62,12 @@ export default function CustomPin({
                 clipRule="evenodd"
               />
               <foreignObject x="6" y="5" width="12" height="12" clipPath="url(#circleView)">
-                <div className="absolute top-0 flex h-full w-full items-center justify-center bg-white rounded-full">
-                  <img src={startupimage} alt="Custom Pin" className="h-full w-full rounded-full" />
+                <div className="absolute top-0 flex h-full w-full items-center justify-center rounded-full bg-white">
+                  <img
+                    src={startupimage || placeholderImageUrl}
+                    alt="Custom Pin"
+                    className="h-full w-full rounded-full"
+                  />
                 </div>
               </foreignObject>
             </svg>

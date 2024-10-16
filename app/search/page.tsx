@@ -13,7 +13,7 @@ import {
 } from "~/lib/api";
 import { Startup } from "~/lib/schemas";
 import { Investor } from "~/lib/schemas/investor";
-import { investorTypes, sectors, withAuth } from "~/lib/utils";
+import { investorTypes, placeholderImageUrl, sectors, withAuth } from "~/lib/utils";
 
 export default function SearchContent() {
   const router = useRouter();
@@ -368,7 +368,10 @@ function Items({ list, profilePictures }: { list: Startup[] | Investor[]; profil
             <div className="flex w-full items-center">
               <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">
                 <img
-                  src={profilePictures[`${isStartup ? "startup" : "investor"}_${item.id}`]}
+                  src={
+                    profilePictures[`${isStartup ? "startup" : "investor"}_${item.id}`] ||
+                    placeholderImageUrl
+                  }
                   alt={
                     isStartup
                       ? (item as Startup).companyName

@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "~/context/hooks";
 import { bookmarkControllerFindAllByUserId } from "~/lib/api";
 import { Bookmark } from "~/lib/schemas";
-import { withAuth } from "~/lib/utils";
+import { placeholderImageUrl, withAuth } from "~/lib/utils";
 
 export default function Bookmarks() {
   const router = useRouter();
@@ -160,9 +160,9 @@ export default function Bookmarks() {
                 <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">
                   <img
                     src={
-                      startup
+                      (startup
                         ? profilePictures[`startup_${startup.id}`]
-                        : profilePictures[`investor_${investor?.id}`]
+                        : profilePictures[`investor_${investor?.id}`]) || placeholderImageUrl
                     }
                     alt={
                       startup ? startup.companyName : `${investor?.firstName} ${investor?.lastName}`

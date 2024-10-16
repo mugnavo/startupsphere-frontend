@@ -150,7 +150,7 @@ import {
   viewControllerGetAll,
 } from "~/lib/api";
 import { Bookmark, Investor, Like, Startup, View } from "~/lib/schemas";
-import { withAuth } from "~/lib/utils";
+import { placeholderImageUrl, withAuth } from "~/lib/utils";
 
 type StartupStats = {
   views: number;
@@ -492,7 +492,7 @@ export default function OwnedStartups() {
                     <div>
                       <h2 className="p-2 text-xs font-light">Investor Profile</h2>
                       <div className="flex h-full flex-col items-center justify-center gap-2">
-                        <img src={pfp} className="h-44 w-44 rounded-full" />
+                        <img src={pfp || placeholderImageUrl} className="h-44 w-44 rounded-full" />
                         <p className="font-mono text-2xl">
                           {investor?.firstName} {investor?.lastName}
                         </p>

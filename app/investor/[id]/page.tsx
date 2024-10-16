@@ -5,7 +5,7 @@ import { Bookmark, ChevronLeft, Globe, Image, MapPin, ThumbsUp } from "lucide-re
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useMap } from "react-map-gl";
-import { useSession } from "~/context/hooks";
+import { useInteractiveMap, useSession } from "~/context/hooks";
 import {
   bookmarkControllerCreate,
   bookmarkControllerFindOneByUserIdandInvestorId,
@@ -15,9 +15,11 @@ import {
   likeControllerInvestorRemove,
   investorsControllerFindOne,
   viewControllerCreate,
+  investorsControllerUpdate,
 } from "~/lib/api";
 import { Investor } from "~/lib/schemas";
-import { withAuth } from "~/lib/utils";
+import { LocationData } from "~/lib/types";
+import { placeholderImageUrl, withAuth } from "~/lib/utils";
 
 export default function InvestorDetails() {
   const { id: investorId } = useParams();
@@ -32,6 +34,45 @@ export default function InvestorDetails() {
   const { mainMap } = useMap();
 
   const [pfp, setPfp] = useState<any>(null);
+
+  const [investorLocationData, setInvestorLocationData] = useState<LocationData | undefined>();
+
+  const { dashboardSelection, setDashboardSelection, selectedLocation, setSelectedLocation } =
+    useInteractiveMap();
+  const [previewingMap, setPreviewingMap] = useState(false);
+
+  useEffect(() => {
+    if (!dashboardSelection.active && previewingMap) {
+      if (selectedLocation) {
+        setInvestorLocationData(selectedLocation);
+        setSelectedLocation(undefined);
+
+        // update
+        investorsControllerUpdate(
+          Number(investorDetails?.id),
+          {
+            locationLat: selectedLocation.latitude,
+            locationLng: selectedLocation.longitude,
+            locationName: selectedLocation.name,
+          } as Investor,
+          withAuth
+        ).then(() => window.location.reload());
+      }
+
+      setPreviewingMap(false);
+    }
+  }, [dashboardSelection, previewingMap, selectedLocation, setSelectedLocation]);
+
+  function previewMap(edit = false) {
+    setPreviewingMap(true);
+
+    setDashboardSelection({
+      active: true,
+      entityName: investorDetails?.firstName + " " + investorDetails?.lastName,
+      edit: edit,
+      previewLocation: edit ? undefined : investorLocationData,
+    });
+  }
 
   function createView() {
     setViewed(true);
@@ -65,7 +106,7 @@ export default function InvestorDetails() {
     try {
       const { data: returnData } = await investorsControllerFindOne(Number(investorId));
       const data = (returnData as unknown as Investor[])[0];
-      console.log(data);
+
       if (data) {
         if (data.locationLat && data.locationLng) {
           mainMap?.flyTo({ center: { lat: data.locationLat, lng: data.locationLng } });
@@ -185,7 +226,7 @@ export default function InvestorDetails() {
         <div className="flex h-64 w-full items-center justify-center bg-gray-200">
           {pfp ? (
             <img
-              src={pfp}
+              src={pfp || placeholderImageUrl}
               alt={investorDetails?.firstName}
               className="h-full max-h-64 w-auto max-w-full object-contain"
             />
@@ -242,6 +283,28 @@ export default function InvestorDetails() {
             </div>
           </div>
         )}
+
+        {user?.id === investorDetails?.id ? (
+          <div className="mx-4 mb-3 mt-1 flex items-center gap-2">
+            {investorDetails?.locationLat && investorDetails?.locationLng ? (
+              <button
+                className="btn btn-primary btn-sm text-xs"
+                type="button"
+                onClick={() => previewMap()}
+              >
+                Preview
+              </button>
+            ) : null}
+
+            <button
+              className="btn btn-secondary btn-sm text-xs"
+              type="button"
+              onClick={() => previewMap(true)}
+            >
+              Update Location
+            </button>
+          </div>
+        ) : null}
         <hr className="border-gray-200" />
       </div>
       <div className="flex-grow overflow-y-auto px-6 py-2">
