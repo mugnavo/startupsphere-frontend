@@ -54,7 +54,7 @@ export default function Account() {
     <>
       <div
         onClick={() => setIsShowMenu(!isShowMenu)}
-        className="absolute right-3 top-3 z-50 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 border-yellow-400 bg-yellow-600 text-xl font-normal text-white"
+        className="absolute right-3 top-3 z-50 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 border-white bg-[#004A98] text-xl font-normal text-white"
       >
         {pfp ? (
           <img src={pfp} className="h-full w-full rounded-full object-cover" />
