@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { ArrowLeft, Cog, HandCoins, Search, X } from "lucide-react";
+import { ArrowLeft, Search, X, Cog, HandCoins } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSession } from "~/context/hooks";
@@ -13,75 +13,46 @@ export default function Bookmarks() {
   const router = useRouter();
   const { user } = useSession();
   const userId = user ? user.id : null;
-  const [bookmarkStartups, setBookmarkStartups] = useState<Bookmark[]>([]);
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [searchFocus, setSearchFocus] = useState<string | null>(null);
-  const [showFilters, setShowFilters] = useState(false);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null); // Toggle between 0 (startups), 1 (investors), and null (both)
+  const [profilePictures, setProfilePictures] = useState<{ [key: string]: string }>({});
 
   const searchFocusType = [
     { name: "Startups", icon: <Cog size={24} /> },
     { name: "Investors", icon: <HandCoins size={24} /> },
   ];
 
-  const [profilePictures, setProfilePictures] = useState<any>({});
+  // Fetch profile pictures for both startups and investors
+  async function fetchProfilePictures() {
+    const pictures: { [key: string]: string } = {};
 
-  async function fetchStartupProfilePictures() {
-    const pictures = {} as any;
+    await Promise.all(
+      bookmarks.map(async (bookmark) => {
+        const id = bookmark.startup ? bookmark.startup.id : bookmark.investor?.id;
+        const type = bookmark.startup ? "startup" : "investor";
 
-    await Promise.all([
-      ...bookmarkStartups.map(async (startup) => {
-        try {
-          const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/startup/${startup.id}`,
-            {
-              headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
-              responseType: "blob",
-            }
-          );
-          pictures[`startup_${startup.id}`] = URL.createObjectURL(response.data);
-        } catch (error) {
-          console.error(`Failed to fetch profile picture for startup ID ${startup.id}:`, error);
+        if (id) {
+          try {
+            const response = await axios.get(
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/${type}/${id}`,
+              {
+                headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+                responseType: "blob",
+              }
+            );
+            pictures[`${type}_${id}`] = URL.createObjectURL(response.data);
+          } catch (error) {
+            console.error(`Failed to fetch profile picture for ${type} ID ${id}:`, error);
+          }
         }
-      }),
-    ]);
-    setProfilePictures((oldPfps: any) => ({ ...oldPfps, ...pictures }));
+      })
+    );
+
+    setProfilePictures(pictures);
   }
 
-  // async function fetchInvestorProfilePictures() {
-  //   const pictures = {} as any;
-
-  //   await Promise.all([
-  //     ...bookmarkInvestors.map(async (investor) => {
-  //       try {
-  //         const response = await axios.get(
-  //           `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/investor/${investor.id}`,
-  //           {
-  //             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  //             responseType: "blob",
-  //           }
-  //         );
-  //         pictures[`investor_${investor.id}`] = URL.createObjectURL(response.data);
-  //       } catch (error) {
-  //         console.error(`Failed to fetch profile picture for investor ID ${investor.id}:`, error);
-  //       }
-  //     }),
-  //   ]);
-  //   setProfilePictures((oldPfps: any) => ({ ...oldPfps, ...pictures }));
-  // }
-
-  useEffect(() => {
-    if (bookmarkStartups.length > 0) {
-      fetchStartupProfilePictures();
-    }
-  }, [bookmarkStartups]);
-
-  // useEffect(() => {
-  //   if (bookmarkInvestors.length > 0) {
-  //     fetchInvestorProfilePictures();
-  //   }
-  // }, [bookmarkInvestors]);
-
-  async function fetchBookmarkStartups() {
+  async function fetchBookmarks() {
     try {
       if (!userId) {
         console.error("User not authenticated.");
@@ -89,21 +60,40 @@ export default function Bookmarks() {
       }
 
       const { data } = await bookmarkControllerFindAllByUserId(userId, withAuth);
-      setBookmarkStartups(data);
+      setBookmarks(data);
     } catch (error) {
-      console.error("Error fetching bookmark startups:", error);
+      console.error("Error fetching bookmarks:", error);
     }
   }
 
   useEffect(() => {
     if (userId) {
-      fetchBookmarkStartups();
+      fetchBookmarks();
     }
   }, [userId]);
 
-  const filteredBookmarks = bookmarkStartups.filter((bookmark) =>
-    bookmark.startup?.companyName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    if (bookmarks.length > 0) {
+      fetchProfilePictures();
+    }
+  }, [bookmarks]);
+
+  // Filter bookmarks based on search query and active filter (Startups/Investors)
+  const filteredBookmarks = bookmarks.filter((bookmark) => {
+    const name = bookmark.startup
+      ? bookmark.startup.companyName
+      : `${bookmark.investor?.firstName} ${bookmark.investor?.lastName}`;
+
+    const matchesSearch = name.toLowerCase().includes(searchQuery.toLowerCase());
+
+    // If no filter is applied, show both startups and investors
+    if (activeIndex === null) return matchesSearch;
+
+    // Filter by startups (activeIndex === 0) or investors (activeIndex === 1)
+    return activeIndex === 0
+      ? bookmark.startup && matchesSearch
+      : bookmark.investor && matchesSearch;
+  });
 
   return (
     <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col bg-[#fefefe] p-6 pb-3 shadow-sm shadow-slate-400">
@@ -117,14 +107,8 @@ export default function Bookmarks() {
 
       {/* Search bar */}
       <div className="relative flex items-center gap-2 py-1">
-        <div
-          onClick={() => {
-            setSearchFocus("");
-            setShowFilters(false);
-          }}
-          className="absolute inset-0 flex w-fit cursor-pointer items-center pl-2 text-gray-500"
-        >
-          {searchFocus ? <ArrowLeft size={15} /> : <Search size={15} />}
+        <div className="absolute inset-0 flex w-fit cursor-pointer items-center pl-2 text-gray-500">
+          <Search size={15} />
         </div>
         <input
           type="search"
@@ -136,15 +120,25 @@ export default function Bookmarks() {
           placeholder={`Search Bookmarks...`}
         />
       </div>
-
+      
       {/* Filter buttons */}
-      <div className={` ${!searchFocus ? "flex" : "hidden"}`}>
+      <div className="flex py-3 pt-0">
         {searchFocusType.map((item, index) => (
           <button
             key={item.name}
-            onClick={() => setSearchFocus(item.name)}
+            onClick={() => setActiveIndex(index === activeIndex ? null : index)} // Toggle off filter
             type="button"
-            className={`flex w-full items-center gap-3 bg-white px-3 py-1 text-gray-400 ring-1 ring-gray-300 hover:bg-gradient-to-r hover:font-bold hover:text-white ${index === 0 ? "rounded-l-full hover:from-[#FFC312] hover:via-[#EE5A24] hover:to-[#EA2027]" : "rounded-r-full hover:from-[#68d8d6] hover:via-[#00a6fb] hover:to-[#00509d]"}`}
+            className={`flex w-full items-center gap-3 px-3 py-1 text-gray-400 ring-1 ring-gray-300 ${
+              activeIndex === index
+                ? index === 0
+                  ? "bg-gradient-to-r from-[#FFC312] via-[#EE5A24] to-[#EA2027] font-bold text-white"
+                  : "bg-gradient-to-r from-[#68d8d6] via-[#00a6fb] to-[#00509d] font-bold text-white"
+                : "bg-white hover:bg-gradient-to-r hover:font-bold hover:text-white"
+            } rounded-${index === 0 ? "l-full" : "r-full"} ${
+              index === 0
+                ? "hover:from-[#FFC312] hover:via-[#EE5A24] hover:to-[#EA2027]"
+                : "hover:from-[#68d8d6] hover:via-[#00a6fb] hover:to-[#00509d]"
+            }`}
           >
             {item.icon} {item.name}
           </button>
@@ -158,29 +152,55 @@ export default function Bookmarks() {
             <p className="text-gray-500">No bookmarks found</p>
           </div>
         ) : (
-          filteredBookmarks.map(({ id, startup }) => (
+          filteredBookmarks.map(({ id, startup, investor }) => (
             <div
               key={id}
               className="mb-2 flex cursor-pointer items-center justify-between rounded-md p-2 shadow-none hover:bg-gray-100"
-              onClick={() => router.push(`/startup/${startup?.id}`)}
+              onClick={() => {
+                if (startup) {
+                  router.push(`/startup/${startup.id}`);
+                } else if (investor) {
+                  router.push(`/investor/${investor?.id}`);
+                }
+              }}
             >
               <div className="flex w-full items-center">
                 <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">
                   <img
-                    src={profilePictures[`startup_${startup?.id}`]}
-                    alt={startup?.companyName}
+                    src={
+                      startup
+                        ? profilePictures[`startup_${startup.id}`]
+                        : profilePictures[`investor_${investor?.id}`]
+                    }
+                    alt={
+                      startup ? startup.companyName : `${investor?.firstName} ${investor?.lastName}`
+                    }
                     className="h-full w-full object-cover"
                   />
                 </div>
                 <div className="flex-1">
                   <div className="flex flex-col">
-                    <div className="text-sm font-semibold">{startup?.companyName}</div>
-                    <div className="text-xs text-gray-500">{startup?.locationName}</div>
-                    <div className="mt-1 flex flex-wrap">
-                      <span className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs">
-                        {startup?.industry}
-                      </span>
-                    </div>
+                    {startup ? (
+                      <>
+                        <div className="text-sm font-semibold">{startup.companyName}</div>
+                        <div className="text-xs text-gray-500">{startup.locationName}</div>
+                        <div className="mt-1 flex flex-wrap">
+                          <span className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs">
+                            {startup.industry}
+                          </span>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="text-sm font-semibold">{`${investor?.firstName} ${investor?.lastName}`}</div>
+                        <div className="text-xs text-gray-500">{investor?.locationName}</div>
+                        <div className="mt-1 flex overflow-hidden whitespace-nowrap">
+                          <span className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs">
+                            Investor
+                          </span>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
