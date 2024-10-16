@@ -42,7 +42,7 @@ export default function SideMenu() {
 
 function Logo() {
   return (
-    <div className="absolute left-0 top-0 flex h-12 w-full items-center justify-center bg-[#004A98] shadow-csm">
+    <div className="absolute left-0 top-0 flex h-12 w-full items-center justify-center bg-[#004A98]">
       {/* <img
         src={"logo.png"}
         alt="startupsphere logo"
