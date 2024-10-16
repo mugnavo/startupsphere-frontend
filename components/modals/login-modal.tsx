@@ -99,7 +99,10 @@ export default function LoginModal() {
                 placeholder="Input your password"
                 className="input input-bordered w-full"
               />
-              <a href="#" className="link-hover link mt-2 self-end text-xs">
+              <a
+                href="https://startupvest-front-ten.vercel.app/signup"
+                className="link-hover link mt-2 self-end text-xs"
+              >
                 Don&apos;t have an account? Register here
               </a>
             </label>
