@@ -3,6 +3,7 @@
 import { Download, MoveLeft, MoveRight, SquareChartGantt, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import DeleteConfirmationModal from "~/components/modals/delete-modal"; // Import the modal component
+import ReportModal from "~/components/modals/report-modal";
 import { useSession } from "~/context/hooks"; // Import the session context
 import { reportControllerDelete, reportControllerGetAllByUserId } from "~/lib/api"; // Update the import for user-specific API
 import { Report } from "~/lib/schemas"; // Report schema
@@ -16,7 +17,7 @@ export default function ReportsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = Math.ceil(reports.length / 10); // Number of records per page
   const [isModalOpen, setModalOpen] = useState(false); // State to manage modal visibility
-  const [reportToDelete, setReportToDelete] = useState<number | null>(null); // Track which report to delete
+  const [selectedReport, setSelectedReport] = useState<number | null>(null); // Track which report to open/delete
 
   async function fetchReports() {
     if (!userId) {
@@ -44,19 +45,39 @@ export default function ReportsPage() {
     }
   }, [userId]);
 
+  function openReportDetails(reportId: number) {
+    setSelectedReport(reportId);
+    // open report_modal
+    const modal = document.getElementById("report_modal");
+    if (modal instanceof HTMLDialogElement) {
+      modal.showModal();
+    }
+  }
+
   function onDeleteReport(reportId: number) {
     reportControllerDelete(reportId, withAuth);
     fetchReports();
   }
 
   function downloadReport(reportId: number) {
-    // Add your download logic here
-    console.log(`Downloading report with ID: ${reportId}`);
+    const selectedReport = reports.find((report) => report.id === reportId);
+    if (!selectedReport) return;
+
+    const blob = new Blob([selectedReport.content], { type: "text/csv;charset=utf-8;" });
+    const file = new File([blob], `${selectedReport.name}.csv`, { type: "text/csv" });
+    const url = URL.createObjectURL(file);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = selectedReport.name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 
   // Open the modal for confirmation
   const handleOpenModal = (reportId: number) => {
-    setReportToDelete(reportId);
+    setSelectedReport(reportId);
     setModalOpen(true);
   };
 
@@ -65,6 +86,7 @@ export default function ReportsPage() {
 
   return (
     <div className="mx-auto flex h-full w-[70%] flex-col py-8">
+      <ReportModal report={reports.find((report) => report.id === selectedReport)} />
       <div className="mb-4 flex flex-col items-start">
         <h1 className="flex items-center text-2xl font-bold">
           <SquareChartGantt className="mr-2 h-6 w-6 text-[#1E1E1E]" />
@@ -102,17 +124,16 @@ export default function ReportsPage() {
             ) : reports.length === 0 ? (
               <tr>
                 <td colSpan={3} className="text-center">
-                  No reports available.
+                  No reports generated.
                 </td>
               </tr>
             ) : (
               filteredReports.map((report) => (
                 <tr key={report.id}>
                   <td>
-                    {/* Assuming report.url is the URL you want to display */}
                     <button
                       className="text-blue-500 hover:underline"
-                      onClick={() => console.log("TODO OPEN MODAL")}
+                      onClick={() => openReportDetails(report.id)}
                     >
                       {report.name}
                     </button>
@@ -165,16 +186,16 @@ export default function ReportsPage() {
       </div>
 
       {/* Delete Confirmation Modal */}
-      {isModalOpen && reportToDelete !== null && (
+      {isModalOpen && selectedReport !== null && (
         <DeleteConfirmationModal
           onDelete={() => {
-            onDeleteReport(reportToDelete);
+            onDeleteReport(selectedReport);
             setModalOpen(false);
-            setReportToDelete(null);
+            setSelectedReport(null);
           }}
           onClose={() => {
             setModalOpen(false);
-            setReportToDelete(null);
+            setSelectedReport(null);
           }}
         />
       )}
