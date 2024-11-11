@@ -7,10 +7,9 @@
  */
 
 export interface Report {
-  file_type: string;
   generated_by: number;
   id: number;
   name: string;
   timestamp: string;
-  url: string;
+  content: Object;
 }

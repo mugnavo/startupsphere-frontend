@@ -1,8 +1,8 @@
 import daisyui from "daisyui";
 import defaultThemes from "daisyui/src/theming/themes";
-import { withUt } from "uploadthing/tw";
+import { type Config } from "tailwindcss";
 
-export default withUt({
+export default {
   content: ["./components/**/*.{js,ts,jsx,tsx,mdx}", "./app/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {
@@ -24,4 +24,4 @@ export default withUt({
       },
     ],
   },
-});
+} satisfies Config;

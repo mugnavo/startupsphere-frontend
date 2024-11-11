@@ -138,7 +138,6 @@ import axios from "axios";
 import { Album, ScanEye, Search, ThumbsUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import StartupDetailsModal from "~/components/modals/startup-details";
 import LChart from "~/components/ui/line-chart";
 import PChart from "~/components/ui/pie-chart";
 import { useSession } from "~/context/hooks";
@@ -192,7 +191,6 @@ export default function OwnedStartups() {
   const backgroundColors = ["before:bg-[#dc2626]", "before:bg-[#fb923c]", "before:bg-[#fde047]"];
   const [investor, setInvestor] = useState<Investor | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
-  const [isShowStartupDetails, setIsShowStartupDetails] = useState(false);
   const [pfp, setPfp] = useState<any>(null);
 
   const [likes, setLikes] = useState<Like[]>([]);
@@ -419,246 +417,219 @@ export default function OwnedStartups() {
     };
   }, [isSearching]);
 
-  useEffect(() => {
-    const modal = document.getElementById("startup_details_modal") as HTMLDialogElement;
-
-    if (modal) {
-      // Event listener to handle modal close
-      const handleModalClose = () => {
-        setIsShowStartupDetails(false);
-      };
-
-      if (isShowStartupDetails) {
-        modal.show();
-        modal.addEventListener("close", handleModalClose); // Add listener for when modal closes
-      } else {
-        modal.close();
-        setSelectedStartup(undefined);
-      }
-
-      // Clean up the event listener
-      return () => {
-        modal.removeEventListener("close", handleModalClose);
-      };
-    }
-  }, [isShowStartupDetails]);
-
   // const allStartupData = ["ave. views", "ave. likes", "ave. bookmarks"];
   const allStartupData = ["avg. views", "avg. likes", "avg. bookmarks"];
   const startupData = ["total views", "total likes", "total bookmarks"];
   return (
     <div className="relative z-50 mx-auto flex h-auto w-[70%] flex-col gap-4">
-      <StartupDetailsModal editable={false} startup={selectedStartup} />
-      <>
-        <div className="relative mt-4 flex justify-start gap-3">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
-            <Search size={15} className="text-gray-500" />
-          </div>
-          <input
-            type="search"
-            name="search-startup"
-            id="search-startup"
-            className="block h-auto w-auto flex-1 rounded-md border-0 py-1.5 pl-7 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
-            placeholder="Search Startups"
-            autoComplete="off"
-            value={searchValue}
-            onClick={() => setIsSearching(true)}
-            onChange={(e) => {
-              setSearchValue(e.target.value);
-            }}
-          />
+      <div className="relative mt-4 flex justify-start gap-3">
+        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
+          <Search size={15} className="text-gray-500" />
+        </div>
+        <input
+          type="search"
+          name="search-startup"
+          id="search-startup"
+          className="block h-auto w-auto flex-1 rounded-md border-0 py-1.5 pl-7 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+          placeholder="Search Startups"
+          autoComplete="off"
+          value={searchValue}
+          onClick={() => setIsSearching(true)}
+          onChange={(e) => {
+            setSearchValue(e.target.value);
+          }}
+        />
 
-          {/* search filters */}
-          <div className="flex gap-3 overflow-x-auto pb-1">
-            {filters.map((category, index) => (
-              <button
+        {/* search filters */}
+        <div className="flex gap-3 overflow-x-auto pb-1">
+          {filters.map((category, index) => (
+            <button
+              key={index}
+              onClick={() => toggleSelected(index)}
+              type="button"
+              className={`flex items-center gap-3 shadow-md ${category.isActive ? "btn-active bg-[#004A98] text-white" : "btn-primary hover:bg-gray-200"}`}
+            >
+              {category.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid h-[18rem] w-full grid-cols-9 gap-3">
+        <div className="relative col-span-2 flex flex-col border shadow-custom">
+          <div className="flex h-full w-full flex-col items-center justify-center">
+            {loading ? (
+              <span className="loading loading-spinner loading-lg"></span>
+            ) : (
+              <>
+                {investor ? (
+                  <div>
+                    <h2 className="p-2 text-xs font-light">Investor Profile</h2>
+                    <div className="flex h-full flex-col items-center justify-center gap-2">
+                      <img src={pfp || placeholderImageUrl} className="h-44 w-44 rounded-full" />
+                      <p className="font-mono text-2xl">
+                        {investor?.firstName} {investor?.lastName}
+                      </p>
+                    </div>{" "}
+                  </div>
+                ) : (
+                  <div className="text-sm">No investor profile found</div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+        <div className="relative col-span-3 flex flex-col items-center justify-center border shadow-custom">
+          <h1 className="self-start p-4 py-2 text-xl font-bold">
+            {loading ? (
+              <div className="flex h-6 w-full items-center">
+                <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+              </div>
+            ) : selectedStartup && selectedStartup.companyName ? (
+              <>{selectedStartup.companyName}</>
+            ) : (
+              <>{startups.length} Total Startups</>
+            )}
+          </h1>
+          <div className="text-md flex h-full w-[95%] justify-between">
+            {(
+              (selectedStartup && ["views", "likes", "bookmarks"]) || [views, likes, bookmarks]
+            ).map((stat, index) => (
+              <div
                 key={index}
-                onClick={() => toggleSelected(index)}
-                type="button"
-                className={`flex items-center gap-3 shadow-md ${category.isActive ? "btn-active bg-[#004A98] text-white" : "btn-primary hover:bg-gray-200"}`}
+                className={`ml-3 flex h-fit w-[30%] flex-col items-center justify-center rounded pb-3`}
+                // before:absolute before:left-[-0.6rem] before:top-[24%] before:h-[45%] before:w-1 before:rounded-l before:bg-red-600
+                // before:absolute before:bottom-0 before:left-1/2 before:h-1 before:w-1/2 before:translate-x-[-1/2] before:rounded before:bg-blue-600
+                // className={`relative flex h-[25%] w-[30%] items-center justify-center gap-3 overflow-clip rounded bg-warning px-3 text-center before:absolute before:bottom-0 before:left-0 before:top-0 before:w-1 before:rounded-s before:bg-yellow-600`}
               >
-                {category.name}
-              </button>
+                <span className="text-[10px] leading-[0.7rem] text-gray-400">
+                  {selectedStartup ? startupData[index] : allStartupData[index]}
+                </span>
+                <span className={`flex gap-2 text-2xl`}>
+                  {loading
+                    ? 0
+                    : selectedStartup
+                      ? selectedStartup[stat as keyof StartupStats]
+                      : parseFloat((stat.length / startups.length).toFixed(2)).toFixed(1)}
+                  <span className="pt-1 text-gray-400">{icons[index]}</span>
+                </span>
+                {/* <div className="relative right-[-3rem] h-full rounded-full bg-orange-800 p-6"></div> */}
+              </div>
             ))}
           </div>
+          <PChart
+            // startups.filter((startup) => startup.managerId == user?.id)
+            startups={relatedStartups}
+            filters={filters.filter((filter) => filter.isActive && filter.name != "All")}
+          />
         </div>
-
-        <div className="grid h-[18rem] w-full grid-cols-9 gap-3">
-          <div className="relative col-span-2 flex flex-col border shadow-custom">
-            <div className="flex h-full w-full flex-col items-center justify-center">
-              {loading ? (
-                <span className="loading loading-spinner loading-lg"></span>
-              ) : (
-                <>
-                  {investor ? (
-                    <div>
-                      <h2 className="p-2 text-xs font-light">Investor Profile</h2>
-                      <div className="flex h-full flex-col items-center justify-center gap-2">
-                        <img src={pfp || placeholderImageUrl} className="h-44 w-44 rounded-full" />
-                        <p className="font-mono text-2xl">
-                          {investor?.firstName} {investor?.lastName}
-                        </p>
-                      </div>{" "}
-                    </div>
-                  ) : (
-                    <div className="text-sm">No investor profile found</div>
-                  )}
-                </>
-              )}
-            </div>
-          </div>
-          <div className="relative col-span-3 flex flex-col items-center justify-center border shadow-custom">
-            <h1 className="self-start p-4 py-2 text-xl font-bold">
-              {loading ? (
-                <div className="flex h-6 w-full items-center">
-                  <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
-                </div>
-              ) : selectedStartup && selectedStartup.companyName ? (
-                <>{selectedStartup.companyName}</>
-              ) : (
-                <>{startups.length} Total Startups</>
-              )}
-            </h1>
-            <div className="text-md flex h-full w-[95%] justify-between">
-              {(
-                (selectedStartup && ["views", "likes", "bookmarks"]) || [views, likes, bookmarks]
-              ).map((stat, index) => (
-                <div
-                  key={index}
-                  className={`ml-3 flex h-fit w-[30%] flex-col items-center justify-center rounded pb-3`}
-                  // before:absolute before:left-[-0.6rem] before:top-[24%] before:h-[45%] before:w-1 before:rounded-l before:bg-red-600
-                  // before:absolute before:bottom-0 before:left-1/2 before:h-1 before:w-1/2 before:translate-x-[-1/2] before:rounded before:bg-blue-600
-                  // className={`relative flex h-[25%] w-[30%] items-center justify-center gap-3 overflow-clip rounded bg-warning px-3 text-center before:absolute before:bottom-0 before:left-0 before:top-0 before:w-1 before:rounded-s before:bg-yellow-600`}
-                >
-                  <span className="text-[10px] leading-[0.7rem] text-gray-400">
-                    {selectedStartup ? startupData[index] : allStartupData[index]}
-                  </span>
-                  <span className={`flex gap-2 text-2xl`}>
-                    {loading
-                      ? 0
-                      : selectedStartup
-                        ? selectedStartup[stat as keyof StartupStats]
-                        : parseFloat((stat.length / startups.length).toFixed(2)).toFixed(1)}
-                    <span className="pt-1 text-gray-400">{icons[index]}</span>
-                  </span>
-                  {/* <div className="relative right-[-3rem] h-full rounded-full bg-orange-800 p-6"></div> */}
-                </div>
-              ))}
-            </div>
-            <PChart
-              // startups.filter((startup) => startup.managerId == user?.id)
-              startups={relatedStartups}
-              filters={filters.filter((filter) => filter.isActive && filter.name != "All")}
-            />
-          </div>
-          <div className="col-span-4 flex flex-col border bg-white p-4 text-xs text-gray-500 shadow-custom">
-            Likes / Views / Bookmarks Analytics
-            <LChart likes={likes} views={views} bookmarks={bookmarks} />
-          </div>
+        <div className="col-span-4 flex flex-col border bg-white p-4 text-xs text-gray-500 shadow-custom">
+          Likes / Views / Bookmarks Analytics
+          <LChart likes={likes} views={views} bookmarks={bookmarks} />
         </div>
+      </div>
 
-        {/* table */}
-        <div
-          className={`mt-5 flex flex-col items-start ${loading ? "items-end" : "justify-center"} bg-white shadow-custom`}
-        >
-          {loading ? (
-            <span className="m-1 h-2 w-[25%] animate-pulse rounded-lg bg-base-300" />
-          ) : (
-            <span className="w-full px-3 text-end text-xs italic text-gray-500">
-              {filters.every((filter) => filter.isActive === false) ? (
-                relatedStartups.length > 0 ? (
-                  "Similar startups"
-                ) : (
-                  <span className="text-red-600">No similar startups found.</span>
-                )
+      {/* table */}
+      <div
+        className={`mt-5 flex flex-col items-start ${loading ? "items-end" : "justify-center"} bg-white shadow-custom`}
+      >
+        {loading ? (
+          <span className="m-1 h-2 w-[25%] animate-pulse rounded-lg bg-base-300" />
+        ) : (
+          <span className="w-full px-3 text-end text-xs italic text-gray-500">
+            {filters.every((filter) => filter.isActive === false) ? (
+              relatedStartups.length > 0 ? (
+                "Similar startups"
               ) : (
-                "Top 5 Startups with high ratings"
-              )}
-            </span>
-          )}
-          <div className="w-full overflow-x-auto">
-            <table className="table">
-              {/* head */}
-              <thead className="bg-[#004A98]">
-                <tr className="text-white">
-                  <th className="w-[30%]">Startup Name</th>
-                  <th className="w-[30%]">Industry</th>
-                  <th className="w-auto">Views</th>
-                  <th className="w-auto">Likes</th>
-                  <th className="w-auto">Bookmarks</th>
-                </tr>
-              </thead>
-              <tbody className="font-normal">
-                {loading &&
-                  Array.from({ length: 5 }).map((_, i) => (
-                    <tr key={i}>
-                      <td>
-                        <div className="flex h-6 w-full items-center">
-                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
-                        </div>
-                      </td>
-                      <td>
-                        <div className="flex h-6 w-full items-center">
-                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
-                        </div>
-                      </td>
-                      <td>
-                        <div className="flex h-6 w-full items-center">
-                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
-                        </div>
-                      </td>
-                      <td>
-                        <div className="flex h-6 w-full items-center">
-                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
-                        </div>
-                      </td>
-                      <td>
-                        <div className="flex h-6 w-full items-center">
-                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                {relatedStartups.slice(0, 6).map((startup, index) => (
-                  <tr
-                    key={index}
-                    className="cursor-pointer hover:bg-slate-100"
-                    onClick={() => router.push(`/startup/${startup?.id}`)}
-                  >
-                    <td>{startup.companyName}</td>
-                    <td>{startup.industry}</td>
-                    <td>{startup.views}</td>
-                    <td>{startup.likes}</td>
-                    <td>{startup.bookmarks}</td>
+                <span className="text-red-600">No similar startups found.</span>
+              )
+            ) : (
+              "Top 5 Startups with high ratings"
+            )}
+          </span>
+        )}
+        <div className="w-full overflow-x-auto">
+          <table className="table">
+            {/* head */}
+            <thead className="bg-[#004A98]">
+              <tr className="text-white">
+                <th className="w-[30%]">Startup Name</th>
+                <th className="w-[30%]">Industry</th>
+                <th className="w-auto">Views</th>
+                <th className="w-auto">Likes</th>
+                <th className="w-auto">Bookmarks</th>
+              </tr>
+            </thead>
+            <tbody className="font-normal">
+              {loading &&
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i}>
+                    <td>
+                      <div className="flex h-6 w-full items-center">
+                        <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                      </div>
+                    </td>
+                    <td>
+                      <div className="flex h-6 w-full items-center">
+                        <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                      </div>
+                    </td>
+                    <td>
+                      <div className="flex h-6 w-full items-center">
+                        <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                      </div>
+                    </td>
+                    <td>
+                      <div className="flex h-6 w-full items-center">
+                        <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                      </div>
+                    </td>
+                    <td>
+                      <div className="flex h-6 w-full items-center">
+                        <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                      </div>
+                    </td>
                   </tr>
                 ))}
+              {relatedStartups.slice(0, 6).map((startup, index) => (
+                <tr
+                  key={index}
+                  className="cursor-pointer hover:bg-slate-100"
+                  onClick={() => router.push(`/startup/${startup?.id}`)}
+                >
+                  <td>{startup.companyName}</td>
+                  <td>{startup.industry}</td>
+                  <td>{startup.views}</td>
+                  <td>{startup.likes}</td>
+                  <td>{startup.bookmarks}</td>
+                </tr>
+              ))}
 
-                {/* to fill empty spaces if table data is short  */}
-                {!loading &&
-                  Array.from({ length: 5 - relatedStartups.length }).map((_, index) => (
-                    <tr key={index}>
-                      <td>
-                        <div className="flex h-6"></div>
-                      </td>
-                      <td>
-                        <div className="flex h-6"></div>
-                      </td>
-                      <td>
-                        <div className="flex h-6"></div>
-                      </td>
-                      <td>
-                        <div className="flex h-6"></div>
-                      </td>
-                      <td>
-                        <div className="flex h-6"></div>
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-          </div>
+              {/* to fill empty spaces if table data is short  */}
+              {!loading &&
+                Array.from({ length: 5 - relatedStartups.length }).map((_, index) => (
+                  <tr key={index}>
+                    <td>
+                      <div className="flex h-6"></div>
+                    </td>
+                    <td>
+                      <div className="flex h-6"></div>
+                    </td>
+                    <td>
+                      <div className="flex h-6"></div>
+                    </td>
+                    <td>
+                      <div className="flex h-6"></div>
+                    </td>
+                    <td>
+                      <div className="flex h-6"></div>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
         </div>
-      </>
+      </div>
 
       {/* SEARCH SUGGESTION BOX */}
       {isSearching && startups && (

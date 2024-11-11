@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Cog, Filter, HandCoins, Search, SquareMousePointer, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { uploadFiles } from "~/components/uploadthing";
 import { useSession } from "~/context/hooks";
 import {
   investorsControllerFindAllInvestors,
@@ -168,7 +167,10 @@ export default function SearchContent() {
 
     const csvContent = [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
 
-    return new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    return {
+      blob: new Blob([csvContent], { type: "text/csv;charset=utf-8;" }),
+      content: csvContent,
+    };
   };
 
   const handleGenerateReports = async () => {
@@ -186,11 +188,11 @@ export default function SearchContent() {
       const minutes = String(now.getMinutes()).padStart(2, "0");
       const seconds = String(now.getSeconds()).padStart(2, "0");
 
-      // Construct the filename
-      const filename = `${year}${month}${day}-Startups-${hours}${minutes}${seconds}.csv`;
+      // TODO: better filenames, or let user specify?
+      const filename = `${year}${month}${day}-StartUpSphere-${hours}${minutes}${seconds}`;
 
-      const csvBlob = generateCSV();
-      const file = new File([csvBlob], filename, { type: "text/csv" });
+      const { blob, content } = generateCSV();
+      const file = new File([blob], `${filename}.csv`, { type: "text/csv" });
 
       //download chuchu
       const url = URL.createObjectURL(file);
@@ -202,16 +204,10 @@ export default function SearchContent() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
-      // post to reports
-      const result = await uploadFiles("reportUploader", {
-        files: [file],
-      });
-
       const reportRequest = {
-        file_type: result[0].type,
         generated_by: user?.id as number,
-        name: result[0].name,
-        url: result[0].url,
+        name: filename,
+        content: content,
       };
 
       await reportControllerCreate(reportRequest, withAuth);

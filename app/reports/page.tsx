@@ -110,14 +110,12 @@ export default function ReportsPage() {
                 <tr key={report.id}>
                   <td>
                     {/* Assuming report.url is the URL you want to display */}
-                    <a
-                      href={report.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
                       className="text-blue-500 hover:underline"
+                      onClick={() => console.log("TODO OPEN MODAL")}
                     >
-                      {report.url}
-                    </a>
+                      {report.name}
+                    </button>
                   </td>
                   <td>{new Date(report.timestamp).toLocaleDateString()}</td>
                   <td className="flex gap-1.5">
