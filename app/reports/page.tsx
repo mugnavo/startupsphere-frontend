@@ -79,7 +79,7 @@ export default function ReportsPage() {
           {/* Head */}
           <thead className="bg-[#004A98]">
             <tr className="text-white">
-              <th className="w-auto">URL</th>
+              <th className="w-auto">Name</th>
               <th className="w-auto">Date Generated</th>
               <th className="w-20">Actions</th>
             </tr>

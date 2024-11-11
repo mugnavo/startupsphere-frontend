@@ -11,5 +11,5 @@ export interface Report {
   id: number;
   name: string;
   timestamp: string;
-  content: Object;
+  content: string;
 }
