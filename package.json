@@ -12,7 +12,6 @@
     "format": "prettier --write . \"!pnpm-lock.yaml\" \"!pull_request_template.md\" --ignore-path .gitignore"
   },
   "dependencies": {
-    "@heroicons/react": "^2.1.5",
     "@mapbox/mapbox-gl-geocoder": "^5.0.3",
     "@mapbox/search-js-core": "^1.0.0-beta.22",
     "axios": "^1.7.7",
@@ -40,10 +39,10 @@
     "eslint-config-prettier": "^9.1.0",
     "postcss": "^8.4.49",
     "prettier": "^3.3.3",
-    "prettier-plugin-tailwindcss": "^0.6.8",
+    "prettier-plugin-tailwindcss": "^0.6.9",
     "rimraf": "^6.0.1",
     "tailwindcss": "^3.4.15",
     "typescript": "^5.6.3"
   },
-  "packageManager": "pnpm@9.13.2"
+  "packageManager": "pnpm@9.14.1"
 }
