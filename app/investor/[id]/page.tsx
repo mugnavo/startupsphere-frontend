@@ -105,11 +105,9 @@ export default function InvestorDetails() {
   }, [investorDetails]);
 
   async function fetchInvestorbyID() {
-    console.log("fetching investor by id");
     try {
       const { data: returnData } = await investorsControllerFindOne(Number(investorId));
       const data = returnData as unknown as Investor;
-      console.log("data", data);
       if (data) {
         if (data.locationLat && data.locationLng) {
           mainMap?.flyTo({ center: { lat: data.locationLat, lng: data.locationLng } });
