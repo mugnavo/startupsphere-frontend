@@ -8,7 +8,6 @@ import { useCallback, useEffect, useState } from "react";
 import type { MapLayerMouseEvent } from "react-map-gl";
 import Map, { Marker, useMap } from "react-map-gl";
 
-import axios from "axios";
 import { useInteractiveMap } from "~/context/hooks";
 import { investorsControllerFindAllInvestors, startupsControllerFindAllStartups } from "~/lib/api";
 import type { Investor, Startup } from "~/lib/schemas";
@@ -29,68 +28,6 @@ export default function StartupMap() {
     pitch: 77.50180300523273,
     bearing: -13.596730550512234,
   });
-
-  const [profilePictures, setProfilePictures] = useState<any>({});
-
-  async function fetchStartupProfilePictures() {
-    const pictures = {} as any;
-
-    await Promise.all([
-      ...startups.map(async (startup) => {
-        try {
-          const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/startup/${startup.id}`,
-            {
-              headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
-              responseType: "blob",
-            }
-          );
-          if (response.data?.size) {
-            pictures[`startup_${startup.id}`] = URL.createObjectURL(response.data);
-          }
-        } catch (error) {
-          console.error(`Failed to fetch profile picture for startup ID ${startup.id}:`, error);
-        }
-      }),
-    ]);
-    setProfilePictures((oldPfps: any) => ({ ...oldPfps, ...pictures }));
-  }
-
-  async function fetchInvestorProfilePictures() {
-    const pictures = {} as any;
-
-    await Promise.all([
-      ...investors.map(async (investor) => {
-        try {
-          const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/investor/${investor.id}`,
-            {
-              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-              responseType: "blob",
-            }
-          );
-          if (response.data?.size) {
-            pictures[`investor_${investor.id}`] = URL.createObjectURL(response.data);
-          }
-        } catch (error) {
-          console.error(`Failed to fetch profile picture for investor ID ${investor.id}:`, error);
-        }
-      }),
-    ]);
-    setProfilePictures((oldPfps: any) => ({ ...oldPfps, ...pictures }));
-  }
-
-  useEffect(() => {
-    if (startups.length > 0) {
-      fetchStartupProfilePictures();
-    }
-  }, [startups]);
-
-  useEffect(() => {
-    if (investors.length > 0) {
-      fetchInvestorProfilePictures();
-    }
-  }, [investors]);
 
   async function fetchStartups() {
     const { data } = await startupsControllerFindAllStartups();
@@ -258,20 +195,17 @@ export default function StartupMap() {
               offset={[0, -20]}
             >
               <div
-                className="group relative flex w-32 justify-center text-lg text-red-600"
+                className="group flex flex-col items-center text-lg text-red-600"
                 onClick={() => {
                   router.replace(`/startup/${startup.id}`);
                 }}
               >
                 <CustomPin
                   className="h-8 w-8"
-                  startupimage={profilePictures[`startup_${startup.id}`]}
                   categories={[startup.industry]}
                   startupname={startup.companyName}
                 />
-                <div className="absolute -bottom-6 text-center text-sm font-semibold">
-                  {startup.companyName}
-                </div>
+                <div className="text-center text-sm font-semibold">{startup.companyName}</div>
               </div>
             </Marker>
           ))}
@@ -287,18 +221,17 @@ export default function StartupMap() {
               offset={[0, -20]}
             >
               <div
-                className="group relative flex w-32 justify-center text-lg text-sky-600"
+                className="group flex flex-col items-center text-lg text-sky-600"
                 onClick={() => {
                   router.replace(`/investor/${investor.id}`);
                 }}
               >
                 <CustomPin
                   className="h-8 w-8"
-                  startupimage={profilePictures[`investor_${investor.id}`]}
                   categories={["Investor"]}
                   startupname={`${investor.firstName} ${investor.lastName}`}
                 />
-                <div className="absolute -bottom-6 text-center text-sm font-semibold">
+                <div className="text-center text-sm font-semibold">
                   {investor.firstName} {investor.lastName}
                 </div>
               </div>
