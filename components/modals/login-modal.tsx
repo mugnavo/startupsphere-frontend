@@ -100,7 +100,7 @@ export default function LoginModal() {
                 className="input input-bordered w-full"
               />
               <a
-                href="https://startupvest-front-ten.vercel.app/signup"
+                href="https://investtrack-ten.vercel.app/signup"
                 className="link-hover link mt-2 self-end text-xs"
               >
                 Don&apos;t have an account? Register here

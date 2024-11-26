@@ -3,7 +3,6 @@
 import { jwtDecode } from "jwt-decode";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect } from "react";
-import { User } from "~/lib/schemas";
 
 function AutoAuthFlow() {
   const searchParams = useSearchParams();
@@ -27,7 +26,7 @@ function AutoAuthFlow() {
     }
   }, [token]);
 
-  return <div>page</div>;
+  return <div>Logging in via SSO from InvestTrack...</div>;
 }
 
 export default function Page() {
