@@ -222,7 +222,7 @@ export default function InvestorDetails() {
     >
       <div className="flex flex-grow items-center justify-center">
         <div className="absolute left-0 top-0 p-2">
-          <ChevronLeft size={24} className="cursor-pointer" onClick={() => router.back()} />
+          <ChevronLeft size={24} className="cursor-pointer" onClick={() => router.push("/")} />
         </div>
         <div className="flex h-64 w-full items-center justify-center bg-gray-200">
           {pfp ? (
