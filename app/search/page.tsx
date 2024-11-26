@@ -188,8 +188,14 @@ export default function SearchContent() {
       const minutes = String(now.getMinutes()).padStart(2, "0");
       const seconds = String(now.getSeconds()).padStart(2, "0");
 
-      // TODO: better filenames, or let user specify?
-      const filename = `${year}${month}${day}-StartUpSphere-${hours}${minutes}${seconds}`;
+      const activeCategories = categories
+        .filter((category) => category.isActive)
+        .map((category) => category.name)
+        .join("_");
+
+      const filename = searchFocus
+        ? `${searchFocus}_${year}${month}${day}${hours}${minutes}${activeCategories ? `-${activeCategories}` : ""}`
+        : `StartupSphere_${year}${month}${day}-${hours}${minutes}`;
 
       const { blob, content } = generateCSV();
       const file = new File([blob], `${filename}.csv`, { type: "text/csv" });
