@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
-import { motion } from "framer-motion";
 import { ArrowLeft, Cog, Filter, HandCoins, Search, SquareMousePointer, X } from "lucide-react";
+import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSession } from "~/context/hooks";
