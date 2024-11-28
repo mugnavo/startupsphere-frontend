@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { LogOut } from "lucide-react";
+import { LogOut, UserPlus } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSession } from "~/context/hooks";
 
@@ -75,7 +75,6 @@ export default function Account() {
             {user ? `${user?.firstName} ${user?.lastName} ` : "Guest"}
             <span className="absolute bottom-0 left-0 text-xs text-gray-400">{user?.email}</span>
           </div>
-
           <div
             className={`flex cursor-pointer items-center gap-2 rounded p-3 hover:bg-gray-100`}
             onClick={async () => {
@@ -90,11 +89,16 @@ export default function Account() {
               }
             }}
           >
-            <>
-              <LogOut size={15} /> {user ? "Logout" : "Login"}
-            </>
+            <LogOut size={15} /> {user ? "Logout" : "Login"}
           </div>
-
+          {!user && (
+            <a
+              href="https://investtrack-ten.vercel.app/signup"
+              className={`flex cursor-pointer items-center gap-2 rounded p-3 hover:bg-gray-100`}
+            >
+              <UserPlus size={15} /> Register
+            </a>
+          )}
           <div className="m-auto mt-1 block w-3 rounded-lg border border-gray-300" />
         </div>
       )}
