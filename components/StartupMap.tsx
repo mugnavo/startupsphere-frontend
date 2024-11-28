@@ -8,17 +8,14 @@ import { useCallback, useEffect, useState } from "react";
 import type { MapLayerMouseEvent } from "react-map-gl";
 import Map, { Marker, useMap } from "react-map-gl";
 
-import { useInteractiveMap } from "~/context/hooks";
-import { investorsControllerFindAllInvestors, startupsControllerFindAllStartups } from "~/lib/api";
-import type { Investor, Startup } from "~/lib/schemas";
+import { useEcosystem, useInteractiveMap } from "~/context/hooks";
 import CustomPin from "./map/CustomPin";
 import Geocoder from "./map/Geocoder";
 
 const geocode = new GeocodingCore({ accessToken: process.env.NEXT_PUBLIC_MAPBOX_TOKEN! });
 
 export default function StartupMap() {
-  const [startups, setStartups] = useState<Startup[]>([]);
-  const [investors, setInvestors] = useState<Investor[]>([]);
+  const { startups, investors } = useEcosystem();
 
   const router = useRouter();
   const [viewState, setViewState] = useState({
@@ -28,24 +25,6 @@ export default function StartupMap() {
     pitch: 77.50180300523273,
     bearing: -13.596730550512234,
   });
-
-  async function fetchStartups() {
-    const { data } = await startupsControllerFindAllStartups();
-    if (data) {
-      setStartups(data);
-    }
-  }
-
-  async function fetchInvestors() {
-    const { data } = await investorsControllerFindAllInvestors();
-    if (data) {
-      setInvestors(data);
-    }
-  }
-  useEffect(() => {
-    fetchStartups();
-    fetchInvestors();
-  }, []);
 
   const { dashboardSelection, setDashboardSelection, selectedLocation, setSelectedLocation } =
     useInteractiveMap();

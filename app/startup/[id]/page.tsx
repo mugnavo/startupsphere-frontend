@@ -5,7 +5,7 @@ import { Bookmark, ChevronLeft, Globe, Image, MapPin, ThumbsUp } from "lucide-re
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useMap } from "react-map-gl";
-import { useInteractiveMap, useSession } from "~/context/hooks";
+import { useEcosystem, useInteractiveMap, useSession } from "~/context/hooks";
 import {
   bookmarkControllerCreate,
   bookmarkControllerFindOneByUserIdandStartupId,
@@ -34,6 +34,8 @@ export default function StartupDetails() {
   const router = useRouter();
   const { mainMap } = useMap();
 
+  const { startups, setStartups } = useEcosystem();
+
   const [pfp, setPfp] = useState<any>(null);
 
   const [ownedStartups, setOwnedStartups] = useState<Startup[]>([]);
@@ -57,6 +59,20 @@ export default function StartupDetails() {
       return total + (fundingRound.moneyRaised || 0);
     }, 0);
 
+  async function updateLocation(newLocation: LocationData) {
+    await startupsControllerUpdate(
+      Number(startupDetails?.id),
+      {
+        locationLat: newLocation.latitude,
+        locationLng: newLocation.longitude,
+        locationName: newLocation.name,
+      } as Startup,
+      withAuth
+    );
+
+    fetchStartupbyID(true);
+  }
+
   useEffect(() => {
     if (!dashboardSelection.active && previewingMap) {
       if (selectedLocation) {
@@ -64,15 +80,7 @@ export default function StartupDetails() {
         setSelectedLocation(undefined);
 
         // update
-        startupsControllerUpdate(
-          Number(startupDetails?.id),
-          {
-            locationLat: selectedLocation.latitude,
-            locationLng: selectedLocation.longitude,
-            locationName: selectedLocation.name,
-          } as Startup,
-          withAuth
-        ).then(() => window.location.reload());
+        updateLocation(selectedLocation);
       }
 
       setPreviewingMap(false);
@@ -128,7 +136,7 @@ export default function StartupDetails() {
     }
   }
 
-  async function fetchStartupbyID() {
+  async function fetchStartupbyID(update = false) {
     try {
       const { data } = await startupsControllerFindOne(String(startupId), withAuth);
       console.log(data);
@@ -137,6 +145,16 @@ export default function StartupDetails() {
           mainMap?.flyTo({ center: { lat: data.locationLat, lng: data.locationLng } });
         }
         setStartupDetails(data);
+
+        // also update context
+        if (update) {
+          const startupIndex = startups.findIndex((s) => s.id === data.id);
+          if (startupIndex !== -1) {
+            const updatedStartups = [...startups];
+            updatedStartups[startupIndex] = data;
+            setStartups(updatedStartups);
+          }
+        }
       }
     } catch (error) {
       console.error("Error fetching startup details:", error);

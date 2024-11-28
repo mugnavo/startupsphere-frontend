@@ -2,11 +2,15 @@
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import { MapProvider } from "react-map-gl";
-import { usersControllerGetProfile } from "~/lib/api";
-import { User } from "~/lib/schemas";
+import {
+  investorsControllerFindAllInvestors,
+  startupsControllerFindAllStartups,
+  usersControllerGetProfile,
+} from "~/lib/api";
+import { Investor, Startup, User } from "~/lib/schemas";
 import { DashboardSelection, LocationData } from "~/lib/types";
 import { withAuth } from "~/lib/utils";
-import { InteractionContext, SessionContext } from ".";
+import { EcosystemContext, InteractionContext, SessionContext } from ".";
 
 export function ContextProvider({ children }: { children: React.ReactNode }) {
   const [dashboardSelection, setDashboardSelection] = useState<DashboardSelection>({
@@ -16,6 +20,9 @@ export function ContextProvider({ children }: { children: React.ReactNode }) {
     previewLocation: undefined,
   });
   const [selectedLocation, setSelectedLocation] = useState<LocationData | undefined>(undefined);
+
+  const [startups, setStartups] = useState<Startup[]>([]);
+  const [investors, setInvestors] = useState<Investor[]>([]);
 
   const [user, setUser] = useState<User | null | undefined>(undefined);
 
@@ -32,22 +39,40 @@ export function ContextProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  async function fetchStartups() {
+    const { data } = await startupsControllerFindAllStartups();
+    if (data) {
+      setStartups(data);
+    }
+  }
+
+  async function fetchInvestors() {
+    const { data } = await investorsControllerFindAllInvestors();
+    if (data) {
+      setInvestors(data);
+    }
+  }
+
   useEffect(() => {
     parseUser();
+    fetchStartups();
+    fetchInvestors();
   }, []);
 
   return (
     <SessionContext.Provider value={{ user, setUser }}>
-      <InteractionContext.Provider
-        value={{
-          dashboardSelection,
-          setDashboardSelection,
-          selectedLocation,
-          setSelectedLocation,
-        }}
-      >
-        <MapProvider>{children}</MapProvider>
-      </InteractionContext.Provider>
+      <EcosystemContext.Provider value={{ startups, setStartups, investors, setInvestors }}>
+        <InteractionContext.Provider
+          value={{
+            dashboardSelection,
+            setDashboardSelection,
+            selectedLocation,
+            setSelectedLocation,
+          }}
+        >
+          <MapProvider>{children}</MapProvider>
+        </InteractionContext.Provider>
+      </EcosystemContext.Provider>
     </SessionContext.Provider>
   );
 }

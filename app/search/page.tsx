@@ -4,12 +4,8 @@ import { ArrowLeft, Cog, Filter, HandCoins, Search, SquareMousePointer, X } from
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useSession } from "~/context/hooks";
-import {
-  investorsControllerFindAllInvestors,
-  reportControllerCreate,
-  startupsControllerFindAllStartups,
-} from "~/lib/api";
+import { useEcosystem, useSession } from "~/context/hooks";
+import { reportControllerCreate } from "~/lib/api";
 import { Startup } from "~/lib/schemas";
 import { Investor } from "~/lib/schemas/investor";
 import { investorTypes, placeholderImageUrl, sectors, withAuth } from "~/lib/utils";
@@ -17,8 +13,9 @@ import { investorTypes, placeholderImageUrl, sectors, withAuth } from "~/lib/uti
 export default function SearchContent() {
   const router = useRouter();
   const { user } = useSession();
-  const [startups, setStartups] = useState<Startup[]>([]);
-  const [investors, setInvestors] = useState<Investor[]>([]);
+
+  const { startups, investors } = useEcosystem();
+
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [searchFocus, setSearchFocus] = useState<string>("");
@@ -37,20 +34,11 @@ export default function SearchContent() {
     }))
   );
 
-  async function fetchInvestors() {
-    const { data } = await investorsControllerFindAllInvestors();
-    if (data) {
-      setInvestors(data);
+  useEffect(() => {
+    if (startups.length > 0 || investors.length > 0) {
+      setLoading(false);
     }
-  }
-
-  async function fetchStartups() {
-    const { data } = await startupsControllerFindAllStartups();
-    if (data) {
-      setStartups(data);
-    }
-    setLoading(false);
-  }
+  }, [startups, investors]);
 
   const [profilePictures, setProfilePictures] = useState<any>({});
 
@@ -113,12 +101,6 @@ export default function SearchContent() {
       fetchInvestorProfilePictures();
     }
   }, [investors]);
-
-  useEffect(() => {
-    setLoading(true);
-    fetchStartups();
-    fetchInvestors();
-  }, []);
 
   const filteredStartups = startups.filter(
     (startup) =>
