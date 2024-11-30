@@ -2,12 +2,15 @@
 
 import axios from "axios";
 import { LogOut, UserPlus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useSession } from "~/context/hooks";
 
 export default function Account() {
   const { user } = useSession();
   const { setUser } = useSession();
+  const router = useRouter();
+  const [logout, setLogout] = useState(false);
   const [isShowMenu, setIsShowMenu] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const [pfp, setPfp] = useState<string>("");
@@ -44,13 +47,17 @@ export default function Account() {
       }
     } catch (e) {
       console.log("Error while fetching user pfp: ", e);
+      setPfp("sample");
     }
   }
   useEffect(() => {
     if (user) {
       fetchPfp();
+    } else if(logout){
+      router.replace("/");
+      setPfp('sample');
     }
-  }, [user]);
+  }, [user, logout]);
 
   return (
     <>
@@ -58,10 +65,10 @@ export default function Account() {
         onClick={() => setIsShowMenu(!isShowMenu)}
         className="absolute right-3 top-3 z-50 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 border-white bg-[#004A98] text-xl font-normal text-white"
       >
-        {pfp ? (
-          <img src={pfp} className="h-full w-full rounded-full object-cover" />
+        {user && pfp ? (
+          pfp=="sample" ? user?.firstName[0] : <img src={pfp} className="h-full w-full rounded-full object-cover" />
         ) : (
-          user?.firstName[0] || "G"
+           "G"
         )}
       </div>
 
@@ -69,11 +76,11 @@ export default function Account() {
       {isShowMenu && (
         <div
           ref={modalRef}
-          className="absolute right-3 top-14 z-50 flex h-auto w-48 flex-col gap-1 rounded bg-white p-2 text-sm shadow-custom"
+          className="absolute right-3 top-14 z-50 flex h-auto w-auto min-w-48 flex-col gap-1 rounded-lg bg-white px-4 py-2 text-sm shadow"
         >
-          <div className="txt-lg relative mb-2 flex py-4">
+          <div className="relative mb-2 flex flex-col pt-4 text-lg text-[#004A98]">
             {user ? `${user?.firstName} ${user?.lastName} ` : "Guest"}
-            <span className="absolute bottom-0 left-0 text-xs text-gray-400">{user?.email}</span>
+            <span className="text-xs text-gray-400">{user?.email}</span>
           </div>
           <div
             className={`flex cursor-pointer items-center gap-2 rounded p-3 hover:bg-gray-100`}
@@ -81,6 +88,7 @@ export default function Account() {
               if (user) {
                 localStorage.removeItem("jwt");
                 setUser(null);
+                setLogout(true);
               } else {
                 const loginModal = document.getElementById("login_modal");
                 if (loginModal instanceof HTMLDialogElement) {
@@ -89,17 +97,17 @@ export default function Account() {
               }
             }}
           >
-            <LogOut size={15} /> {user ? "Logout" : "Login"}
+            <LogOut size={15} className="text-[#004A98]" /> {user ? "Logout" : "Login"}
           </div>
           {!user && (
             <a
               href="https://investtrack-ten.vercel.app/signup"
               className={`flex cursor-pointer items-center gap-2 rounded p-3 hover:bg-gray-100`}
             >
-              <UserPlus size={15} /> Register
+              <UserPlus size={15} className="text-[#004A98]" /> Register
             </a>
           )}
-          <div className="m-auto mt-1 block w-3 rounded-lg border border-gray-300" />
+          <div className="m-auto my-1 block w-3 rounded-lg border border-blue-600" />
         </div>
       )}
     </>
