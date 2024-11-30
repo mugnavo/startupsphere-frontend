@@ -1,137 +1,3 @@
-// "use client";
-
-// import axios from "axios";
-// import { X } from "lucide-react";
-// import { useRouter } from "next/navigation";
-// import { useEffect, useState } from "react";
-// import { useSession } from "~/context/hooks";
-// import { startupsControllerFindAll } from "~/lib/api";
-// import { Startup } from "~/lib/schemas";
-// import { withAuth } from "~/lib/utils";
-
-// export default function OwnedStartups() {
-//   const router = useRouter();
-//   const [startups, setStartups] = useState<Startup[]>([]);
-//   const { user } = useSession();
-
-//   async function fetchOwnedStartups() {
-//     if (!user) return;
-//     const { data } = await startupsControllerFindAll(withAuth);
-//     setStartups(data);
-//   }
-
-//   const [profilePictures, setProfilePictures] = useState<any>({});
-
-//   async function fetchStartupProfilePictures() {
-//     const pictures = {} as any;
-
-//     await Promise.all([
-//       ...startups.map(async (startup) => {
-//         try {
-//           const response = await axios.get(
-//             `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/startup/${startup.id}`,
-//             {
-//               headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
-//               responseType: "blob",
-//             }
-//           );
-//           pictures[`startup_${startup.id}`] = URL.createObjectURL(response.data);
-//         } catch (error) {
-//           console.error(`Failed to fetch profile picture for startup ID ${startup.id}:`, error);
-//         }
-//       }),
-//     ]);
-//     setProfilePictures({ ...profilePictures, ...pictures });
-//   }
-
-//   // async function fetchInvestorProfilePictures() {
-//   //   const pictures = {} as any;
-
-//   //   await Promise.all([
-//   //     ...investors.map(async (investor) => {
-//   //       try {
-//   //         const response = await axios.get(
-//   //           `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/investor/${investor.id}`,
-//   //           {
-//   //             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-//   //             responseType: "blob",
-//   //           }
-//   //         );
-//   //         pictures[`investor_${investor.id}`] = URL.createObjectURL(response.data);
-//   //       } catch (error) {
-//   //         console.error(`Failed to fetch profile picture for investor ID ${investor.id}:`, error);
-//   //       }
-//   //     }),
-//   //   ]);
-//   //   setProfilePictures({ ...profilePictures, ...pictures });
-//   // }
-
-//   useEffect(() => {
-//     if (startups.length > 0) {
-//       fetchStartupProfilePictures();
-//     }
-//   }, [startups]);
-
-//   // useEffect(() => {
-//   //   if (investors.length > 0) {
-//   //     fetchInvestorProfilePictures();
-//   //   }
-//   // }, [investors]);
-
-//   useEffect(() => {
-//     fetchOwnedStartups();
-//   }, [user]);
-
-//   return (
-//     <div className="absolute left-20 top-0 z-10 flex h-screen w-[22rem] flex-col bg-white p-6">
-//       {/* the gradient div */}
-//       <div className="absolute inset-0 z-[-10] h-[8rem] bg-gradient-to-b from-yellow-600 to-transparent opacity-80" />
-//       <div className="mb-4 flex items-center justify-between">
-//         <span className="text-lg font-semibold">Owned Startups</span>
-//         <X size={20} onClick={() => router.replace("/")} className="cursor-pointer" />
-//       </div>
-//       <div className="flex-1 overflow-y-auto">
-//         <div className="mt-2">
-//           {startups.length === 0 ? (
-//             <div className="mt-5 flex flex-col items-center">
-//               <p className="text-gray-500">No owned startups</p>
-//             </div>
-//           ) : (
-//             startups.map((startup) => (
-//               <div
-//                 key={startup.id}
-//                 className="mb-1 flex cursor-pointer items-center justify-between rounded-md p-2 shadow-none hover:bg-gray-100"
-//                 onClick={() => router.push(`/startup/${startup?.id}`)}
-//               >
-//                 <div className="flex w-full items-center">
-//                   <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">
-//                     <img
-//                       src={profilePictures[`startup_${startup?.id}`]}
-//                       alt={startup?.companyName}
-//                       className="h-full w-full object-cover"
-//                     />
-//                   </div>
-//                   <div className="flex-1">
-//                     <div className="flex flex-col">
-//                       <div className="text-sm font-semibold">{startup?.companyName}</div>
-//                       <div className="text-xs text-gray-500">{startup?.locationName}</div>
-//                       <div className="mt-1 flex flex-wrap">
-//                         <span className="mb-1 mr-2 rounded-full bg-gray-200 px-2 py-1 text-xs">
-//                           {startup?.industry}
-//                         </span>
-//                       </div>
-//                     </div>
-//                   </div>
-//                 </div>
-//               </div>
-//             ))
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
 "use client";
 
 import axios from "axios";
@@ -169,7 +35,7 @@ const filtersPills = [
   { name: "Views", isActive: false },
 ];
 
-const size = 20;
+const size = 23;
 const icons = [
   <ScanEye key="ScanEye" size={size} />,
   <ThumbsUp key="ThumbsUp" size={size} />,
@@ -179,8 +45,9 @@ const icons = [
 export default function OwnedStartups() {
   const router = useRouter();
   const { user } = useSession();
+  const isInvestor = user && user?.role.toLowerCase() == "investor";
   const [loading, setLoading] = useState(true);
-  const [startups, setStartups] = useState<Startup[]>([]);
+  const [startups, setStartups] = useState<Startup[] | null>();
   const [selectedStartup, setSelectedStartup] = useState<Startup>();
   const [relatedStartups, setRelatedStartups] = useState<Startup[]>([]);
   const [searchValue, setSearchValue] = useState<string>("");
@@ -199,55 +66,74 @@ export default function OwnedStartups() {
 
   //fetches all startup's like, view, bookmark counts only
   async function fetchChartData() {
-    const likesPromise = likeControllerGetAll(withAuth);
-    const viewsPromise = viewControllerGetAll(withAuth);
-    const bookmarksPromise = bookmarkControllerGetAll(withAuth);
+    try {
+      const likesPromise = likeControllerGetAll(withAuth);
+      const viewsPromise = viewControllerGetAll(withAuth);
+      const bookmarksPromise = bookmarkControllerGetAll(withAuth);
 
-    const [likesRes, viewsRes, bookmarksRes] = await Promise.all([
-      likesPromise,
-      viewsPromise,
-      bookmarksPromise,
-    ]);
+      const [likesRes, viewsRes, bookmarksRes] = await Promise.all([
+        likesPromise,
+        viewsPromise,
+        bookmarksPromise,
+      ]);
 
-    if (likesRes.data) {
-      setLikes(likesRes.data.filter((data) => data.user != null));
+      if (startups && startups.length > 0) {
+        if (likesRes.data) {
+          setLikes(likesRes.data);
+        }
+        if (viewsRes.data) {
+          setViews(viewsRes.data);
+        }
+        if (bookmarksRes.data) {
+          setBookmarks(bookmarksRes.data);
+        }
+      }
+      setLoading(false);
+    } catch (e) {
+      console.log("Error getting analytics", e);
     }
-    if (viewsRes.data) {
-      setViews(viewsRes.data.filter((data) => data.user_id != null));
-    }
-    if (bookmarksRes.data) {
-      setBookmarks(bookmarksRes.data.filter((data) => data.user != null));
-    }
-    setLoading(false);
   }
 
   async function fetchOwnedStartups() {
-    if (!user) return;
-    const { data } = await startupsControllerFindAll(withAuth);
-    setStartups(data);
-    setLoading(false);
+    try {
+      if (!user) return;
+      const { data } = await startupsControllerFindAll(withAuth);
+      setStartups(data);
+      setLoading(false);
+    } catch (e) {
+      console.log("Error getting ownedstartups", e);
+    }
   }
 
   async function fetchOwnedInvestor() {
-    if (!user) return;
-    const { data } = await investorsControllerFindAllCreatedUser(withAuth);
-    const investor = data[0];
-    setInvestor(investor);
-    setLoading(false);
+    try {
+      if (!user) return;
+      const { data } = await investorsControllerFindAllCreatedUser(withAuth);
+      const investor = data[0];
+      setInvestor(investor);
+      setLoading(false);
+    } catch (e) {
+      console.log("Error getting ownedinvestor", e);
+    }
   }
 
   async function fetchPfp() {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/investor/${investor?.id}`,
-      {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        responseType: "blob",
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/${user?.id}`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          responseType: "blob",
+        }
+      );
+      if (response.data?.size) {
+        setPfp(URL.createObjectURL(response.data));
       }
-    );
-    if (response.data?.size) {
-      setPfp(URL.createObjectURL(response.data));
+      setLoading(false);
+    } catch (e) {
+      console.log("Error while fetching user pfp: ", e);
+      setPfp("sample");
     }
-    setLoading(false);
   }
 
   // async function fetchStartups() {
@@ -258,7 +144,6 @@ export default function OwnedStartups() {
   // }
 
   useEffect(() => {
-    fetchChartData();
     fetchOwnedStartups();
     fetchOwnedInvestor();
   }, [user]);
@@ -270,15 +155,20 @@ export default function OwnedStartups() {
   }, [investor]);
 
   useEffect(() => {
-    if (startups) handleFilters("bookmarks", "likes", "views");
+    if (startups) {
+      fetchChartData();
+      handleFilters("bookmarks", "likes", "views");
+    }
   }, [startups]);
 
   useEffect(() => {
-    setSearchResults(
-      startups.filter((startup) =>
-        startup.companyName.toLowerCase().includes(searchValue.toLowerCase())
-      )
-    );
+    if (startups) {
+      setSearchResults(
+        startups.filter((startup) =>
+          startup.companyName.toLowerCase().includes(searchValue.toLowerCase())
+        )
+      );
+    }
   }, [searchValue]);
 
   // if a startup is selected, filters are off
@@ -287,14 +177,17 @@ export default function OwnedStartups() {
       if (isSearching) {
         setFilters(filters.map((filter) => ({ ...filter, isActive: false })));
         // set related startups based on the category of the selected startup
+
+        setSearchValue("");
+        setIsSearching(false);
+      }
+
+      if (startups) {
         setRelatedStartups(
           startups.filter(
             (startup) => startup != selectedStartup && startup.industry == selectedStartup.industry
           )
         );
-
-        setSearchValue("");
-        setIsSearching(false);
       }
     }
   }, [selectedStartup]);
@@ -305,28 +198,30 @@ export default function OwnedStartups() {
     statTwo?: keyof StartupStats,
     statThree?: keyof StartupStats
   ) {
-    const stat_arr = startups.map((startup) => {
-      const value =
-        (statOne ? startup[statOne] : 0) +
-        (statTwo ? startup[statTwo] : 0) +
-        (statThree ? startup[statThree] : 0);
-      return {
-        startup: startup,
-        value: value,
-      };
-    });
-    // console.log(stat_arr, statOne, statTwo, statThree);
-    stat_arr.sort((a, b) => a.value - b.value).reverse();
+    if (startups) {
+      const stat_arr = startups.map((startup) => {
+        const value =
+          (statOne ? startup[statOne] : 0) +
+          (statTwo ? startup[statTwo] : 0) +
+          (statThree ? startup[statThree] : 0);
+        return {
+          startup: startup,
+          value: value,
+        };
+      });
+      // console.log(stat_arr, statOne, statTwo, statThree);
+      stat_arr.sort((a, b) => a.value - b.value).reverse();
 
-    // if there's a filter, assign the selected startup etc and make length of relatedSS to 6 because the 1 is made as selectedSS
-    // if (statOne) setSelectedStartup(stat_arr[0]?.startup);
-    if (filters.some((filter) => filter.isActive && filter.name != "All"))
-      setSelectedStartup(stat_arr[0]?.startup);
+      // if there's a filter, assign the selected startup etc and make length of relatedSS to 6 because the 1 is made as selectedSS
+      // if (statOne) setSelectedStartup(stat_arr[0]?.startup);
+      if (filters.some((filter) => filter.isActive && filter.name != "All"))
+        setSelectedStartup(stat_arr[0]?.startup);
 
-    setRelatedStartups(stat_arr.map((stat) => stat.startup));
-    // setRelatedStartups(
-    //   stat_arr.map((stat) => stat.startup).slice(statOne ? 1 : 0, statOne ? 6 : 5)
-    // );
+      setRelatedStartups(stat_arr.map((stat) => stat.startup));
+      // setRelatedStartups(
+      //   stat_arr.map((stat) => stat.startup).slice(statOne ? 1 : 0, statOne ? 6 : 5)
+      // );
+    }
   }
 
   useEffect(() => {
@@ -417,219 +312,284 @@ export default function OwnedStartups() {
     };
   }, [isSearching]);
 
-  // const allStartupData = ["ave. views", "ave. likes", "ave. bookmarks"];
   const allStartupData = ["avg. views", "avg. likes", "avg. bookmarks"];
   const startupData = ["total views", "total likes", "total bookmarks"];
   return (
+    user &&
     <div className="relative z-50 mx-auto flex h-auto w-[70%] flex-col gap-4">
-      <div className="relative mt-4 flex justify-start gap-3">
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
-          <Search size={15} className="text-gray-500" />
-        </div>
-        <input
-          type="search"
-          name="search-startup"
-          id="search-startup"
-          className="block h-auto w-auto flex-1 rounded-md border-0 py-1.5 pl-7 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
-          placeholder="Search Startups"
-          autoComplete="off"
-          value={searchValue}
-          onClick={() => setIsSearching(true)}
-          onChange={(e) => {
-            setSearchValue(e.target.value);
-          }}
-        />
+      {!loading && !isInvestor ? (
+        <div className="relative mt-4 flex justify-start gap-3">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
+            <Search size={15} className="text-gray-500" />
+          </div>
+          <input
+            type="search"
+            name="search-startup"
+            id="search-startup"
+            className="block h-auto w-auto flex-1 rounded-md border-0 py-1.5 pl-7 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+            placeholder="Search Startups"
+            autoComplete="off"
+            value={searchValue}
+            onClick={() => setIsSearching(true)}
+            onChange={(e) => {
+              setSearchValue(e.target.value);
+            }}
+          />
 
-        {/* search filters */}
-        <div className="flex gap-3 overflow-x-auto pb-1">
-          {filters.map((category, index) => (
-            <button
-              key={index}
-              onClick={() => toggleSelected(index)}
-              type="button"
-              className={`flex items-center gap-3 shadow-md ${category.isActive ? "btn-active bg-[#004A98] text-white" : "btn-primary hover:bg-gray-200"}`}
-            >
-              {category.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="grid h-[18rem] w-full grid-cols-9 gap-3">
-        <div className="relative col-span-2 flex flex-col border shadow-custom">
-          <div className="flex h-full w-full flex-col items-center justify-center">
-            {loading ? (
-              <span className="loading loading-spinner loading-lg"></span>
-            ) : (
-              <>
-                {investor ? (
-                  <div>
-                    <h2 className="p-2 text-xs font-light">Investor Profile</h2>
-                    <div className="flex h-full flex-col items-center justify-center gap-2">
-                      <img src={pfp || placeholderImageUrl} className="h-44 w-44 rounded-full" />
-                      <p className="font-mono text-2xl">
-                        {investor?.firstName} {investor?.lastName}
-                      </p>
-                    </div>{" "}
-                  </div>
-                ) : (
-                  <div className="text-sm">No investor profile found</div>
-                )}
-              </>
-            )}
+          {/* search filters */}
+          <div className="flex gap-3 overflow-x-auto pb-1">
+            {filters.map((category, index) => (
+              <button
+                key={index}
+                onClick={() => toggleSelected(index)}
+                type="button"
+                className={`flex items-center gap-3 shadow-md ${category.isActive ? "btn-active bg-[#004A98] text-white" : "btn-primary hover:bg-gray-200"}`}
+              >
+                {category.name}
+              </button>
+            ))}
           </div>
         </div>
-        <div className="relative col-span-3 flex flex-col items-center justify-center border shadow-custom">
-          <h1 className="self-start p-4 py-2 text-xl font-bold">
-            {loading ? (
-              <div className="flex h-6 w-full items-center">
-                <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
-              </div>
-            ) : selectedStartup && selectedStartup.companyName ? (
-              <>{selectedStartup.companyName}</>
-            ) : (
-              <>{startups.length} Total Startups</>
-            )}
-          </h1>
+      ) : (
+        <div className="h-14 p-6">
+          {isInvestor ? (
+            <h1 className="text-2xl font-bold text-[#004A98]">Investor Profile</h1>
+          ) : (
+            <div className="flex h-6 w-full items-center">
+              <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+            </div>
+          )}
+        </div>
+      )}
+      <div className="grid h-[18rem] w-full grid-cols-[400px,auto] gap-3">
+        {isInvestor && (
+          <div className="relative flex flex-col border shadow-custom">
+            <div className="flex h-full w-full flex-col items-center justify-center">
+              {loading || !pfp ? (
+                <span className="loading loading-spinner loading-lg"></span>
+              ) : (
+                <div>
+                  {/* <h2 className="p-2 text-xs font-light">Investor Profile</h2> */}
+                  <div className="flex h-auto flex-col items-center justify-center gap-2 p-[2rem]">
+                    <img
+                      src={pfp == "sample" ? placeholderImageUrl : pfp}
+                      className="h-44 w-44 rounded-full"
+                    />
+                    <p className="font-mono text-2xl">
+                      {user?.firstName} {user?.lastName}
+                    </p>
+                    <p>{user?.role} </p>
+                    {/* <p>{user?.email} </p>
+                    <p>{user?.locationName ? user?.locationName : "No location has been set."} </p> */}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        <div className="relative flex flex-col items-center justify-center border shadow-custom">
+          {loading ? (
+            <div className="flex h-12 w-full items-center p-5">
+              <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+            </div>
+          ) : (
+            <h1 className="min-h-12 self-start p-4 pb-3 pl-8 text-xl font-bold text-[#004A98]">
+              {!isInvestor ? (
+                selectedStartup ? (
+                  <>{selectedStartup.companyName}</>
+                ) : (
+                  <>{startups ? startups.length : 0} Total Startups</>
+                )
+              ) : (
+                "Analytics"
+              )}
+            </h1>
+          )}
+
           <div className="text-md flex h-full w-[95%] justify-between">
             {(
-              (selectedStartup && ["views", "likes", "bookmarks"]) || [views, likes, bookmarks]
+              (selectedStartup && ["views", "likes", "bookmarks"]) || [
+                startups?.reduce((a: number, b) => a + (b.views || 0), 0),
+                startups?.reduce((a: number, b) => a + (b.likes || 0), 0),
+                startups?.reduce((a: number, b) => a + (b.bookmarks || 0), 0),
+              ]
             ).map((stat, index) => (
               <div
                 key={index}
                 className={`ml-3 flex h-fit w-[30%] flex-col items-center justify-center rounded pb-3`}
-                // before:absolute before:left-[-0.6rem] before:top-[24%] before:h-[45%] before:w-1 before:rounded-l before:bg-red-600
-                // before:absolute before:bottom-0 before:left-1/2 before:h-1 before:w-1/2 before:translate-x-[-1/2] before:rounded before:bg-blue-600
-                // className={`relative flex h-[25%] w-[30%] items-center justify-center gap-3 overflow-clip rounded bg-warning px-3 text-center before:absolute before:bottom-0 before:left-0 before:top-0 before:w-1 before:rounded-s before:bg-yellow-600`}
               >
-                <span className="text-[10px] leading-[0.7rem] text-gray-400">
-                  {selectedStartup ? startupData[index] : allStartupData[index]}
-                </span>
-                <span className={`flex gap-2 text-2xl`}>
-                  {loading
-                    ? 0
-                    : selectedStartup
-                      ? selectedStartup[stat as keyof StartupStats]
-                      : parseFloat((stat.length / startups.length).toFixed(2)).toFixed(1)}
-                  <span className="pt-1 text-gray-400">{icons[index]}</span>
-                </span>
+                {!loading ? (
+                  <>
+                    <span className="text-[10px] leading-[0.7rem] text-gray-400">
+                      {selectedStartup || isInvestor ? startupData[index] : allStartupData[index]}
+                    </span>
+                    <span className={`flex gap-2 text-2xl`}>
+                      {investor
+                        ? investor[stat as keyof StartupStats] || 0
+                        : selectedStartup
+                          ? selectedStartup[stat as keyof StartupStats]
+                          : (startups &&
+                              startups.length > 0 &&
+                              parseFloat(
+                                ((typeof stat === "number" ? stat : 0) / startups.length).toFixed(
+                                  1
+                                )
+                              )) ||
+                            0}
+                      <span className="pt-1 text-[#004A98]">{icons[index]}</span>
+                    </span>
+                  </>
+                ) : (
+                  <div className="flex h-6 w-full items-center">
+                    <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                  </div>
+                )}
                 {/* <div className="relative right-[-3rem] h-full rounded-full bg-orange-800 p-6"></div> */}
               </div>
             ))}
           </div>
-          <PChart
-            // startups.filter((startup) => startup.managerId == user?.id)
-            startups={relatedStartups}
-            filters={filters.filter((filter) => filter.isActive && filter.name != "All")}
-          />
+          {loading ? (
+            <span className="loading loading-spinner loading-lg absolute bottom-20"></span>
+          ) : (
+            <PChart
+              // startups.filter((startup) => startup.managerId == user?.id)
+              startups={selectedStartup ? [selectedStartup] : relatedStartups}
+              // filters={
+              //   selectedStartup
+              //     ? null
+              //     : filters.filter((filter) => filter.isActive && filter.name != "All")
+              // }
+              investor={investor}
+            />
+          )}
         </div>
-        <div className="col-span-4 flex flex-col border bg-white p-4 text-xs text-gray-500 shadow-custom">
-          Likes / Views / Bookmarks Analytics
-          <LChart likes={likes} views={views} bookmarks={bookmarks} />
-        </div>
+
+        {!isInvestor && (
+          <div className="flex flex-col border bg-white p-4 text-xs text-gray-500 shadow-custom">
+            {loading ? (
+              <div className="flex h-full w-full items-center justify-center">
+                <span className="loading loading-spinner loading-lg"></span>
+              </div>
+            ) : (
+              <>
+                Likes / Views / Bookmarks Analytics
+                <LChart likes={likes} views={views} bookmarks={bookmarks} />
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       {/* table */}
-      <div
-        className={`mt-5 flex flex-col items-start ${loading ? "items-end" : "justify-center"} bg-white shadow-custom`}
-      >
-        {loading ? (
-          <span className="m-1 h-2 w-[25%] animate-pulse rounded-lg bg-base-300" />
-        ) : (
-          <span className="w-full px-3 text-end text-xs italic text-gray-500">
-            {filters.every((filter) => filter.isActive === false) ? (
-              relatedStartups.length > 0 ? (
-                "Similar startups"
+      {!loading && !isInvestor && (
+        <div
+          className={`mt-5 flex flex-col items-start ${loading ? "items-end" : "justify-center"} bg-white shadow-custom`}
+        >
+          {loading ? (
+            <span className="m-1 h-2 w-[25%] animate-pulse rounded-lg bg-base-300" />
+          ) : (
+            <span className="w-full px-3 text-end text-md italic text-gray-500">
+              {filters.every((filter) => filter.isActive === false) ? (
+                relatedStartups.length > 0 ? (
+                  "Similar startups"
+                ) : (
+                  <span className="text-red-600 font-extrabold">No similar startups found.</span>
+                )
               ) : (
-                <span className="text-red-600">No similar startups found.</span>
-              )
-            ) : (
-              "Top 5 Startups with high ratings"
-            )}
-          </span>
-        )}
-        <div className="w-full overflow-x-auto">
-          <table className="table">
-            {/* head */}
-            <thead className="bg-[#004A98]">
-              <tr className="text-white">
-                <th className="w-[30%]">Startup Name</th>
-                <th className="w-[30%]">Industry</th>
-                <th className="w-auto">Views</th>
-                <th className="w-auto">Likes</th>
-                <th className="w-auto">Bookmarks</th>
-              </tr>
-            </thead>
-            <tbody className="font-normal">
-              {loading &&
-                Array.from({ length: 5 }).map((_, i) => (
-                  <tr key={i}>
-                    <td>
-                      <div className="flex h-6 w-full items-center">
-                        <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
-                      </div>
-                    </td>
-                    <td>
-                      <div className="flex h-6 w-full items-center">
-                        <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
-                      </div>
-                    </td>
-                    <td>
-                      <div className="flex h-6 w-full items-center">
-                        <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
-                      </div>
-                    </td>
-                    <td>
-                      <div className="flex h-6 w-full items-center">
-                        <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
-                      </div>
-                    </td>
-                    <td>
-                      <div className="flex h-6 w-full items-center">
-                        <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              {relatedStartups.slice(0, 6).map((startup, index) => (
-                <tr
-                  key={index}
-                  className="cursor-pointer hover:bg-slate-100"
-                  onClick={() => router.push(`/startup/${startup?.id}`)}
-                >
-                  <td>{startup.companyName}</td>
-                  <td>{startup.industry}</td>
-                  <td>{startup.views}</td>
-                  <td>{startup.likes}</td>
-                  <td>{startup.bookmarks}</td>
+                "Top 5 Startups with high ratings"
+              )}
+            </span>
+          )}
+          <div className="w-full overflow-x-auto">
+            <table className="table">
+              {/* head */}
+              <thead className="bg-[#004A98]">
+                <tr className="text-white">
+                  <th className="w-[30%]">Startup Name</th>
+                  <th className="w-[30%]">Industry</th>
+                  <th className="w-auto">Views</th>
+                  <th className="w-auto">Likes</th>
+                  <th className="w-auto">Bookmarks</th>
                 </tr>
-              ))}
-
-              {/* to fill empty spaces if table data is short  */}
-              {!loading &&
-                Array.from({ length: 5 - relatedStartups.length }).map((_, index) => (
-                  <tr key={index}>
-                    <td>
-                      <div className="flex h-6"></div>
-                    </td>
-                    <td>
-                      <div className="flex h-6"></div>
-                    </td>
-                    <td>
-                      <div className="flex h-6"></div>
-                    </td>
-                    <td>
-                      <div className="flex h-6"></div>
-                    </td>
-                    <td>
-                      <div className="flex h-6"></div>
-                    </td>
+              </thead>
+              <tbody className="font-normal">
+                {!startups &&
+                  Array.from({ length: 1 }).map((_, i) => (
+                    <tr key={i}>
+                      <td>
+                        <div className="flex h-6 w-full items-center">
+                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                        </div>
+                      </td>
+                      <td>
+                        <div className="flex h-6 w-full items-center">
+                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                        </div>
+                      </td>
+                      <td>
+                        <div className="flex h-6 w-full items-center">
+                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                        </div>
+                      </td>
+                      <td>
+                        <div className="flex h-6 w-full items-center">
+                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                        </div>
+                      </td>
+                      <td>
+                        <div className="flex h-6 w-full items-center">
+                          <div className="h-2 w-2/3 animate-pulse rounded-lg bg-base-300" />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                {relatedStartups.slice(0, 5).map((startup, index) => (
+                  <tr
+                    key={index}
+                    className="cursor-pointer hover:bg-slate-100 hover:font-bold"
+                    onClick={() => router.push(`/startup/${startup?.id}`)}
+                  >
+                    <td>{startup.companyName}</td>
+                    <td>{startup.industry}</td>
+                    <td>{startup.views}</td>
+                    <td>{startup.likes}</td>
+                    <td>{startup.bookmarks}</td>
                   </tr>
                 ))}
-            </tbody>
-          </table>
+
+                {/* to fill empty spaces if table data is short  */}
+                {startups && startups.length > 0 && relatedStartups.length > 0
+                  ? Array.from({ length: 5 - relatedStartups.length }).map((_, index) => (
+                      <tr key={index}>
+                        <td>
+                          <div className="flex h-6"></div>
+                        </td>
+                        <td>
+                          <div className="flex h-6"></div>
+                        </td>
+                        <td>
+                          <div className="flex h-6"></div>
+                        </td>
+                        <td>
+                          <div className="flex h-6"></div>
+                        </td>
+                        <td>
+                          <div className="flex h-6"></div>
+                        </td>
+                      </tr>
+                    ))
+                  : startups && (
+                      <tr>
+                        <td colSpan={5} className="px-4 py-6 text-center text-gray-500">
+                          No records found.
+                        </td>
+                      </tr>
+                    )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* SEARCH SUGGESTION BOX */}
       {isSearching && startups && (

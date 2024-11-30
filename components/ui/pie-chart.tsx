@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Sector } from "recharts";
-import { Startup } from "~/lib/schemas";
+import { Investor, Startup } from "~/lib/schemas";
 
 const data = [
   { name: "Group A", value: 400 },
@@ -10,14 +10,20 @@ const data = [
 ];
 
 const COLORS = [
-  "#FF6347", // Tomato Red
-  "#32CD32", // Lime Green
-  "#FFD700", // Gold
-  "#00CED1", // Dark Turquoise
-  "#FF69B4", // Hot Pink
-  "#8A2BE2", // Blue Violet
-  "#FF4500", // Orange Red
-  "#20B2AA", // Light Sea Green
+  "#004A98",
+  "#00A6FB",
+  "#57B8FF",
+  "#CCC",
+  "#1e1e1e",
+  "#ED262A",
+  // "#FF6347", // Tomato Red
+  // "#32CD32", // Lime Green
+  // "#FFD700", // Gold
+  // "#00CED1", // Dark Turquoise
+  // "#FF69B4", // Hot Pink
+  // "#8A2BE2", // Blue Violet
+  // "#FF4500", // Orange Red
+  // "#20B2AA", // Light Sea Green
 ];
 
 const RADIAN = Math.PI / 180;
@@ -93,7 +99,7 @@ const renderActiveShape = (props: any) => {
         ))}
 
         <tspan x={cx} fontSize={12} dy="1.5em" fill="#999">
-          {`${(percent * 100).toFixed(2)}%`}
+          {percent < 0.0001 ? " " : `${(percent * 100).toFixed(2)}%`}
         </tspan>
       </text>
 
@@ -158,15 +164,47 @@ type StartupStats = {
   bookmarks: number;
 };
 
-export default function PChart({ startups, filters }: { startups: Startup[]; filters: Filter[] }) {
-  const val = filters.map((filter) => filter.name);
-  const transformedData = startups.map((startup) => ({
-    name: startup.companyName,
-    value:
-      val.length > 0
-        ? val.reduce((total, stat) => total + startup[stat.toLowerCase() as keyof StartupStats], 0) // or any other relevant numeric field
-        : startup.bookmarks + startup.views + startup.likes,
-  }));
+export default function PChart({
+  startups,
+  // filters,
+  investor,
+}: {
+  startups: Startup[];
+  // filters: Filter[] | null;
+  investor: Investor | null;
+}) {
+  // const val = filters && filters.map((filter) => filter.name);
+  const transformedData = investor
+    ? Array.from(["views", "likes", "bookmarks"]).map((item) => {
+        const flag = investor[item as keyof StartupStats] === 0;
+        return {
+          value: flag ? 0.0001 : investor[item as keyof StartupStats],
+          name: flag ? `No ${item} data` : `${item.charAt(0).toUpperCase() + item.slice(1)}`,
+        };
+      })
+    : // : val
+      //   ? startups.map((startup) => ({
+      //       name: startup.companyName,
+      //       value:
+      //         val.length > 0
+      //           ? val.reduce(
+      //               (total, stat) => total + startup[stat.toLowerCase() as keyof StartupStats],
+      //               0
+      //             )
+      //           : ((startup.bookmarks + startup.views + startup.likes)) || 0.0001,
+      //     }))
+      startups.length > 0 ? startups.map((startup) => ({
+            name: startup.companyName,
+            value: ((startup.bookmarks + startup.views + startup.likes)) || 0.0001,
+          }))
+      :
+      Array.from(["views", "likes", "bookmarks"]).map((item) => {
+        const flag = startups.length == 0 || startups[0][item as keyof StartupStats] === 0;
+        return {
+          value: flag ? 0.0001 : startups[0][item as keyof StartupStats],
+          name: flag ? `No ${item} data` : `${item.charAt(0).toUpperCase() + item.slice(1)}`,
+        };
+      });
 
   const [state, setState] = useState({
     activeIndex: 0,
