@@ -49,7 +49,7 @@ export default function SearchContent() {
       ...startups.map(async (startup) => {
         try {
           const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/${startup.id}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/startup/${startup.id}`,
             {
               headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
               responseType: "blob",
@@ -73,7 +73,7 @@ export default function SearchContent() {
       ...investors.map(async (investor) => {
         try {
           const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/${investor.id}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/investor/${investor.id}`,
             {
               headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
               responseType: "blob",
