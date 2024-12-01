@@ -1,11 +1,10 @@
 "use client";
 
-import axios from "axios";
 import { Bookmark, ChevronLeft, Globe, Image, MapPin, ThumbsUp } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMap } from "react-map-gl";
-import { useInteractiveMap, useSession } from "~/context/hooks";
+import { useEcosystem, useInteractiveMap, useSession } from "~/context/hooks";
 import {
   bookmarkControllerCreate,
   bookmarkControllerFindOneByUserIdandInvestorId,
@@ -25,7 +24,6 @@ export default function InvestorDetails() {
   const { id: investorId } = useParams();
   const { user } = useSession();
   const userId = user ? user.id : null;
-  const [investorDetails, setInvestorDetails] = useState<Investor | null>(null);
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -33,7 +31,11 @@ export default function InvestorDetails() {
   const router = useRouter();
   const { mainMap } = useMap();
 
-  const [pfp, setPfp] = useState<any>(null);
+  const { profilePictures, investors, setInvestors } = useEcosystem();
+  const investorDetails = useMemo(
+    () => investors.find((i) => i.id === Number(investorId)),
+    [investors, investorId]
+  );
 
   const [investorLocationData, setInvestorLocationData] = useState<LocationData | undefined>();
 
@@ -47,21 +49,26 @@ export default function InvestorDetails() {
         setInvestorLocationData(selectedLocation);
         setSelectedLocation(undefined);
 
-        // update
-        investorsControllerUpdate(
-          Number(investorDetails?.id),
-          {
-            locationLat: selectedLocation.latitude,
-            locationLng: selectedLocation.longitude,
-            locationName: selectedLocation.name,
-          } as Investor,
-          withAuth
-        ).then(() => window.location.reload());
+        updateLocation(selectedLocation);
       }
 
       setPreviewingMap(false);
     }
   }, [dashboardSelection, previewingMap, selectedLocation, setSelectedLocation]);
+
+  async function updateLocation(newLocation: LocationData) {
+    await investorsControllerUpdate(
+      Number(investorDetails?.id),
+      {
+        locationLat: newLocation.latitude,
+        locationLng: newLocation.longitude,
+        locationName: newLocation.name,
+      } as Investor,
+      withAuth
+    );
+
+    fetchInvestorbyID();
+  }
 
   function previewMap(edit = false) {
     setPreviewingMap(true);
@@ -86,33 +93,25 @@ export default function InvestorDetails() {
     );
   }
 
-  async function fetchPfp() {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/investor/${investorDetails?.id}`,
-      {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        responseType: "blob",
-      }
-    );
-    if (response.data?.size) {
-      setPfp(URL.createObjectURL(response.data));
-    }
-  }
   useEffect(() => {
-    if (investorDetails) {
-      fetchPfp();
+    if (investorDetails?.locationLat && investorDetails?.locationLng) {
+      mainMap?.flyTo({
+        center: { lat: investorDetails.locationLat, lng: investorDetails.locationLng },
+      });
     }
-  }, [investorDetails]);
+  }, [investorDetails, mainMap]);
 
   async function fetchInvestorbyID() {
     try {
       const { data: returnData } = await investorsControllerFindOne(Number(investorId));
       const data = returnData as unknown as Investor;
       if (data) {
-        if (data.locationLat && data.locationLng) {
-          mainMap?.flyTo({ center: { lat: data.locationLat, lng: data.locationLng } });
+        const investorIndex = investors.findIndex((i) => i.id === data.id);
+        if (investorIndex !== -1) {
+          const updatedInvestors = [...investors];
+          updatedInvestors[investorIndex] = data;
+          setInvestors(updatedInvestors);
         }
-        setInvestorDetails(data);
       }
     } catch (error) {
       console.error("Error fetching investor details:", error);
@@ -152,10 +151,6 @@ export default function InvestorDetails() {
       setLoading(false);
     }
   }
-
-  useEffect(() => {
-    fetchInvestorbyID();
-  }, []);
 
   useEffect(() => {
     if (!viewed && user !== undefined) {
@@ -225,9 +220,9 @@ export default function InvestorDetails() {
           <ChevronLeft size={24} className="cursor-pointer" onClick={() => router.push("/")} />
         </div>
         <div className="flex h-64 w-full items-center justify-center bg-gray-200">
-          {pfp ? (
+          {profilePictures[`investor_${investorDetails?.id}`] ? (
             <img
-              src={pfp || placeholderImageUrl}
+              src={profilePictures[`investor_${investorDetails?.id}`] || placeholderImageUrl}
               alt={investorDetails?.firstName}
               className="h-full max-h-64 w-auto max-w-full object-contain"
             />

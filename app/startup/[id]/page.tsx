@@ -1,9 +1,8 @@
 "use client";
 
-import axios from "axios";
 import { Bookmark, ChevronLeft, Globe, Image, MapPin, ThumbsUp } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMap } from "react-map-gl";
 import { useEcosystem, useInteractiveMap, useSession } from "~/context/hooks";
 import {
@@ -26,7 +25,6 @@ export default function StartupDetails() {
   const { id: startupId } = useParams();
   const { user } = useSession();
   const userId = user ? user.id : null;
-  const [startupDetails, setStartupDetails] = useState<Startup | null>(null);
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -34,9 +32,11 @@ export default function StartupDetails() {
   const router = useRouter();
   const { mainMap } = useMap();
 
-  const { startups, setStartups } = useEcosystem();
-
-  const [pfp, setPfp] = useState<any>(null);
+  const { startups, setStartups, profilePictures } = useEcosystem();
+  const startupDetails = useMemo(
+    () => startups.find((s) => s.id === Number(startupId)),
+    [startupId, startups]
+  );
 
   const [ownedStartups, setOwnedStartups] = useState<Startup[]>([]);
   const [doesUserOwnStartup, setDoesUserOwnStartup] = useState(false);
@@ -70,7 +70,7 @@ export default function StartupDetails() {
       withAuth
     );
 
-    fetchStartupbyID(true);
+    fetchStartupbyID();
   }
 
   useEffect(() => {
@@ -123,37 +123,23 @@ export default function StartupDetails() {
     );
   }
 
-  async function fetchPfp() {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/startup/${startupId}`,
-      {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        responseType: "blob",
-      }
-    );
-    if (response.data?.size) {
-      setPfp(URL.createObjectURL(response.data));
+  useEffect(() => {
+    if (startupDetails?.locationLat && startupDetails?.locationLng) {
+      mainMap?.flyTo({
+        center: { lat: startupDetails.locationLat, lng: startupDetails.locationLng },
+      });
     }
-  }
+  }, [startupDetails, mainMap]);
 
-  async function fetchStartupbyID(update = false) {
+  async function fetchStartupbyID() {
     try {
       const { data } = await startupsControllerFindOne(String(startupId), withAuth);
-      console.log(data);
       if (data) {
-        if (data.locationLat && data.locationLng) {
-          mainMap?.flyTo({ center: { lat: data.locationLat, lng: data.locationLng } });
-        }
-        setStartupDetails(data);
-
-        // also update context
-        if (update) {
-          const startupIndex = startups.findIndex((s) => s.id === data.id);
-          if (startupIndex !== -1) {
-            const updatedStartups = [...startups];
-            updatedStartups[startupIndex] = data;
-            setStartups(updatedStartups);
-          }
+        const startupIndex = startups.findIndex((s) => s.id === data.id);
+        if (startupIndex !== -1) {
+          const updatedStartups = [...startups];
+          updatedStartups[startupIndex] = data;
+          setStartups(updatedStartups);
         }
       }
     } catch (error) {
@@ -196,8 +182,6 @@ export default function StartupDetails() {
   }
 
   useEffect(() => {
-    fetchStartupbyID();
-    fetchPfp();
     fetchOwnedStartups();
   }, []);
 
@@ -279,9 +263,9 @@ export default function StartupDetails() {
           <ChevronLeft size={24} className="cursor-pointer" onClick={() => router.push("/")} />
         </div>
         <div className="flex h-64 w-full items-center justify-center bg-gray-200">
-          {pfp ? (
+          {profilePictures[`startup_${startupDetails?.id}`] ? (
             <img
-              src={pfp}
+              src={profilePictures[`startup_${startupDetails?.id}`]}
               alt={startupDetails?.companyName}
               className="h-full max-h-64 w-auto max-w-full object-contain"
             />

@@ -1,4 +1,5 @@
 "use client";
+import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import { MapProvider } from "react-map-gl";
@@ -23,6 +24,68 @@ export function ContextProvider({ children }: { children: React.ReactNode }) {
 
   const [startups, setStartups] = useState<Startup[]>([]);
   const [investors, setInvestors] = useState<Investor[]>([]);
+
+  const [profilePictures, setProfilePictures] = useState<any>({});
+
+  async function fetchStartupProfilePictures() {
+    const pictures = {} as any;
+
+    await Promise.all([
+      ...startups.map(async (startup) => {
+        try {
+          const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/startup/${startup.id}`,
+            {
+              headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+              responseType: "blob",
+            }
+          );
+          if (response.data?.size) {
+            pictures[`startup_${startup.id}`] = URL.createObjectURL(response.data);
+          }
+        } catch (error) {
+          console.error(`Failed to fetch profile picture for startup ID ${startup.id}:`, error);
+        }
+      }),
+    ]);
+    setProfilePictures((oldPfps: any) => ({ ...oldPfps, ...pictures }));
+  }
+
+  async function fetchInvestorProfilePictures() {
+    const pictures = {} as any;
+
+    await Promise.all([
+      ...investors.map(async (investor) => {
+        try {
+          const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/investor/${investor.id}`,
+            {
+              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+              responseType: "blob",
+            }
+          );
+          if (response.data?.size) {
+            pictures[`investor_${investor.id}`] = URL.createObjectURL(response.data);
+          }
+        } catch (error) {
+          console.error(`Failed to fetch profile picture for investor ID ${investor.id}:`, error);
+        }
+      }),
+    ]);
+    setProfilePictures((oldPfps: any) => ({ ...oldPfps, ...pictures }));
+  }
+
+  useEffect(() => {
+    if (startups.length > 0) {
+      fetchStartupProfilePictures();
+    }
+  }, [startups]);
+
+  useEffect(() => {
+    if (investors.length > 0) {
+      fetchInvestorProfilePictures();
+    }
+  }, [investors]);
 
   const [user, setUser] = useState<User | null | undefined>(undefined);
 
@@ -61,7 +124,16 @@ export function ContextProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <SessionContext.Provider value={{ user, setUser }}>
-      <EcosystemContext.Provider value={{ startups, setStartups, investors, setInvestors }}>
+      <EcosystemContext.Provider
+        value={{
+          startups,
+          setStartups,
+          investors,
+          setInvestors,
+          profilePictures,
+          setProfilePictures,
+        }}
+      >
         <InteractionContext.Provider
           value={{
             dashboardSelection,

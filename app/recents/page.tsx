@@ -1,10 +1,9 @@
 "use client";
 
-import axios from "axios";
 import { Cog, HandCoins, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useSession } from "~/context/hooks";
+import { useEcosystem, useSession } from "~/context/hooks";
 import { viewControllerFindRecentsByUserId } from "~/lib/api";
 import { View } from "~/lib/schemas";
 import { placeholderImageUrl, withAuth } from "~/lib/utils";
@@ -14,45 +13,12 @@ export default function Recents() {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [recentViews, setRecentViews] = useState<View[]>([]);
   const { user } = useSession();
-  const [profilePictures, setProfilePictures] = useState<any>({});
+  const { profilePictures } = useEcosystem();
 
   const searchFocusType = [
     { name: "Startups", icon: <Cog size={24} /> },
     { name: "Investors", icon: <HandCoins size={24} /> },
   ];
-
-  async function fetchProfilePictures() {
-    const pictures = {} as any;
-
-    await Promise.all(
-      recentViews.map(async (view) => {
-        try {
-          const id = view.startup?.id || view.investor?.id;
-          const type = view.startup ? "startup" : "investor";
-          const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/${type}/${id}`,
-            {
-              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-              responseType: "blob",
-            }
-          );
-          if (response.data?.size) {
-            pictures[`${type}_${view.id}`] = URL.createObjectURL(response.data);
-          }
-        } catch (error) {
-          console.error(`Failed to fetch profile picture for view ID ${view.id}:`, error);
-        }
-      })
-    );
-
-    setProfilePictures((oldPfps: any) => ({ ...oldPfps, ...pictures }));
-  }
-
-  useEffect(() => {
-    if (recentViews.length > 0) {
-      fetchProfilePictures();
-    }
-  }, [recentViews]);
 
   async function fetchRecentViews() {
     if (!user) return;
@@ -131,8 +97,11 @@ export default function Recents() {
                   <div className="mr-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-md bg-gray-100">
                     <img
                       src={
-                        profilePictures[`${view.startup ? "startup" : "investor"}_${view.id}`] ||
-                        placeholderImageUrl
+                        profilePictures[
+                          view.startup
+                            ? `startup_${view.startup.id}`
+                            : `investor_${view.investor?.id}`
+                        ] || placeholderImageUrl
                       }
                       alt={
                         view.startup

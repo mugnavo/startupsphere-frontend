@@ -30,6 +30,8 @@ export const EcosystemContext = createContext<
       setStartups: Dispatch<SetStateAction<Startup[]>>;
       investors: Investor[];
       setInvestors: Dispatch<SetStateAction<Investor[]>>;
+      profilePictures: any;
+      setProfilePictures: Dispatch<SetStateAction<any>>;
     }
   | undefined
 >(undefined);

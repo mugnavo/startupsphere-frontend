@@ -1,10 +1,9 @@
 "use client";
 
-import axios from "axios";
 import { Cog, HandCoins, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useSession } from "~/context/hooks";
+import { useEcosystem, useSession } from "~/context/hooks";
 import { bookmarkControllerFindAllByUserId } from "~/lib/api";
 import { Bookmark } from "~/lib/schemas";
 import { placeholderImageUrl, withAuth } from "~/lib/utils";
@@ -16,42 +15,12 @@ export default function Bookmarks() {
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [activeIndex, setActiveIndex] = useState<number | null>(null); // Toggle between 0 (startups), 1 (investors), and null (both)
-  const [profilePictures, setProfilePictures] = useState<{ [key: string]: string }>({});
+  const { profilePictures } = useEcosystem();
 
   const searchFocusType = [
     { name: "Startups", icon: <Cog size={24} /> },
     { name: "Investors", icon: <HandCoins size={24} /> },
   ];
-
-  async function fetchProfilePictures() {
-    const pictures: { [key: string]: string } = {};
-
-    await Promise.all(
-      bookmarks.map(async (bookmark) => {
-        const id = bookmark.startup ? bookmark.startup.id : bookmark.investor?.id;
-        const type = bookmark.startup ? "startup" : "investor";
-
-        if (id) {
-          try {
-            const response = await axios.get(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/${type}/${id}`,
-              {
-                headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
-                responseType: "blob",
-              }
-            );
-            if (response.data?.size) {
-              pictures[`${type}_${id}`] = URL.createObjectURL(response.data);
-            }
-          } catch (error) {
-            console.error(`Failed to fetch profile picture for ${type} ID ${id}:`, error);
-          }
-        }
-      })
-    );
-
-    setProfilePictures(pictures);
-  }
 
   async function fetchBookmarks() {
     try {
@@ -72,12 +41,6 @@ export default function Bookmarks() {
       fetchBookmarks();
     }
   }, [userId]);
-
-  useEffect(() => {
-    if (bookmarks.length > 0) {
-      fetchProfilePictures();
-    }
-  }, [bookmarks]);
 
   const filteredBookmarks = bookmarks.filter((bookmark) => {
     const name = bookmark.startup

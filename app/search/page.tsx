@@ -1,5 +1,4 @@
 "use client";
-import axios from "axios";
 import { ArrowLeft, Cog, Filter, HandCoins, Search, SquareMousePointer, X } from "lucide-react";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
@@ -14,7 +13,7 @@ export default function SearchContent() {
   const router = useRouter();
   const { user } = useSession();
 
-  const { startups, investors } = useEcosystem();
+  const { startups, investors, profilePictures } = useEcosystem();
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [loading, setLoading] = useState(true);
@@ -39,68 +38,6 @@ export default function SearchContent() {
       setLoading(false);
     }
   }, [startups, investors]);
-
-  const [profilePictures, setProfilePictures] = useState<any>({});
-
-  async function fetchStartupProfilePictures() {
-    const pictures = {} as any;
-
-    await Promise.all([
-      ...startups.map(async (startup) => {
-        try {
-          const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/startup/${startup.id}`,
-            {
-              headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
-              responseType: "blob",
-            }
-          );
-          if (response.data?.size) {
-            pictures[`startup_${startup.id}`] = URL.createObjectURL(response.data);
-          }
-        } catch (error) {
-          console.error(`Failed to fetch profile picture for startup ID ${startup.id}:`, error);
-        }
-      }),
-    ]);
-    setProfilePictures((oldPfps: any) => ({ ...oldPfps, ...pictures }));
-  }
-
-  async function fetchInvestorProfilePictures() {
-    const pictures = {} as any;
-
-    await Promise.all([
-      ...investors.map(async (investor) => {
-        try {
-          const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile-picture/investor/${investor.id}`,
-            {
-              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-              responseType: "blob",
-            }
-          );
-          if (response.data?.size) {
-            pictures[`investor_${investor.id}`] = URL.createObjectURL(response.data);
-          }
-        } catch (error) {
-          console.error(`Failed to fetch profile picture for investor ID ${investor.id}:`, error);
-        }
-      }),
-    ]);
-    setProfilePictures((oldPfps: any) => ({ ...oldPfps, ...pictures }));
-  }
-
-  useEffect(() => {
-    if (startups.length > 0) {
-      fetchStartupProfilePictures();
-    }
-  }, [startups]);
-
-  useEffect(() => {
-    if (investors.length > 0) {
-      fetchInvestorProfilePictures();
-    }
-  }, [investors]);
 
   const filteredStartups = startups.filter(
     (startup) =>
