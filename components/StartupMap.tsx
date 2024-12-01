@@ -15,7 +15,7 @@ import Geocoder from "./map/Geocoder";
 const geocode = new GeocodingCore({ accessToken: process.env.NEXT_PUBLIC_MAPBOX_TOKEN! });
 
 export default function StartupMap() {
-  const { startups, investors } = useEcosystem();
+  const { startups, investors, profilePictures } = useEcosystem();
 
   const router = useRouter();
   const [viewState, setViewState] = useState({
@@ -182,6 +182,7 @@ export default function StartupMap() {
                 <CustomPin
                   className="h-8 w-8"
                   categories={[startup.industry]}
+                  avatar_url={profilePictures[`startup_${startup.id}`]}
                   startupname={startup.companyName}
                 />
                 <div className="text-center text-sm font-semibold">{startup.companyName}</div>
@@ -208,6 +209,7 @@ export default function StartupMap() {
                 <CustomPin
                   className="h-8 w-8"
                   categories={["Investor"]}
+                  avatar_url={profilePictures[`investor_${investor.id}`]}
                   startupname={`${investor.firstName} ${investor.lastName}`}
                 />
                 <div className="text-center text-sm font-semibold">

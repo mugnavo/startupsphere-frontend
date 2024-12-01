@@ -1,15 +1,27 @@
+import { placeholderImageUrl } from "~/lib/utils";
+
 export default function CustomPin({
   categories,
+  avatar_url,
   startupname,
   ...props
-}: { categories?: string[]; startupname?: string } & React.SVGProps<SVGSVGElement>) {
+}: {
+  categories?: string[];
+  avatar_url?: string;
+  startupname?: string;
+} & React.SVGProps<SVGSVGElement>) {
   return (
     <div className="flex h-full w-full flex-col items-center justify-items-center">
       <div
         className="transition-transform duration-700 group-hover:scale-[2.5]"
         style={{ transformOrigin: "bottom" }}
       >
-        <div className="hidden min-w-14 flex-col items-center gap-0.5 rounded-sm bg-white p-1.5 shadow-lg group-hover:flex">
+        <div className="hidden min-w-14 flex-col items-center gap-0.5 rounded-sm bg-white p-1.5 pt-3 shadow-lg group-hover:flex">
+          <img
+            src={avatar_url || placeholderImageUrl}
+            alt="Custom Pin"
+            className="absolute left-1/2 top-[-15px] h-6 w-6 -translate-x-1/2 transform rounded-full"
+          />
           <span className="text-[6px] font-semibold leading-none text-black">{startupname}</span>
           <div className="flex w-full flex-wrap items-center justify-center gap-[1px]">
             {categories?.slice(0, 3).map((category, index) => (
