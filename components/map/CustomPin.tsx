@@ -16,7 +16,7 @@ export default function CustomPin({
         className="transition-transform duration-700 group-hover:scale-[2.5]"
         style={{ transformOrigin: "bottom" }}
       >
-        <div className="hidden min-w-14 flex-col items-center gap-0.5 rounded-sm bg-white p-1.5 pt-3 shadow-lg group-hover:flex">
+        <div className="hidden min-w-14 flex-col items-center gap-0.5 rounded-sm bg-white p-1.5 pt-4 shadow-lg group-hover:flex">
           <img
             src={avatar_url || placeholderImageUrl}
             alt="Custom Pin"
